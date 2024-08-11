@@ -1,0 +1,8 @@
+flutter_native_splash:
+  android: true
+  ios: true
+  web: true
+
+  color: "#000000"
+  branding: "assets/images/branding.png"
+  image: "assets/images/e-ukay.jpg"
