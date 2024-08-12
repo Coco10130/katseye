@@ -6,6 +6,8 @@ class MyTextField extends StatelessWidget {
   final double widthFactor;
   final double height;
   final TextEditingController controller;
+  final bool password;
+  final bool email;
 
   const MyTextField({
     super.key,
@@ -14,6 +16,8 @@ class MyTextField extends StatelessWidget {
     required this.controller,
     this.height = 85,
     this.widthFactor = 0.85,
+    this.password = false,
+    this.email = false,
   });
 
   @override
@@ -44,6 +48,8 @@ class MyTextField extends StatelessWidget {
             // Input field
             TextField(
               controller: controller,
+              obscureText: password,
+              keyboardType: email ? TextInputType.emailAddress : null,
               style: const TextStyle(
                 color: Color(0xFFFFFFFF),
                 fontFamily: "Poppins",

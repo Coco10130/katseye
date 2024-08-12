@@ -1,24 +1,28 @@
-import 'package:eukay/components/my_button.dart';
-import 'package:eukay/components/my_input.dart';
 import 'package:eukay/components/my_text_button.dart';
 import 'package:flutter/material.dart';
+import 'package:eukay/components/my_button.dart';
+import 'package:eukay/components/my_input.dart';
+import 'package:flutter/widgets.dart';
 
-class LoginPage extends StatefulWidget {
-  final VoidCallback onRegisterTap;
-  const LoginPage({super.key, required this.onRegisterTap});
+class RegisterPage extends StatefulWidget {
+  final VoidCallback onLoginTap;
+  const RegisterPage({super.key, required this.onLoginTap});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage>
+class _RegisterPageState extends State<RegisterPage>
     with SingleTickerProviderStateMixin {
-  // input controllers
+  // text controllers
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
-  // animation controllers
-  bool _isVisible = false;
+  // animation
+  bool _isVisible = true;
   late final AnimationController _scaleController = AnimationController(
     duration: const Duration(milliseconds: 500),
     vsync: this,
@@ -46,23 +50,24 @@ class _LoginPageState extends State<LoginPage>
   @override
   void dispose() {
     _scaleController.dispose();
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _registerTransition() {
+  void _loginTransition() {
     _scaleController.reverse().then((_) {
       setState(() {
         _isVisible = false;
       });
-      widget.onRegisterTap();
+      widget.onLoginTap();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // screen size
     final double screenWidth = MediaQuery.of(context).size.width;
     const double spacing = 10;
 
@@ -81,15 +86,26 @@ class _LoginPageState extends State<LoginPage>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                // card title
                 const Text(
-                  "Welcome Back",
+                  "Create an Account",
                   style: TextStyle(
                     fontFamily: "Poppins",
                     fontWeight: FontWeight.w700,
-                    fontSize: 32,
+                    fontSize: 28,
                     color: Color(0xFFFFFFFF),
                   ),
+                ),
+
+                // spcaing
+                const SizedBox(
+                  height: spacing,
+                ),
+
+                // name input
+                MyTextField(
+                  label: "Name",
+                  hint: "Your Name",
+                  controller: _nameController,
                 ),
 
                 // spacing
@@ -100,7 +116,7 @@ class _LoginPageState extends State<LoginPage>
                 // email input
                 MyTextField(
                   label: "Email",
-                  hint: "Enter Email",
+                  hint: "Your Email",
                   controller: _emailController,
                   email: true,
                 ),
@@ -113,7 +129,7 @@ class _LoginPageState extends State<LoginPage>
                 // password input
                 MyTextField(
                   label: "Password",
-                  hint: "Enter Password",
+                  hint: "Your Password",
                   controller: _passwordController,
                   password: true,
                 ),
@@ -123,42 +139,12 @@ class _LoginPageState extends State<LoginPage>
                   height: spacing,
                 ),
 
-                // forgot password
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: MyTextButton(
-                    title: "Forgot Password",
-                    onPressed: () {},
-                  ),
-                ),
-
-                // spacing
-                const SizedBox(
-                  height: spacing,
-                ),
-
-                // login button
-                MyButton(
-                  title: "Login",
-                  backgroundColor: const Color(0xFF000000),
-                  textColor: const Color(0xFFFFFFFF),
-                  onPressed: () {},
-                ),
-
-                // spacing
-                const SizedBox(
-                  height: spacing,
-                ),
-
-                // divider
-                const Text(
-                  "OR",
-                  style: TextStyle(
-                    fontFamily: "Poppins",
-                    fontSize: 15,
-                    color: Color(0xFF94A3B8),
-                    fontWeight: FontWeight.bold,
-                  ),
+                // confirm password
+                MyTextField(
+                  label: "Confirm Password",
+                  hint: "Confirm Password",
+                  controller: _confirmPasswordController,
+                  password: true,
                 ),
 
                 // spacing
@@ -169,12 +155,23 @@ class _LoginPageState extends State<LoginPage>
                 // register button
                 MyButton(
                   title: "Register",
-                  backgroundColor: const Color(0xFFA9A9A9),
-                  textColor: const Color(0xFF000000),
-                  onPressed: _registerTransition,
+                  backgroundColor: const Color(0xFF000000),
+                  textColor: const Color(0xFFFFFFFF),
+                  onPressed: () {},
                 ),
 
-                // padding bottom
+                // spacing
+                const SizedBox(
+                  height: spacing,
+                ),
+
+                // back to login button
+                MyTextButton(
+                  title: "Alrady have an account? Login Here",
+                  onPressed: _loginTransition,
+                ),
+
+                // spacing
                 const SizedBox(
                   height: spacing,
                 ),
