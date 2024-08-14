@@ -1,6 +1,7 @@
-import 'package:eukay/components/my_button.dart';
+import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/my_input.dart';
-import 'package:eukay/components/my_text_button.dart';
+import 'package:eukay/components/buttons/my_text_button.dart';
+import 'package:eukay/pages/main_pages/dashboard_page.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -58,6 +59,27 @@ class _LoginPageState extends State<LoginPage>
       });
       widget.onRegisterTap();
     });
+  }
+
+  void _login() {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const DashboardPage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(1.0, 0.0);
+          const end = Offset.zero;
+          const curve = Curves.easeIn;
+
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var offsetAnimation = animation.drive(tween);
+
+          return SlideTransition(position: offsetAnimation, child: child);
+        },
+      ),
+    );
   }
 
   @override
@@ -142,7 +164,7 @@ class _LoginPageState extends State<LoginPage>
                   title: "Login",
                   backgroundColor: const Color(0xFF000000),
                   textColor: const Color(0xFFFFFFFF),
-                  onPressed: () {},
+                  onPressed: _login,
                 ),
 
                 // spacing

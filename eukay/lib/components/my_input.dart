@@ -60,6 +60,7 @@ class MyTextField extends StatelessWidget {
                 fillColor: const Color(0xFF373737),
                 hintStyle: const TextStyle(
                   color: Color(0xFF94A3B8),
+                  fontFamily: "Poppins",
                 ),
                 border: const UnderlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(20)),

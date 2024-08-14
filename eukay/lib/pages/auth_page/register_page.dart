@@ -1,6 +1,6 @@
-import 'package:eukay/components/my_text_button.dart';
+import 'package:eukay/components/buttons/my_text_button.dart';
 import 'package:flutter/material.dart';
-import 'package:eukay/components/my_button.dart';
+import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/my_input.dart';
 import 'package:flutter/widgets.dart';
 
