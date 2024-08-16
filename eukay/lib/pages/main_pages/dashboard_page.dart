@@ -2,6 +2,7 @@ import 'package:eukay/components/buttons/my_icon_button.dart';
 import 'package:eukay/components/my_searchbox.dart';
 import 'package:eukay/components/product_cards/featured_product.dart';
 import 'package:eukay/pages/main_pages/check_out/cart_page.dart';
+import 'package:eukay/pages/main_pages/profile_pages/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -93,6 +94,27 @@ class DashboardPage extends StatelessWidget {
       );
     }
 
+    void profile() {
+      Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const ProfilePage(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(1.0, 0.0);
+            const end = Offset.zero;
+            const curve = Curves.easeIn;
+
+            var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var offsetAnimation = animation.drive(tween);
+
+            return SlideTransition(position: offsetAnimation, child: child);
+          },
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: const Color(0xFF000000),
       appBar: AppBar(
@@ -125,7 +147,7 @@ class DashboardPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: IconButton(
-              onPressed: () {},
+              onPressed: profile,
               icon: const ImageIcon(
                 AssetImage("assets/icons/user.png"),
                 size: 24,
