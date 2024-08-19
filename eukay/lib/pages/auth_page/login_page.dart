@@ -1,8 +1,11 @@
+import 'package:eukay/bloc/auth_bloc/auth_bloc.dart';
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/my_input.dart';
 import 'package:eukay/components/buttons/my_text_button.dart';
+import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/pages/main_pages/dashboard_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback onRegisterTap;
@@ -62,13 +65,13 @@ class _LoginPageState extends State<LoginPage>
   }
 
   void _login() {
-    Navigator.push(
+    Navigator.pushAndRemoveUntil(
       context,
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) =>
             const DashboardPage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0);
+          const begin = Offset(3.0, 0.0);
           const end = Offset.zero;
           const curve = Curves.easeIn;
 
@@ -79,6 +82,7 @@ class _LoginPageState extends State<LoginPage>
           return SlideTransition(position: offsetAnimation, child: child);
         },
       ),
+      (route) => false,
     );
   }
 
@@ -88,124 +92,155 @@ class _LoginPageState extends State<LoginPage>
     final double screenWidth = MediaQuery.of(context).size.width;
     const double spacing = 10;
 
-    return Center(
-      child: SingleChildScrollView(
-        child: ScaleTransition(
-          scale: _scaleAnimation,
-          child: Container(
-            width: screenWidth * 0.9,
-            height: _isVisible ? null : 0,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthLoginFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              errorMessage: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
             ),
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                // card title
-                Text(
-                  "Welcome Back",
-                  style: TextStyle(
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.w700,
-                    fontSize: 32,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                ),
+          );
+        }
 
-                // spacing
-                const SizedBox(
-                  height: spacing,
-                ),
+        if (state is AuthLoginSuccess) {
+          _login();
+        }
+      },
+      builder: (context, state) {
+        if (state is AuthLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-                // email input
-                MyTextField(
-                  label: "Email",
-                  hint: "Enter Email",
-                  controller: _emailController,
-                  email: true,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
+        return Center(
+          child: SingleChildScrollView(
+            child: ScaleTransition(
+              scale: _scaleAnimation,
+              child: Container(
+                width: screenWidth * 0.9,
+                height: _isVisible ? null : 0,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
                 ),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    // card title
+                    Text(
+                      "Welcome Back",
+                      style: TextStyle(
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.w700,
+                        fontSize: 32,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
 
-                // spacing
-                const SizedBox(
-                  height: spacing,
-                ),
+                    // spacing
+                    const SizedBox(
+                      height: spacing,
+                    ),
 
-                // password input
-                MyTextField(
-                  label: "Password",
-                  hint: "Enter Password",
-                  controller: _passwordController,
-                  password: true,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
-                ),
+                    // email input
+                    MyTextField(
+                      label: "Email",
+                      hint: "Enter Email",
+                      controller: _emailController,
+                      email: true,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
+                    ),
 
-                // spacing
-                const SizedBox(
-                  height: spacing,
-                ),
+                    // spacing
+                    const SizedBox(
+                      height: spacing,
+                    ),
 
-                // forgot password
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: MyTextButton(
-                    title: "Forgot Password",
-                    textColor: Theme.of(context).colorScheme.onPrimary,
-                    onPressed: () {},
-                  ),
-                ),
+                    // password input
+                    MyTextField(
+                      label: "Password",
+                      hint: "Enter Password",
+                      controller: _passwordController,
+                      password: true,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
+                    ),
 
-                // spacing
-                const SizedBox(
-                  height: spacing,
-                ),
+                    // spacing
+                    const SizedBox(
+                      height: spacing,
+                    ),
 
-                // login button
-                MyButton(
-                  title: "Login",
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  onPressed: _login,
-                ),
+                    // forgot password
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: MyTextButton(
+                        title: "Forgot Password",
+                        textColor: Theme.of(context).colorScheme.onPrimary,
+                        onPressed: () {},
+                      ),
+                    ),
 
-                // spacing
-                const SizedBox(
-                  height: spacing,
-                ),
+                    // spacing
+                    const SizedBox(
+                      height: spacing,
+                    ),
 
-                // divider
-                Text(
-                  "OR",
-                  style: TextStyle(
-                    fontFamily: "Poppins",
-                    fontSize: 15,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                    // login button
+                    MyButton(
+                      title: "Login",
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      onPressed: () {
+                        context.read<AuthBloc>().add(
+                              AuthLoginRequest(
+                                email: _emailController.text.trim(),
+                                password: _passwordController.text.trim(),
+                              ),
+                            );
+                      },
+                    ),
 
-                // spacing
-                const SizedBox(
-                  height: spacing,
-                ),
+                    // spacing
+                    const SizedBox(
+                      height: spacing,
+                    ),
 
-                // register button
-                MyButton(
-                  title: "Register",
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  onPressed: _registerTransition,
-                ),
+                    // divider
+                    Text(
+                      "OR",
+                      style: TextStyle(
+                        fontFamily: "Poppins",
+                        fontSize: 15,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
 
-                // padding bottom
-                const SizedBox(
-                  height: spacing,
+                    // spacing
+                    const SizedBox(
+                      height: spacing,
+                    ),
+
+                    // register button
+                    MyButton(
+                      title: "Register",
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      onPressed: _registerTransition,
+                    ),
+
+                    // padding bottom
+                    const SizedBox(
+                      height: spacing,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

@@ -1,8 +1,11 @@
+import 'package:eukay/bloc/auth_bloc/auth_bloc.dart';
 import 'package:eukay/components/buttons/my_text_button.dart';
+import 'package:eukay/components/my_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/my_input.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback onLoginTap;
@@ -71,120 +74,151 @@ class _RegisterPageState extends State<RegisterPage>
     final double screenWidth = MediaQuery.of(context).size.width;
     const double spacing = 10;
 
-    return Center(
-      child: SingleChildScrollView(
-        child: ScaleTransition(
-          scale: _scaleAnimation,
-          child: Container(
-            width: screenWidth * 0.9,
-            height: _isVisible ? null : 0,
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.primary,
-              borderRadius: const BorderRadius.all(Radius.circular(20)),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  "Create an Account",
-                  style: TextStyle(
-                    fontFamily: "Poppins",
-                    fontWeight: FontWeight.w700,
-                    fontSize: 28,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                ),
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthRegisterFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
+            errorMessage: state.errorMessage,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            textColor: Theme.of(context).colorScheme.error,
+          ));
+        }
 
-                // spcaing
-                const SizedBox(
-                  height: spacing,
-                ),
+        if (state is AuthRegisterSuccess) {
+          _isVisible = false;
+          widget.onLoginTap();
+        }
+      },
+      builder: (context, state) {
+        if (state is AuthLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-                // name input
-                MyTextField(
-                  label: "Name",
-                  hint: "Your Name",
-                  controller: _nameController,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
+        return Center(
+          child: SingleChildScrollView(
+            child: ScaleTransition(
+              scale: _scaleAnimation,
+              child: Container(
+                width: screenWidth * 0.9,
+                height: _isVisible ? null : 0,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
+                  borderRadius: const BorderRadius.all(Radius.circular(20)),
                 ),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      "Create an Account",
+                      style: TextStyle(
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.w700,
+                        fontSize: 28,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    ),
 
-                // spacing
-                const SizedBox(
-                  height: spacing,
-                ),
+                    // spcaing
+                    const SizedBox(
+                      height: spacing,
+                    ),
 
-                // email input
-                MyTextField(
-                  label: "Email",
-                  hint: "Your Email",
-                  controller: _emailController,
-                  email: true,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
-                ),
+                    // name input
+                    MyTextField(
+                      label: "Name",
+                      hint: "Your Name",
+                      controller: _nameController,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
+                    ),
 
-                // spacing
-                const SizedBox(
-                  height: spacing,
-                ),
+                    // spacing
+                    const SizedBox(
+                      height: spacing,
+                    ),
 
-                // password input
-                MyTextField(
-                  label: "Password",
-                  hint: "Your Password",
-                  controller: _passwordController,
-                  password: true,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
-                ),
+                    // email input
+                    MyTextField(
+                      label: "Email",
+                      hint: "Your Email",
+                      controller: _emailController,
+                      email: true,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
+                    ),
 
-                // spacing
-                const SizedBox(
-                  height: spacing,
-                ),
+                    // spacing
+                    const SizedBox(
+                      height: spacing,
+                    ),
 
-                // confirm password
-                MyTextField(
-                  label: "Confirm Password",
-                  hint: "Confirm Password",
-                  controller: _confirmPasswordController,
-                  password: true,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
-                ),
+                    // password input
+                    MyTextField(
+                      label: "Password",
+                      hint: "Your Password",
+                      controller: _passwordController,
+                      password: true,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
+                    ),
 
-                // spacing
-                const SizedBox(
-                  height: spacing,
-                ),
+                    // spacing
+                    const SizedBox(
+                      height: spacing,
+                    ),
 
-                // register button
-                MyButton(
-                  title: "Register",
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
-                  onPressed: () {},
-                ),
+                    // confirm password
+                    MyTextField(
+                      label: "Confirm Password",
+                      hint: "Confirm Password",
+                      controller: _confirmPasswordController,
+                      password: true,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
+                    ),
 
-                // spacing
-                const SizedBox(
-                  height: spacing,
-                ),
+                    // spacing
+                    const SizedBox(
+                      height: spacing,
+                    ),
 
-                // back to login button
-                MyTextButton(
-                  title: "Alrady have an account? Login Here",
-                  onPressed: _loginTransition,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
-                ),
+                    // register button
+                    MyButton(
+                      title: "Register",
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
+                      onPressed: () {
+                        context.read<AuthBloc>().add(AuthRegisterRequest(
+                              email: _emailController.text.trim(),
+                              password: _passwordController.text.trim(),
+                              confirmPassword:
+                                  _confirmPasswordController.text.trim(),
+                              name: _nameController.text.trim(),
+                            ));
+                      },
+                    ),
 
-                // spacing
-                const SizedBox(
-                  height: spacing,
+                    // spacing
+                    const SizedBox(
+                      height: spacing,
+                    ),
+
+                    // back to login button
+                    MyTextButton(
+                      title: "Alrady have an account? Login Here",
+                      onPressed: _loginTransition,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
+                    ),
+
+                    // spacing
+                    const SizedBox(
+                      height: spacing,
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

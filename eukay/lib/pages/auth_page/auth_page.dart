@@ -27,6 +27,7 @@ class _AuthPageState extends State<AuthPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).colorScheme.onSurface,
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 500),

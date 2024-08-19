@@ -1,6 +1,8 @@
+import 'package:eukay/bloc/cart_bloc/cart_bloc.dart';
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/product_cards/cart_product.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 class CartPage extends StatefulWidget {
@@ -121,69 +123,74 @@ class CartBody extends StatefulWidget {
 
 class _CartBodyState extends State<CartBody> {
   @override
+  void initState() {
+    super.initState();
+    context
+        .read<CartBloc>()
+        .add(InitializeCart(cartItems: widget.cartProducts));
+  }
+
+  @override
   Widget build(BuildContext context) {
-    void addQuantity(int index) {
-      setState(() {
-        widget.cartProducts[index]["quantity"]++;
-      });
-    }
-
-    void minusQuantity(int index) {
-      setState(() {
-        if (widget.cartProducts[index]["quantity"] > 1) {
-          widget.cartProducts[index]["quantity"]--;
-        }
-      });
-    }
-
-    void toCheckOut(int index) {
-      setState(() {
-        widget.cartProducts[index]["toCheckOut"] =
-            !widget.cartProducts[index]["toCheckOut"];
-      });
-    }
-
     final double parentWidth = MediaQuery.of(context).size.width;
 
-    return Stack(
-      children: <Widget>[
-        // cart products
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 10,
-            right: 10,
-            top: 20,
-            bottom: 130,
-          ),
-          child: ListView.builder(
-            itemCount: widget.cartProducts.length,
-            itemBuilder: (context, index) {
-              final product = widget.cartProducts[index];
-              final int quantity = product["quantity"];
-              final double price = product["price"].toDouble();
-              final double totalPrice = price * quantity;
+    return BlocBuilder<CartBloc, CartState>(
+      builder: (context, state) {
+        if (state is CartUpdateState) {
+          return Stack(
+            children: <Widget>[
+              // cart products
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 10,
+                  right: 10,
+                  top: 20,
+                  bottom: 130,
+                ),
+                child: BlocBuilder<CartBloc, CartState>(
+                  builder: (context, state) {
+                    return ListView.builder(
+                      itemCount: widget.cartProducts.length,
+                      itemBuilder: (context, index) {
+                        final product = widget.cartProducts[index];
+                        final int quantity = product["quantity"];
+                        final double price = product["price"].toDouble();
+                        final double totalPrice = price * quantity;
 
-              return ProductCard(
-                name: product["title"]!,
-                price: totalPrice,
-                image: product["image"]!,
-                countity: "$quantity",
-                marked: product["toCheckOut"],
-                toCheckOut: () => toCheckOut(index),
-                addFunction: () => addQuantity(index),
-                minusFunction: () => minusQuantity(index),
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                textColor: Theme.of(context).colorScheme.onPrimary,
-              );
-            },
-          ),
-        ),
-        // floating navigation bar
-        Align(
-          alignment: AlignmentDirectional.bottomCenter,
-          child: _navigationBar(parentWidth),
-        )
-      ],
+                        return ProductCard(
+                          name: product["title"]!,
+                          price: totalPrice,
+                          image: product["image"]!,
+                          countity: "$quantity",
+                          marked: product["toCheckOut"],
+                          toCheckOut: () => context
+                              .read<CartBloc>()
+                              .add(CartToggleCheckOut(index: index)),
+                          addFunction: () => context
+                              .read<CartBloc>()
+                              .add(CartAddQuantity(index: index)),
+                          minusFunction: () => context
+                              .read<CartBloc>()
+                              .add(CartMinusQuantity(index: index)),
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondary,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+              // floating navigation bar
+              Align(
+                alignment: AlignmentDirectional.bottomCenter,
+                child: _navigationBar(parentWidth),
+              )
+            ],
+          );
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 
