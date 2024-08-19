@@ -87,9 +87,9 @@ class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: Theme.of(context).colorScheme.onSurface,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFA9A9A9),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         iconTheme: const IconThemeData(
           color: Color(0xFFFFFFFF),
         ),
@@ -172,6 +172,8 @@ class _CartBodyState extends State<CartBody> {
                 toCheckOut: () => toCheckOut(index),
                 addFunction: () => addQuantity(index),
                 minusFunction: () => minusQuantity(index),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                textColor: Theme.of(context).colorScheme.onPrimary,
               );
             },
           ),
@@ -203,7 +205,7 @@ class _CartBodyState extends State<CartBody> {
         bottom: 20,
       ),
       decoration: BoxDecoration(
-          color: const Color(0xFFA9A9A9),
+          color: Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -224,8 +226,8 @@ class _CartBodyState extends State<CartBody> {
             // display total
             Text(
               "Total: ${formatCurrency.format(totalCheckedPrice)}",
-              style: const TextStyle(
-                color: Color(0xFFFFFFFF),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
                 fontFamily: "Poppins",
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -240,8 +242,8 @@ class _CartBodyState extends State<CartBody> {
             // checkout button
             MyButton(
               title: "Proceed to Checkout",
-              backgroundColor: const Color(0xFFFFFFFF),
-              textColor: const Color(0xFF000000),
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              textColor: Theme.of(context).colorScheme.onPrimary,
               onPressed: () {},
             )
           ],

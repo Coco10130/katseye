@@ -8,12 +8,18 @@ class MyTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool password;
   final bool email;
+  final Color textColor;
+  final Color backgroundColor;
+  final Color hintColor;
 
   const MyTextField({
     super.key,
     required this.label,
     required this.hint,
     required this.controller,
+    this.backgroundColor = Colors.transparent,
+    this.hintColor = Colors.white54,
+    this.textColor = Colors.black,
     this.height = 85,
     this.widthFactor = 0.85,
     this.password = false,
@@ -25,7 +31,7 @@ class MyTextField extends StatelessWidget {
     final double parentWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      color: Colors.transparent, // Transparent background
+      color: Colors.transparent,
       child: SizedBox(
         width: parentWidth * widthFactor,
         height: height,
@@ -35,10 +41,11 @@ class MyTextField extends StatelessWidget {
             // Label
             Text(
               label,
-              style: const TextStyle(
-                color: Color(0xFFFFFFFF),
+              style: TextStyle(
+                color: textColor,
                 fontSize: 15,
                 fontFamily: "Poppins",
+                fontWeight: FontWeight.w600,
               ),
             ),
 
@@ -50,21 +57,23 @@ class MyTextField extends StatelessWidget {
               controller: controller,
               obscureText: password,
               keyboardType: email ? TextInputType.emailAddress : null,
-              style: const TextStyle(
-                color: Color(0xFFFFFFFF),
+              style: TextStyle(
+                color: textColor,
                 fontFamily: "Poppins",
               ),
               decoration: InputDecoration(
                 hintText: hint,
                 filled: true,
-                fillColor: const Color(0xFF373737),
-                hintStyle: const TextStyle(
-                  color: Color(0xFF94A3B8),
+                fillColor: backgroundColor,
+                hintStyle: TextStyle(
+                  color: hintColor,
                   fontFamily: "Poppins",
                 ),
-                border: const UnderlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                ),
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16.0, vertical: 12.0),
               ),
             ),
           ],

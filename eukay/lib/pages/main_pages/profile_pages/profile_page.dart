@@ -7,19 +7,19 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF373737),
+      backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "Profile",
           style: TextStyle(
             fontSize: 24,
             fontFamily: "Poppins",
             fontWeight: FontWeight.w700,
-            color: Color(0xFFFFFFFF),
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFFA9A9A9),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -42,9 +42,9 @@ class ProfilePageBody extends StatelessWidget {
         ClipPath(
           clipper: CustomCurvedEdges(),
           child: Container(
-            color: const Color(0xFF000000),
+            color: Theme.of(context).colorScheme.onSurface,
             padding: const EdgeInsets.all(0),
-            child: const SizedBox(
+            child: SizedBox(
               height: 250,
               width: double.infinity,
               child: Stack(
@@ -55,24 +55,24 @@ class ProfilePageBody extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        CircleAvatar(
-                          radius: 40,
+                        const CircleAvatar(
+                          radius: 45,
                           backgroundImage:
-                              AssetImage('assets/images/shirt.png'),
+                              AssetImage('assets/images/colet.jpeg'),
                         ),
 
                         // spacing
-                        SizedBox(
+                        const SizedBox(
                           height: 10,
                         ),
 
                         // name
                         Text(
-                          'Tanggol Dimaguiba',
+                          'Tanggol Dimagiba',
                           style: TextStyle(
                             fontSize: 16,
                             fontFamily: "Poppins",
-                            color: Color(0xFFFFFFFF),
+                            color: Theme.of(context).colorScheme.onSecondary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -109,7 +109,7 @@ class ProfilePageBody extends StatelessWidget {
         height: 60,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF373737),
+            backgroundColor: Colors.transparent,
             elevation: 0,
           ),
           onPressed: () {},

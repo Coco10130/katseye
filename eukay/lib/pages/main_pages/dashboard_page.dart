@@ -116,19 +116,19 @@ class DashboardPage extends StatelessWidget {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF000000),
+      backgroundColor: Theme.of(context).colorScheme.onSurface,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFA9A9A9),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
         automaticallyImplyLeading: false,
-        title: const Padding(
-          padding: EdgeInsets.only(left: 10),
+        title: Padding(
+          padding: const EdgeInsets.only(left: 10),
           child: Text(
             "E-Ukay",
             style: TextStyle(
               fontSize: 24,
               fontFamily: "Poppins",
               fontWeight: FontWeight.w700,
-              color: Color(0xFFFFFFFF),
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
           ),
         ),
@@ -182,7 +182,10 @@ class DashboardBody extends StatelessWidget {
             ),
 
             // search box
-            const MySeach(label: "Search product"),
+            MySeach(
+              label: "Search product",
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
 
             // spacing
             const SizedBox(
@@ -190,12 +193,12 @@ class DashboardBody extends StatelessWidget {
             ),
 
             // categories label
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 "Categories",
                 style: TextStyle(
-                  color: Color(0xFFFFFFFF),
+                  color: Theme.of(context).colorScheme.onSecondary,
                   fontFamily: "Poppins",
                   fontWeight: FontWeight.w700,
                   fontSize: 25,
@@ -209,36 +212,52 @@ class DashboardBody extends StatelessWidget {
             ),
 
             // display categories
-            const SizedBox(
+            SizedBox(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // shirt icon
-                  MyIconBUtton(icon: "assets/icons/tshirt.png"),
+                  MyIconBUtton(
+                    icon: "assets/icons/tshirt.png",
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    iconColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
 
                   // spacing
-                  SizedBox(
+                  const SizedBox(
                     width: spacing + 10,
                   ),
 
                   // pants icon
-                  MyIconBUtton(icon: "assets/icons/trousers.png"),
+                  MyIconBUtton(
+                    icon: "assets/icons/trousers.png",
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    iconColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
 
                   // spacing
-                  SizedBox(
+                  const SizedBox(
                     width: spacing + 10,
                   ),
 
                   // shoe icon
-                  MyIconBUtton(icon: "assets/icons/tshirt.png"),
+                  MyIconBUtton(
+                    icon: "assets/icons/tshirt.png",
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    iconColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
 
                   // spacing
-                  SizedBox(
+                  const SizedBox(
                     width: spacing + 10,
                   ),
 
                   // underwear icon
-                  MyIconBUtton(icon: "assets/icons/trousers.png"),
+                  MyIconBUtton(
+                    icon: "assets/icons/trousers.png",
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    iconColor: Theme.of(context).colorScheme.onPrimary,
+                  ),
                 ],
               ),
             ),
@@ -249,12 +268,12 @@ class DashboardBody extends StatelessWidget {
             ),
 
             // featured products label
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 "Featured Products",
                 style: TextStyle(
-                  color: Color(0xFFFFFFFF),
+                  color: Theme.of(context).colorScheme.onSecondary,
                   fontFamily: "Poppins",
                   fontWeight: FontWeight.w700,
                   fontSize: 25,
@@ -286,6 +305,8 @@ class DashboardBody extends StatelessWidget {
                   name: product["title"]!,
                   image: product["image"]!,
                   price: price,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  textColor: Theme.of(context).colorScheme.onPrimary,
                 );
               },
             ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class FeaturedProduct extends StatelessWidget {
@@ -7,18 +6,23 @@ class FeaturedProduct extends StatelessWidget {
   final String name;
   final double price;
   final String image;
-  const FeaturedProduct(
-      {super.key,
-      required this.height,
-      required this.name,
-      required this.price,
-      required this.image});
+  final Color backgroundColor;
+  final Color textColor;
+  const FeaturedProduct({
+    super.key,
+    required this.height,
+    required this.name,
+    required this.price,
+    required this.image,
+    this.backgroundColor = Colors.white,
+    this.textColor = Colors.black,
+  });
 
   @override
   Widget build(BuildContext context) {
     const double cardWidth = 150;
     const double spacing = 10;
-    final _formatCurrency = NumberFormat.currency(
+    final formatCurrency = NumberFormat.currency(
       locale: "en_PH",
       symbol: "₱",
     );
@@ -26,14 +30,14 @@ class FeaturedProduct extends StatelessWidget {
     return Container(
       width: cardWidth,
       decoration: BoxDecoration(
-        color: const Color(0xFF373737),
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(15),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(
               height: spacing,
@@ -54,20 +58,17 @@ class FeaturedProduct extends StatelessWidget {
 
             // spacing
             const SizedBox(
-              height: spacing,
+              height: spacing - 5,
             ),
 
             // product name
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                name,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFFFFFFF),
-                  fontFamily: "Poppins",
-                ),
+            Text(
+              name,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+                fontFamily: "Poppins",
               ),
             ),
 
@@ -77,16 +78,12 @@ class FeaturedProduct extends StatelessWidget {
             ),
 
             // product price
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                _formatCurrency.format(price),
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFFFFFFFF),
-                  fontFamily: "Poppins",
-                ),
+            Text(
+              formatCurrency.format(price),
+              style: TextStyle(
+                fontSize: 12,
+                color: textColor,
+                fontFamily: "Poppins",
               ),
             ),
           ],

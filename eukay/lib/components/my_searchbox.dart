@@ -4,11 +4,16 @@ class MySeach extends StatelessWidget {
   final String label;
   final double widthFactor;
   final Color backgroundColor;
-  const MySeach(
-      {super.key,
-      required this.label,
-      this.widthFactor = 0.9,
-      this.backgroundColor = const Color(0xFF373737)});
+  final Color textColor;
+  final Color hintColor;
+  const MySeach({
+    super.key,
+    required this.label,
+    this.widthFactor = 0.9,
+    this.backgroundColor = const Color(0xFF373737),
+    this.textColor = const Color(0xFFFFFFFF),
+    this.hintColor = Colors.white54,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +28,8 @@ class MySeach extends StatelessWidget {
           color: backgroundColor,
         ),
         child: TextField(
-          style: const TextStyle(
-            color: Color(0xFFFFFFFF),
+          style: TextStyle(
+            color: textColor,
             fontFamily: "Poppins",
           ),
           decoration: InputDecoration(
@@ -32,8 +37,8 @@ class MySeach extends StatelessWidget {
             hintText: label,
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-            hintStyle: const TextStyle(
-              color: Color(0xFF94A3B8),
+            hintStyle: TextStyle(
+              color: hintColor,
               fontFamily: "Poppins",
             ),
           ),

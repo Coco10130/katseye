@@ -95,22 +95,22 @@ class _LoginPageState extends State<LoginPage>
           child: Container(
             width: screenWidth * 0.9,
             height: _isVisible ? null : 0,
-            decoration: const BoxDecoration(
-              color: Color(0xFF373737),
-              borderRadius: BorderRadius.all(Radius.circular(20)),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary,
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
             ),
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 // card title
-                const Text(
+                Text(
                   "Welcome Back",
                   style: TextStyle(
                     fontFamily: "Poppins",
                     fontWeight: FontWeight.w700,
                     fontSize: 32,
-                    color: Color(0xFFFFFFFF),
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 ),
 
@@ -125,6 +125,7 @@ class _LoginPageState extends State<LoginPage>
                   hint: "Enter Email",
                   controller: _emailController,
                   email: true,
+                  textColor: Theme.of(context).colorScheme.onPrimary,
                 ),
 
                 // spacing
@@ -138,6 +139,7 @@ class _LoginPageState extends State<LoginPage>
                   hint: "Enter Password",
                   controller: _passwordController,
                   password: true,
+                  textColor: Theme.of(context).colorScheme.onPrimary,
                 ),
 
                 // spacing
@@ -150,6 +152,7 @@ class _LoginPageState extends State<LoginPage>
                   alignment: Alignment.centerRight,
                   child: MyTextButton(
                     title: "Forgot Password",
+                    textColor: Theme.of(context).colorScheme.onPrimary,
                     onPressed: () {},
                   ),
                 ),
@@ -162,8 +165,7 @@ class _LoginPageState extends State<LoginPage>
                 // login button
                 MyButton(
                   title: "Login",
-                  backgroundColor: const Color(0xFF000000),
-                  textColor: const Color(0xFFFFFFFF),
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
                   onPressed: _login,
                 ),
 
@@ -173,12 +175,12 @@ class _LoginPageState extends State<LoginPage>
                 ),
 
                 // divider
-                const Text(
+                Text(
                   "OR",
                   style: TextStyle(
                     fontFamily: "Poppins",
                     fontSize: 15,
-                    color: Color(0xFF94A3B8),
+                    color: Theme.of(context).colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -191,8 +193,7 @@ class _LoginPageState extends State<LoginPage>
                 // register button
                 MyButton(
                   title: "Register",
-                  backgroundColor: const Color(0xFFA9A9A9),
-                  textColor: const Color(0xFF000000),
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
                   onPressed: _registerTransition,
                 ),
 

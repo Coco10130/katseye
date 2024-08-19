@@ -16,7 +16,17 @@ class MyApp extends StatelessWidget {
           false, // Remove this line when deploying to production
       title: 'E-Ukay',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: const ColorScheme(
+          primary: Color(0xFFADB4BF),
+          secondary: Color(0xFF164BA1),
+          surface: Color(0xFFFFFEFF),
+          onSurface: Color(0xFFF0F4FA),
+          onPrimary: Colors.white,
+          onSecondary: Colors.black,
+          error: Colors.red,
+          onError: Colors.white,
+          brightness: Brightness.light, // Use 'dark' for dark theme
+        ),
         useMaterial3: true,
       ),
       home: const AuthPage(),
