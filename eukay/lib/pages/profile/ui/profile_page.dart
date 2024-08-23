@@ -1,4 +1,4 @@
-import 'package:eukay/utils/curved_edges.dart';
+import 'package:eukay/uitls/curved_edges.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatelessWidget {

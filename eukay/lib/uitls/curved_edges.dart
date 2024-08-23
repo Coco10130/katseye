@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 class CustomCurvedEdges extends CustomClipper<Path> {
   @override
@@ -12,9 +12,9 @@ class CustomCurvedEdges extends CustomClipper<Path> {
         firstCurve.dx, firstCurve.dy, lastCurve.dx, lastCurve.dy);
 
     final secondFirstCurve = Offset(0, size.height - 20);
-    final secondSecondCurve = Offset(size.width - 30, size.height - 20);
+    final secondLastCurve = Offset(size.width - 30, size.height - 20);
     path.quadraticBezierTo(secondFirstCurve.dx, secondFirstCurve.dy,
-        secondSecondCurve.dx, secondSecondCurve.dy);
+        secondLastCurve.dx, secondLastCurve.dy);
 
     final thirdFirstCurve = Offset(size.width, size.height - 20);
     final thirdLastCurve = Offset(size.width, size.height);
@@ -23,12 +23,11 @@ class CustomCurvedEdges extends CustomClipper<Path> {
 
     path.lineTo(size.width, 0);
     path.close();
-
     return path;
   }
 
   @override
-  bool shouldReclip(CustomClipper oldClipper) {
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
     return true;
   }
 }

@@ -1,8 +1,8 @@
 import 'package:eukay/components/buttons/my_icon_button.dart';
 import 'package:eukay/components/my_searchbox.dart';
 import 'package:eukay/components/product_cards/featured_product.dart';
-import 'package:eukay/pages/main_pages/check_out/cart_page.dart';
-import 'package:eukay/pages/main_pages/profile_pages/profile_page.dart';
+import 'package:eukay/pages/cart/ui/cart_page.dart';
+import 'package:eukay/pages/profile/ui/profile_page.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatelessWidget {

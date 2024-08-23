@@ -1,4 +1,4 @@
-import 'package:eukay/bloc/cart_bloc/cart_bloc.dart';
+import 'package:eukay/pages/cart/bloc/cart_bloc.dart';
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/product_cards/cart_product.dart';
 import 'package:flutter/material.dart';
@@ -173,7 +173,7 @@ class _CartBodyState extends State<CartBody> {
                               .read<CartBloc>()
                               .add(CartMinusQuantity(index: index)),
                           backgroundColor:
-                              Theme.of(context).colorScheme.secondary,
+                              Theme.of(context).colorScheme.primary,
                         );
                       },
                     );

@@ -1,5 +1,5 @@
-import 'package:eukay/pages/auth_page/login_page.dart';
-import 'package:eukay/pages/auth_page/register_page.dart';
+import 'package:eukay/pages/auth/ui/login_page.dart';
+import 'package:eukay/pages/auth/ui/register_page.dart';
 import 'package:flutter/material.dart';
 
 class AuthPage extends StatefulWidget {

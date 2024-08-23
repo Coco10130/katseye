@@ -1,6 +1,6 @@
-import 'package:eukay/bloc/auth_bloc/auth_bloc.dart';
-import 'package:eukay/bloc/cart_bloc/cart_bloc.dart';
-import 'package:eukay/pages/auth_page/auth_page.dart';
+import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
+import 'package:eukay/pages/cart/bloc/cart_bloc.dart';
+import 'package:eukay/pages/auth/ui/auth_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

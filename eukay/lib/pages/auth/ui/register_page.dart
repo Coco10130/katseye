@@ -1,4 +1,4 @@
-import 'package:eukay/bloc/auth_bloc/auth_bloc.dart';
+import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
 import 'package:eukay/components/buttons/my_text_button.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:flutter/material.dart';

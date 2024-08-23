@@ -1,9 +1,9 @@
-import 'package:eukay/bloc/auth_bloc/auth_bloc.dart';
+import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/my_input.dart';
 import 'package:eukay/components/buttons/my_text_button.dart';
 import 'package:eukay/components/my_snackbar.dart';
-import 'package:eukay/pages/main_pages/dashboard_page.dart';
+import 'package:eukay/pages/dashboard/ui/dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
