@@ -4,7 +4,6 @@ import 'package:eukay/components/my_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/my_input.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -34,7 +33,7 @@ class _RegisterPageState extends State<RegisterPage>
   late final Animation<double> _scaleAnimation =
       Tween<double>(begin: 0.5, end: 1.0).animate(CurvedAnimation(
     parent: _scaleController,
-    curve: Curves.easeOut,
+    curve: Curves.fastEaseInToSlowEaseOut,
   ));
 
   @override
@@ -116,7 +115,7 @@ class _RegisterPageState extends State<RegisterPage>
                         fontFamily: "Poppins",
                         fontWeight: FontWeight.w700,
                         fontSize: 28,
-                        color: Theme.of(context).colorScheme.onPrimary,
+                        color: Theme.of(context).colorScheme.onSecondary,
                       ),
                     ),
 
@@ -130,7 +129,7 @@ class _RegisterPageState extends State<RegisterPage>
                       label: "Name",
                       hint: "Your Name",
                       controller: _nameController,
-                      textColor: Theme.of(context).colorScheme.onPrimary,
+                      textColor: Theme.of(context).colorScheme.onSecondary,
                     ),
 
                     // spacing
@@ -144,7 +143,7 @@ class _RegisterPageState extends State<RegisterPage>
                       hint: "Your Email",
                       controller: _emailController,
                       email: true,
-                      textColor: Theme.of(context).colorScheme.onPrimary,
+                      textColor: Theme.of(context).colorScheme.onSecondary,
                     ),
 
                     // spacing
@@ -158,7 +157,7 @@ class _RegisterPageState extends State<RegisterPage>
                       hint: "Your Password",
                       controller: _passwordController,
                       password: true,
-                      textColor: Theme.of(context).colorScheme.onPrimary,
+                      textColor: Theme.of(context).colorScheme.onSecondary,
                     ),
 
                     // spacing
@@ -172,7 +171,7 @@ class _RegisterPageState extends State<RegisterPage>
                       hint: "Confirm Password",
                       controller: _confirmPasswordController,
                       password: true,
-                      textColor: Theme.of(context).colorScheme.onPrimary,
+                      textColor: Theme.of(context).colorScheme.onSecondary,
                     ),
 
                     // spacing
@@ -205,7 +204,7 @@ class _RegisterPageState extends State<RegisterPage>
                     MyTextButton(
                       title: "Alrady have an account? Login Here",
                       onPressed: _loginTransition,
-                      textColor: Theme.of(context).colorScheme.onPrimary,
+                      textColor: Theme.of(context).colorScheme.onSecondary,
                     ),
 
                     // spacing

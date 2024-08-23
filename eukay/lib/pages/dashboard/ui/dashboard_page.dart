@@ -1,6 +1,6 @@
 import 'package:eukay/components/buttons/my_icon_button.dart';
 import 'package:eukay/components/my_searchbox.dart';
-import 'package:eukay/components/product_cards/featured_product.dart';
+import 'package:eukay/components/product_cards/product_card.dart';
 import 'package:eukay/pages/cart/ui/cart_page.dart';
 import 'package:eukay/pages/profile/ui/profile_page.dart';
 import 'package:flutter/material.dart';
@@ -220,7 +220,7 @@ class DashboardBody extends StatelessWidget {
                   MyIconBUtton(
                     icon: "assets/icons/tshirt.png",
                     backgroundColor: Theme.of(context).colorScheme.primary,
-                    iconColor: Theme.of(context).colorScheme.onPrimary,
+                    iconColor: Theme.of(context).colorScheme.onSecondary,
                   ),
 
                   // spacing
@@ -232,7 +232,7 @@ class DashboardBody extends StatelessWidget {
                   MyIconBUtton(
                     icon: "assets/icons/trousers.png",
                     backgroundColor: Theme.of(context).colorScheme.primary,
-                    iconColor: Theme.of(context).colorScheme.onPrimary,
+                    iconColor: Theme.of(context).colorScheme.onSecondary,
                   ),
 
                   // spacing
@@ -244,7 +244,7 @@ class DashboardBody extends StatelessWidget {
                   MyIconBUtton(
                     icon: "assets/icons/tshirt.png",
                     backgroundColor: Theme.of(context).colorScheme.primary,
-                    iconColor: Theme.of(context).colorScheme.onPrimary,
+                    iconColor: Theme.of(context).colorScheme.onSecondary,
                   ),
 
                   // spacing
@@ -256,7 +256,7 @@ class DashboardBody extends StatelessWidget {
                   MyIconBUtton(
                     icon: "assets/icons/trousers.png",
                     backgroundColor: Theme.of(context).colorScheme.primary,
-                    iconColor: Theme.of(context).colorScheme.onPrimary,
+                    iconColor: Theme.of(context).colorScheme.onSecondary,
                   ),
                 ],
               ),
@@ -292,21 +292,23 @@ class DashboardBody extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                crossAxisSpacing: spacing,
-                mainAxisSpacing: spacing,
-                childAspectRatio: 0.75,
+                crossAxisSpacing: spacing - 10,
+                mainAxisSpacing: spacing - 10,
+                childAspectRatio: 0.74,
               ),
               itemCount: featuredProduct.length,
               itemBuilder: (context, index) {
                 final product = featuredProduct[index];
                 final double price = product["price"].toDouble();
-                return FeaturedProduct(
-                  height: 200, // Adjust height based on your design
+                return ProductCard(
                   name: product["title"]!,
                   image: product["image"]!,
                   price: price,
+                  shop: "shop name",
+                  rating: 4.6,
                   backgroundColor: Theme.of(context).colorScheme.primary,
-                  textColor: Theme.of(context).colorScheme.onPrimary,
+                  textColor: Theme.of(context).colorScheme.onSecondary,
+                  onPressed: () {},
                 );
               },
             ),

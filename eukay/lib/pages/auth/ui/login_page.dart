@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage>
   late final Animation<double> _scaleAnimation =
       Tween<double>(begin: 0.5, end: 1.0).animate(CurvedAnimation(
     parent: _scaleController,
-    curve: Curves.easeOut,
+    curve: Curves.fastEaseInToSlowEaseOut,
   ));
 
   @override
@@ -71,9 +71,9 @@ class _LoginPageState extends State<LoginPage>
         pageBuilder: (context, animation, secondaryAnimation) =>
             const DashboardPage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(3.0, 0.0);
+          const begin = Offset(5.0, 0.0);
           const end = Offset.zero;
-          const curve = Curves.easeIn;
+          const curve = Curves.fastEaseInToSlowEaseOut;
 
           var tween =
               Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
@@ -136,7 +136,7 @@ class _LoginPageState extends State<LoginPage>
                         fontFamily: "Poppins",
                         fontWeight: FontWeight.w700,
                         fontSize: 32,
-                        color: Theme.of(context).colorScheme.onPrimary,
+                        color: Theme.of(context).colorScheme.onSecondary,
                       ),
                     ),
 
@@ -151,7 +151,7 @@ class _LoginPageState extends State<LoginPage>
                       hint: "Enter Email",
                       controller: _emailController,
                       email: true,
-                      textColor: Theme.of(context).colorScheme.onPrimary,
+                      textColor: Theme.of(context).colorScheme.onSecondary,
                     ),
 
                     // spacing
@@ -165,7 +165,7 @@ class _LoginPageState extends State<LoginPage>
                       hint: "Enter Password",
                       controller: _passwordController,
                       password: true,
-                      textColor: Theme.of(context).colorScheme.onPrimary,
+                      textColor: Theme.of(context).colorScheme.onSecondary,
                     ),
 
                     // spacing
@@ -178,7 +178,7 @@ class _LoginPageState extends State<LoginPage>
                       alignment: Alignment.centerRight,
                       child: MyTextButton(
                         title: "Forgot Password",
-                        textColor: Theme.of(context).colorScheme.onPrimary,
+                        textColor: Theme.of(context).colorScheme.onSecondary,
                         onPressed: () {},
                       ),
                     ),
@@ -213,7 +213,7 @@ class _LoginPageState extends State<LoginPage>
                       style: TextStyle(
                         fontFamily: "Poppins",
                         fontSize: 15,
-                        color: Theme.of(context).colorScheme.onPrimary,
+                        color: Theme.of(context).colorScheme.onSecondary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

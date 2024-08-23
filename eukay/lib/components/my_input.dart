@@ -11,6 +11,7 @@ class MyTextField extends StatelessWidget {
   final Color textColor;
   final Color backgroundColor;
   final Color hintColor;
+  final Color cursorColor;
 
   const MyTextField({
     super.key,
@@ -24,6 +25,7 @@ class MyTextField extends StatelessWidget {
     this.widthFactor = 0.85,
     this.password = false,
     this.email = false,
+    this.cursorColor = Colors.black,
   });
 
   @override
@@ -61,6 +63,7 @@ class MyTextField extends StatelessWidget {
                 color: textColor,
                 fontFamily: "Poppins",
               ),
+              cursorColor: cursorColor,
               decoration: InputDecoration(
                 hintText: hint,
                 filled: true,
@@ -69,9 +72,6 @@ class MyTextField extends StatelessWidget {
                   color: hintColor,
                   fontFamily: "Poppins",
                 ),
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16.0, vertical: 12.0),
               ),

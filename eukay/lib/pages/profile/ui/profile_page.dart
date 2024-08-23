@@ -107,12 +107,8 @@ class ProfilePageBody extends StatelessWidget {
       padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
       child: SizedBox(
         height: 60,
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-          ),
-          onPressed: () {},
+        child: GestureDetector(
+          onTap: () {},
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,

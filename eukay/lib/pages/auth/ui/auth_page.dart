@@ -30,7 +30,7 @@ class _AuthPageState extends State<AuthPage> with TickerProviderStateMixin {
       resizeToAvoidBottomInset: false,
       backgroundColor: Theme.of(context).colorScheme.onSurface,
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 600),
         transitionBuilder: (Widget child, Animation<double> animation) {
           return FadeTransition(
             opacity: animation,
