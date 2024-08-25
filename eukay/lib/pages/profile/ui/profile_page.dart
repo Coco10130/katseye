@@ -1,3 +1,6 @@
+import 'package:eukay/components/my-appBar.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
+import 'package:eukay/pages/profile/ui/edit_profile.dart';
 import 'package:eukay/uitls/curved_edges.dart';
 import 'package:flutter/material.dart';
 
@@ -8,24 +11,13 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBar(
-        title: Text(
-          "Profile",
-          style: TextStyle(
-            fontSize: 24,
-            fontFamily: "Poppins",
-            fontWeight: FontWeight.w700,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-        ),
-        centerTitle: true,
+      appBar: MyAppBar(
+        label: "Profile",
+        onPressed: () {
+          Navigator.pop(context);
+        },
         backgroundColor: Theme.of(context).colorScheme.secondary,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        textColor: Theme.of(context).colorScheme.onPrimary,
       ),
       body: const ProfilePageBody(),
     );
@@ -43,7 +35,6 @@ class ProfilePageBody extends StatelessWidget {
           clipper: CustomCurvedEdges(),
           child: Container(
             color: Theme.of(context).colorScheme.onSurface,
-            padding: const EdgeInsets.all(0),
             child: SizedBox(
               height: 250,
               width: double.infinity,
@@ -91,10 +82,15 @@ class ProfilePageBody extends StatelessWidget {
         ),
 
         // edit profile
-        _myContainer("Edit Profile", "assets/icons/user.png"),
-        _myContainer("Shipping Address", "assets/icons/location.png"),
-        _myContainer("Wishlist", "assets/icons/heart.png"),
-        _myContainer("Order History", "assets/icons/clip.png"),
+        _myContainer("Edit Profile", "assets/icons/user.png", () {
+          navigateWithSlideTransition(
+            context: context,
+            page: const EditProfile(),
+          );
+        }),
+        _myContainer("Shipping Address", "assets/icons/location.png", () {}),
+        _myContainer("Wishlist", "assets/icons/heart.png", () {}),
+        _myContainer("Order History", "assets/icons/clip.png", () {}),
       ],
     );
   }
@@ -102,13 +98,14 @@ class ProfilePageBody extends StatelessWidget {
   Widget _myContainer(
     String label,
     String icon,
+    VoidCallback onPressed,
   ) {
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
       child: SizedBox(
         height: 60,
         child: GestureDetector(
-          onTap: () {},
+          onTap: onPressed,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,

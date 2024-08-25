@@ -1,8 +1,10 @@
 import 'package:eukay/components/buttons/my_icon_button.dart';
 import 'package:eukay/components/my_searchbox.dart';
 import 'package:eukay/components/product_cards/product_card.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/cart/ui/cart_page.dart';
 import 'package:eukay/pages/profile/ui/profile_page.dart';
+import 'package:eukay/pages/search_page/ui/search_page.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -73,48 +75,6 @@ class DashboardPage extends StatelessWidget {
       },
     ];
 
-    void cart() {
-      Navigator.push(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const CartPage(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeIn;
-
-            var tween =
-                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ),
-      );
-    }
-
-    void profile() {
-      Navigator.push(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const ProfilePage(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            const begin = Offset(1.0, 0.0);
-            const end = Offset.zero;
-            const curve = Curves.easeIn;
-
-            var tween =
-                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-            var offsetAnimation = animation.drive(tween);
-
-            return SlideTransition(position: offsetAnimation, child: child);
-          },
-        ),
-      );
-    }
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.onSurface,
       appBar: AppBar(
@@ -140,14 +100,24 @@ class DashboardPage extends StatelessWidget {
               size: 24,
               color: Color(0xFFFFFFFF),
             ),
-            onPressed: cart,
+            onPressed: () {
+              navigateWithSlideTransition(
+                context: context,
+                page: const CartPage(),
+              );
+            },
           ),
 
           // profile action button
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: IconButton(
-              onPressed: profile,
+              onPressed: () {
+                navigateWithSlideTransition(
+                  context: context,
+                  page: const ProfilePage(),
+                );
+              },
               icon: const ImageIcon(
                 AssetImage("assets/icons/user.png"),
                 size: 24,
@@ -185,6 +155,10 @@ class DashboardBody extends StatelessWidget {
             MySeach(
               label: "Search product",
               backgroundColor: Theme.of(context).colorScheme.primary,
+              onPressed: () {
+                navigateWithSlideTransition(
+                    context: context, page: const SearchPage());
+              },
             ),
 
             // spacing

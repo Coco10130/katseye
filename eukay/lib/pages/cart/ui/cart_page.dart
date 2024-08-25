@@ -1,3 +1,4 @@
+import 'package:eukay/components/my-appBar.dart';
 import 'package:eukay/pages/cart/bloc/cart_bloc.dart';
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/product_cards/cart_product.dart';
@@ -90,21 +91,13 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.onSurface,
-      appBar: AppBar(
+      appBar: MyAppBar(
+        label: "Shopping Cart",
+        onPressed: () {
+          Navigator.pop(context);
+        },
         backgroundColor: Theme.of(context).colorScheme.secondary,
-        iconTheme: const IconThemeData(
-          color: Color(0xFFFFFFFF),
-        ),
-        title: const Text(
-          "Shopping Cart",
-          style: TextStyle(
-            fontFamily: "Poppins",
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFFFFFFFF),
-          ),
-        ),
-        centerTitle: true,
+        textColor: Theme.of(context).colorScheme.onPrimary,
       ),
       body: CartBody(
         cartProducts: cartProducts,

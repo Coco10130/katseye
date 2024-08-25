@@ -19,7 +19,7 @@ class MyTextField extends StatelessWidget {
     required this.hint,
     required this.controller,
     this.backgroundColor = Colors.transparent,
-    this.hintColor = Colors.white54,
+    this.hintColor = Colors.black54,
     this.textColor = Colors.black,
     this.height = 85,
     this.widthFactor = 0.85,
