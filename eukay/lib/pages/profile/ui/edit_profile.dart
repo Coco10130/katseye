@@ -44,6 +44,7 @@ class _EditProfilBodyState extends State<EditProfilBody> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneNumberController.dispose();
+    print("DISPOSED");
   }
 
   @override

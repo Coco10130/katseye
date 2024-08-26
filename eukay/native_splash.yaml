@@ -1,7 +1,7 @@
 flutter_native_splash:
   android: true
   ios: true
-  web: true
+  web: false
 
   color: "#000000"
   branding: "assets/images/branding.png"

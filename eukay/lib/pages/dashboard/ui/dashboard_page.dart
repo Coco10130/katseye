@@ -3,7 +3,6 @@ import 'package:eukay/components/my_searchbox.dart';
 import 'package:eukay/components/product_cards/product_card.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/cart/ui/cart_page.dart';
-import 'package:eukay/pages/profile/ui/profile_page.dart';
 import 'package:eukay/pages/search_page/ui/search_page.dart';
 import 'package:flutter/material.dart';
 
@@ -94,35 +93,20 @@ class DashboardPage extends StatelessWidget {
         ),
         actions: [
           // cart action button
-          IconButton(
-            icon: const ImageIcon(
-              AssetImage("assets/icons/shopping-cart.png"),
-              size: 24,
-              color: Color(0xFFFFFFFF),
-            ),
-            onPressed: () {
-              navigateWithSlideTransition(
-                context: context,
-                page: const CartPage(),
-              );
-            },
-          ),
-
-          // profile action button
           Padding(
-            padding: const EdgeInsets.only(right: 10),
+            padding: const EdgeInsets.only(right: 20),
             child: IconButton(
-              onPressed: () {
-                navigateWithSlideTransition(
-                  context: context,
-                  page: const ProfilePage(),
-                );
-              },
               icon: const ImageIcon(
-                AssetImage("assets/icons/user.png"),
+                AssetImage("assets/icons/shopping-cart.png"),
                 size: 24,
                 color: Color(0xFFFFFFFF),
               ),
+              onPressed: () {
+                navigateWithSlideTransition(
+                  context: context,
+                  page: const CartPage(),
+                );
+              },
             ),
           ),
         ],
@@ -139,10 +123,18 @@ class DashboardBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double spacing = 20;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double gridItemWidth = screenWidth > 1200 ? 300 : screenWidth * 0.4;
+
+    final int crossAxisCount = (screenWidth / gridItemWidth).floor();
+    final double productSpacing = screenWidth > 1200 ? 50 : 10;
 
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: EdgeInsets.symmetric(
+          horizontal: screenWidth > 1200 ? 100 : 20,
+          vertical: 10,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
@@ -264,11 +256,11 @@ class DashboardBody extends StatelessWidget {
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: spacing - 10,
-                mainAxisSpacing: spacing - 10,
-                childAspectRatio: 0.74,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: productSpacing,
+                mainAxisSpacing: productSpacing,
+                childAspectRatio: screenWidth > 1200 ? 0.81 : 0.74,
               ),
               itemCount: featuredProduct.length,
               itemBuilder: (context, index) {

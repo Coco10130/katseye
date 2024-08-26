@@ -1,4 +1,3 @@
-import 'package:eukay/components/my-appBar.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/profile/ui/edit_profile.dart';
 import 'package:eukay/uitls/curved_edges.dart';
@@ -11,14 +10,6 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: MyAppBar(
-        label: "Profile",
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        textColor: Theme.of(context).colorScheme.onPrimary,
-      ),
       body: const ProfilePageBody(),
     );
   }

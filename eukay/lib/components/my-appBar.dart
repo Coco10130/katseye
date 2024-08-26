@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 AppBar MyAppBar({
   required String label,
-  required VoidCallback onPressed,
+  VoidCallback? onPressed,
+  bool leading = false,
+  bool centerTile = true,
   Color backgroundColor = Colors.black,
   Color textColor = Colors.white,
 }) {
@@ -16,11 +18,14 @@ AppBar MyAppBar({
         color: textColor,
       ),
     ),
-    centerTitle: true,
+    centerTitle: centerTile,
     backgroundColor: backgroundColor,
-    leading: IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: onPressed,
-    ),
+    automaticallyImplyLeading: false,
+    leading: onPressed != null
+        ? IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: onPressed,
+          )
+        : null, // Remove the leading icon if onPressed is null
   );
 }

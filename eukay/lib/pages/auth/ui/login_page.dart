@@ -1,3 +1,4 @@
+import 'package:eukay/navigation_menu.dart';
 import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/my_input.dart';
@@ -6,6 +7,7 @@ import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/pages/dashboard/ui/dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback onRegisterTap;
@@ -105,7 +107,7 @@ class _LoginPageState extends State<LoginPage>
         }
 
         if (state is AuthLoginSuccess) {
-          _login();
+          Get.to(() => const NavigationMenu());
         }
       },
       builder: (context, state) {

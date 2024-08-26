@@ -52,11 +52,12 @@ class ProductCard extends StatelessWidget {
             ]),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             // Product image
             Container(
               width: parentWidth,
-              height: parentWidth * 0.35,
+              height: parentWidth > 1200 ? 200 : parentWidth * 0.35,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(borderRadius),

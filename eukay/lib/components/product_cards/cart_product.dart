@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class ProductCard extends StatefulWidget {
+class CartProduct extends StatefulWidget {
   final String name;
   final double price;
   final String countity;
@@ -14,7 +14,7 @@ class ProductCard extends StatefulWidget {
   final Color textColor;
   final double widthFactor;
 
-  const ProductCard({
+  const CartProduct({
     super.key,
     required this.name,
     required this.price,
@@ -30,10 +30,10 @@ class ProductCard extends StatefulWidget {
   });
 
   @override
-  State<ProductCard> createState() => _ProductCardState();
+  State<CartProduct> createState() => _CartProductState();
 }
 
-class _ProductCardState extends State<ProductCard> {
+class _CartProductState extends State<CartProduct> {
   @override
   Widget build(BuildContext context) {
     final double parentWidth = MediaQuery.of(context).size.width;

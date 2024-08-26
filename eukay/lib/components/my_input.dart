@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 
 class MyTextField extends StatelessWidget {
-  final String label;
-  final String hint;
-  final double widthFactor;
-  final double height;
+  final String label, hint;
+  final double widthFactor, height;
   final TextEditingController controller;
-  final bool password;
-  final bool email;
-  final Color textColor;
-  final Color backgroundColor;
-  final Color hintColor;
-  final Color cursorColor;
+  final bool password, email;
+  final Color textColor,
+      underlineColor,
+      backgroundColor,
+      hintColor,
+      cursorColor;
 
   const MyTextField({
     super.key,
@@ -26,6 +24,7 @@ class MyTextField extends StatelessWidget {
     this.password = false,
     this.email = false,
     this.cursorColor = Colors.black,
+    this.underlineColor = Colors.white,
   });
 
   @override
@@ -73,7 +72,21 @@ class MyTextField extends StatelessWidget {
                   fontFamily: "Poppins",
                 ),
                 contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16.0, vertical: 12.0),
+                  horizontal: 16.0,
+                  vertical: 12.0,
+                ),
+                border: UnderlineInputBorder(
+                  borderSide: BorderSide(color: underlineColor),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: underlineColor),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: underlineColor),
+                ),
+                errorBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.red),
+                ),
               ),
             ),
           ],

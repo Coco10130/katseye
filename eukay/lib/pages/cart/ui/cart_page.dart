@@ -150,7 +150,7 @@ class _CartBodyState extends State<CartBody> {
                         final double price = product["price"].toDouble();
                         final double totalPrice = price * quantity;
 
-                        return ProductCard(
+                        return CartProduct(
                           name: product["title"]!,
                           price: totalPrice,
                           image: product["image"]!,
