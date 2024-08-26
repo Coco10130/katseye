@@ -99,7 +99,7 @@ const register = async (req, res) => {
     };
 
     await User.create(userData);
-    res.status(201).json({ successMessage: "User Registered syccessfully" });
+    res.status(201).json({ successMessage: "User Registered successfully" });
   } catch (error) {
     res.status(500).json({ errorMessage: error.message });
   }

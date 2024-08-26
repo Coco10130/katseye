@@ -7,6 +7,7 @@ const app = express();
 
 // import routes
 const authRouters = require("./routes/auth.route.js");
+const profileRouters = require("./routes/profile.route.js");
 
 // middlewares
 app.use(express.json());
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
 
 // routes
 app.use("/api/auth/", authRouters);
+app.use("/api/profile/", profileRouters);
 
 mongoose
   .connect(process.env.MONGODB)
