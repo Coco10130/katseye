@@ -1,88 +1,145 @@
+import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
+import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
 import 'package:eukay/pages/profile/ui/edit_profile.dart';
 import 'package:eukay/uitls/curved_edges.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+class ProfilePage extends StatefulWidget {
+  final String token;
+  const ProfilePage({super.key, required this.token});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  @override
+  void initState() {
+    super.initState();
+    fetchProfile();
+  }
+
+  void fetchProfile() {
+    context
+        .read<ProfileBloc>()
+        .add(ProfileInitialFetchEvent(token: widget.token));
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      body: const ProfilePageBody(),
+      body: ProfilePageBody(fetchProfile: fetchProfile, token: widget.token),
     );
   }
 }
 
 class ProfilePageBody extends StatelessWidget {
-  const ProfilePageBody({super.key});
+  final VoidCallback fetchProfile;
+  final String token;
+  const ProfilePageBody(
+      {super.key, required this.fetchProfile, required this.token});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ClipPath(
-          clipper: CustomCurvedEdges(),
-          child: Container(
-            color: Theme.of(context).colorScheme.onSurface,
-            child: SizedBox(
-              height: 250,
-              width: double.infinity,
-              child: Stack(
-                children: [
-                  // Profile picture
-                  Align(
-                    alignment: Alignment.center,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+    return BlocConsumer<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        if (state is FetchProfileFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              errorMessage: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        if (state is FetchProfileSuccessState) {
+          return Column(
+            children: [
+              ClipPath(
+                clipper: CustomCurvedEdges(),
+                child: Container(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  child: SizedBox(
+                    height: 250,
+                    width: double.infinity,
+                    child: Stack(
                       children: [
-                        const CircleAvatar(
-                          radius: 45,
-                          backgroundImage:
-                              AssetImage('assets/images/colet.jpeg'),
-                        ),
+                        // Profile picture
+                        Align(
+                          alignment: Alignment.center,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CircleAvatar(
+                                backgroundColor: Colors.transparent,
+                                radius: 45,
+                                backgroundImage:
+                                    NetworkImage(state.profile.image),
+                              ),
 
-                        // spacing
-                        const SizedBox(
-                          height: 10,
-                        ),
+                              // spacing
+                              const SizedBox(
+                                height: 20,
+                              ),
 
-                        // name
-                        Text(
-                          'Tanggol Dimagiba',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: "Poppins",
-                            color: Theme.of(context).colorScheme.onSecondary,
-                            fontWeight: FontWeight.bold,
+                              // name
+                              Text(
+                                state.profile.userName,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: "Poppins",
+                                  color:
+                                      Theme.of(context).colorScheme.onSecondary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
 
-        // spacing
-        const SizedBox(
-          height: 30,
-        ),
+              // spacing
+              const SizedBox(
+                height: 30,
+              ),
 
-        // edit profile
-        _myContainer("Edit Profile", "assets/icons/user.png", () {
-          navigateWithSlideTransition(
-            context: context,
-            page: const EditProfile(),
+              // edit profile
+              _myContainer("Edit Profile", "assets/icons/user.png", () {
+                navigateWithSlideTransition(
+                  context: context,
+                  page: EditProfile(
+                    token: token,
+                    name: state.profile.userName,
+                    email: state.profile.email,
+                    number: state.profile.phoneNumber,
+                    image: state.profile.image,
+                  ),
+                  onFetch: fetchProfile,
+                );
+              }),
+              _myContainer(
+                  "Shipping Address", "assets/icons/location.png", () {}),
+              _myContainer("Wishlist", "assets/icons/heart.png", () {}),
+              _myContainer("Order History", "assets/icons/clip.png", () {}),
+            ],
           );
-        }),
-        _myContainer("Shipping Address", "assets/icons/location.png", () {}),
-        _myContainer("Wishlist", "assets/icons/heart.png", () {}),
-        _myContainer("Order History", "assets/icons/clip.png", () {}),
-      ],
+        }
+
+        if (state is ProfileLoadingState) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return const Center(child: Text('Error loading profile'));
+      },
     );
   }
 

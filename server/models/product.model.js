@@ -32,7 +32,7 @@ const ProductSchema = mongoose.Schema(
       required: true,
     },
 
-    sized: {
+    sizes: {
       type: [String],
       required: true,
     },
@@ -48,6 +48,6 @@ const ProductSchema = mongoose.Schema(
   }
 );
 
-const Product = mognoose.model("product", ProductSchema);
+const Product = mongoose.model("product", ProductSchema);
 
 module.exports = Product;

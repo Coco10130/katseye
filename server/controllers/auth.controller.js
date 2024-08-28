@@ -34,18 +34,16 @@ const login = async (req, res) => {
           id: user._id,
           userName: user.userName,
           isSeller: user.isSeller,
+          role: user.role,
         },
         process.env.JWT_SECRET,
-        { expiresIn: "7d" },
+        { expiresIn: "1h" },
         (err, token) => {
           if (err) {
             throw err;
           }
 
-          res
-            .cookie("token", token, { httpOnly: true })
-            .status(200)
-            .json({ token: token });
+          res.status(200).json({ token: token });
         }
       );
     } else {
@@ -87,6 +85,12 @@ const register = async (req, res) => {
     // check if password not match
     if (password !== confirmPassword) {
       return res.status(403).json({ errorMessage: "Passwords do not match" });
+    }
+
+    // check if email is already exist
+    const user = await User.findOne({ email });
+    if (user) {
+      return res.status(409).json({ errorMessage: "Email already exists" });
     }
 
     // hash passwrod

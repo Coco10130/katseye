@@ -1,16 +1,25 @@
+import 'package:eukay/navigation_menu.dart';
 import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
 import 'package:eukay/pages/cart/bloc/cart_bloc.dart';
 import 'package:eukay/pages/auth/ui/auth_page.dart';
+import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  runApp(MyApp(
+    token: prefs.getString("token"),
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String? token;
+  const MyApp({super.key, required this.token});
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +30,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => CartBloc(),
+        ),
+        BlocProvider(
+          create: (context) => ProfileBloc(),
         ),
       ],
       child: GetMaterialApp(
@@ -40,7 +52,9 @@ class MyApp extends StatelessWidget {
           ),
           useMaterial3: true,
         ),
-        home: const AuthPage(),
+        home: (token != null && !JwtDecoder.isExpired(token!))
+            ? NavigationMenu(token: token!)
+            : const AuthPage(),
       ),
     );
   }

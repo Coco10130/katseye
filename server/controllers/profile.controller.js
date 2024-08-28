@@ -7,29 +7,45 @@ const secretKey = process.env.JWT_SECRET;
 
 const getProfile = async (req, res) => {
   try {
-    const { token } = req.cookies;
+    const authorizationHeader = req.headers.authorization;
 
-    if (!token) {
+    if (!authorizationHeader) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
+    const token = authorizationHeader.split(" ")[1];
     const user = jwt.verify(token, secretKey);
 
     const userProfile = await User.findOne({ _id: user.id }).select(
       "-password"
     );
 
-    res.status(200).json({ success: true, data: userProfile });
+    if (!userProfile) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const imageUrl = userProfile.image
+      ? `${req.protocol}://${req.get("host")}/images/${userProfile.image}`
+      : `${req.protocol}://${req.get("host")}/images/default-image.jpg`;
+
+    res.status(200).json({
+      success: true,
+      data: {
+        ...userProfile.toObject(),
+        image: imageUrl,
+      },
+    });
   } catch (error) {
+    console.error("Error in getProfile:", error.message);
     res.status(500).json({ errorMessage: error.message });
   }
 };
 
 const updateProfile = async (req, res) => {
   try {
-    const { token } = req.cookies;
+    const authorizationHeader = req.headers.authorization;
 
-    if (!token) {
+    if (!authorizationHeader) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
@@ -103,15 +119,15 @@ const updateProfile = async (req, res) => {
 
 const registerSeller = async (req, res) => {
   try {
-    const { token } = req.cookies;
+    const authorizationHeader = req.headers.authorization;
 
-    if (!token) {
+    if (!authorizationHeader) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     const { shopName, shopContact, shopEmail } = req.body;
 
-    const decode = jwt.verify(token, secretKey);
+    const decode = jwt.verify(authorizationHeader, secretKey);
 
     let formattedContact = shopContact;
 
@@ -124,7 +140,7 @@ const registerSeller = async (req, res) => {
       shopName,
       shopContact: formattedContact,
       shopEmail,
-      isSeller: true,
+      role: "seller",
     };
 
     const user = await User.findByIdAndUpdate(decode.id, data, { new: true });

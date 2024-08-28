@@ -4,10 +4,10 @@ import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/my_input.dart';
 import 'package:eukay/components/buttons/my_text_button.dart';
 import 'package:eukay/components/my_snackbar.dart';
-import 'package:eukay/pages/dashboard/ui/dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback onRegisterTap;
@@ -22,6 +22,7 @@ class _LoginPageState extends State<LoginPage>
   // input controllers
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  late SharedPreferences prefs;
 
   // animation controllers
   bool _isVisible = false;
@@ -47,6 +48,11 @@ class _LoginPageState extends State<LoginPage>
 
       _scaleController.forward();
     });
+    initSharedPref();
+  }
+
+  void initSharedPref() async {
+    prefs = await SharedPreferences.getInstance();
   }
 
   @override
@@ -64,28 +70,6 @@ class _LoginPageState extends State<LoginPage>
       });
       widget.onRegisterTap();
     });
-  }
-
-  void _login() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const DashboardPage(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(5.0, 0.0);
-          const end = Offset.zero;
-          const curve = Curves.fastEaseInToSlowEaseOut;
-
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          var offsetAnimation = animation.drive(tween);
-
-          return SlideTransition(position: offsetAnimation, child: child);
-        },
-      ),
-      (route) => false,
-    );
   }
 
   @override
@@ -107,7 +91,13 @@ class _LoginPageState extends State<LoginPage>
         }
 
         if (state is AuthLoginSuccess) {
-          Get.to(() => const NavigationMenu());
+          final myToken = state.token.toString();
+          prefs.setString("token", myToken);
+          Get.to(
+            () => NavigationMenu(
+              token: myToken,
+            ),
+          );
         }
       },
       builder: (context, state) {
@@ -197,8 +187,8 @@ class _LoginPageState extends State<LoginPage>
                       onPressed: () {
                         context.read<AuthBloc>().add(
                               AuthLoginRequest(
-                                email: _emailController.text.trim(),
-                                password: _passwordController.text.trim(),
+                                email: _emailController.text,
+                                password: _passwordController.text,
                               ),
                             );
                       },

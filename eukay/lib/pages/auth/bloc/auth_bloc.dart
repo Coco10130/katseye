@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:eukay/pages/auth/repo/auth_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 
@@ -6,54 +9,41 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc() : super(AuthInitial()) {
-    on<AuthLoginRequest>((event, emit) async {
-      emit(AuthLoading());
+    on<AuthLoginRequest>(authLoginRequest);
+    on<AuthRegisterRequest>(authRegisterRequest);
+  }
 
-      try {
-        final email = event.email;
-        final password = event.password;
+  FutureOr<void> authLoginRequest(
+      AuthLoginRequest event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final response =
+          await AuthRepo().loginRequest(event.email, event.password);
 
-        if (password.length <= 8) {
-          return emit(
-              AuthLoginFailure("Password cannot be less than 8 characters"));
-        }
-
-        await Future.delayed(const Duration(seconds: 1), () {
-          return emit(AuthLoginSuccess(id: "$email-$password"));
-        });
-      } catch (e) {
-        return emit(AuthLoginFailure(e.toString()));
+      if (response.isNotEmpty) {
+        emit(AuthLoginSuccess(token: response));
+      } else {
+        emit(AuthLoginFailure("Login failed. Please try again."));
       }
-    });
+    } catch (e) {
+      emit(AuthLoginFailure(e.toString()));
+    }
+  }
 
-    on<AuthRegisterRequest>((event, emit) async {
-      emit(AuthLoading());
-      try {
-        final email = event.email;
-        final password = event.password;
-        final confirmPassword = event.confirmPassword;
-        final name = event.name;
+  FutureOr<void> authRegisterRequest(
+      AuthRegisterRequest event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final response = await AuthRepo().registerRequest(
+          event.userName, event.email, event.password, event.confirmPassword);
 
-        if (name.length < 4) {
-          return emit(
-              AuthRegisterFailure("User name must be at least 4 characters"));
-        }
-
-        if (password.length <= 8) {
-          return emit(
-              AuthRegisterFailure("Password cannot be less than 8 characters"));
-        }
-
-        if (password != confirmPassword) {
-          return emit(AuthRegisterFailure("Passwords do not match"));
-        }
-
-        await Future.delayed(const Duration(seconds: 1), () {
-          return emit(AuthRegisterSuccess(email: email, password: password, name: name));
-        });
-      } catch (e) {
-        return emit(AuthRegisterFailure(e.toString()));
+      if (response.isNotEmpty) {
+        emit(AuthRegisterSuccess(successMessage: response));
+      } else {
+        emit(AuthRegisterFailure("Login failed. Please try again"));
       }
-    });
+    } catch (e) {
+      emit(AuthRegisterFailure(e.toString()));
+    }
   }
 }

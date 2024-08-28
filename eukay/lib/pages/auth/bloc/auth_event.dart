@@ -14,17 +14,12 @@ final class AuthLoginRequest extends AuthEvent {
 }
 
 final class AuthRegisterRequest extends AuthEvent {
-  final String email;
-  final String password;
-  final String confirmPassword;
-  final String name;
-  final bool isSeller;
+  final String email, userName, confirmPassword, password;
 
   AuthRegisterRequest({
     required this.email,
     required this.password,
     required this.confirmPassword,
-    required this.name,
-    this.isSeller = false,
+    required this.userName,
   });
 }

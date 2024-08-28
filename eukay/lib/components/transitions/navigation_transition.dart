@@ -1,5 +1,5 @@
-import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 void navigateWithSlideTransition({
   required BuildContext context,
@@ -8,13 +8,14 @@ void navigateWithSlideTransition({
   Offset endOffset = Offset.zero,
   Curve curve = Curves.fastEaseInToSlowEaseOut,
   Duration duration = const Duration(milliseconds: 500),
-}) {
-  Navigator.push(
+  VoidCallback? onFetch,
+}) async {
+  final result = await Navigator.push(
     context,
     PageRouteBuilder(
       transitionDuration: duration,
-      pageBuilder: (context, animation, secondAnimation) => page,
-      transitionsBuilder: (context, animation, secondAimation, child) {
+      pageBuilder: (context, animation, secondaryAnimation) => page,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
         var tween = Tween(begin: beginOffset, end: endOffset).chain(
           CurveTween(curve: curve),
         );
@@ -27,4 +28,8 @@ void navigateWithSlideTransition({
       },
     ),
   );
+
+  if (result == true) {
+    onFetch?.call();
+  }
 }

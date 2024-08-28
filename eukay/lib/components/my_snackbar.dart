@@ -6,11 +6,13 @@ SnackBar mySnackBar({
   Color textColor = const Color(0xFF000000),
 }) {
   return SnackBar(
-    content: Text(
-      errorMessage,
-      style: TextStyle(
-        color: textColor,
-        fontFamily: "Poppins",
+    content: Center(
+      child: Text(
+        errorMessage,
+        style: TextStyle(
+          color: textColor,
+          fontFamily: "Poppins",
+        ),
       ),
     ),
     backgroundColor: backgroundColor,

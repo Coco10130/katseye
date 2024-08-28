@@ -22,12 +22,6 @@ const UserSchema = mongoose.Schema(
       required: false,
     },
 
-    isSeller: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-
     role: {
       type: String,
       required: false,

@@ -6,11 +6,12 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 
 class NavigationMenu extends StatelessWidget {
-  const NavigationMenu({super.key});
+  final String token;
+  const NavigationMenu({super.key, required this.token});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(NavigationController());
+    final controller = Get.put(NavigationController(token));
 
     return Scaffold(
       body: Obx(() => controller.screens[controller.selectedIndex.value]),
@@ -54,10 +55,13 @@ class NavigationMenu extends StatelessWidget {
 
 class NavigationController extends GetxController {
   final Rx<int> selectedIndex = 0.obs;
+  final String token;
 
-  final screens = [
-    const DashboardPage(),
-    const ShopPage(),
-    const ProfilePage()
-  ];
+  NavigationController(this.token);
+
+  List<Widget> get screens => [
+        const DashboardPage(),
+        const ShopPage(),
+        ProfilePage(token: token),
+      ];
 }

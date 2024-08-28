@@ -6,9 +6,9 @@ sealed class AuthState {}
 final class AuthInitial extends AuthState {}
 
 final class AuthLoginSuccess extends AuthState {
-  final String id;
+  final String token;
 
-  AuthLoginSuccess({required this.id});
+  AuthLoginSuccess({required this.token});
 }
 
 final class AuthLoginFailure extends AuthState {
@@ -24,14 +24,10 @@ final class AuthRegisterFailure extends AuthState {
 }
 
 final class AuthRegisterSuccess extends AuthState {
-  final String name;
-  final String email;
-  final String password;
+  final String successMessage;
 
   AuthRegisterSuccess({
-    required this.name,
-    required this.email,
-    required this.password,
+    required this.successMessage,
   });
 }
 

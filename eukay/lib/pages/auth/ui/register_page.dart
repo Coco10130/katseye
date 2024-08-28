@@ -84,6 +84,11 @@ class _RegisterPageState extends State<RegisterPage>
         }
 
         if (state is AuthRegisterSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
+            errorMessage: state.successMessage,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            textColor: Theme.of(context).colorScheme.onPrimary,
+          ));
           _isVisible = false;
           widget.onLoginTap();
         }
@@ -186,11 +191,10 @@ class _RegisterPageState extends State<RegisterPage>
                       textColor: Theme.of(context).colorScheme.onPrimary,
                       onPressed: () {
                         context.read<AuthBloc>().add(AuthRegisterRequest(
-                              email: _emailController.text.trim(),
-                              password: _passwordController.text.trim(),
-                              confirmPassword:
-                                  _confirmPasswordController.text.trim(),
-                              name: _nameController.text.trim(),
+                              email: _emailController.text,
+                              password: _passwordController.text,
+                              confirmPassword: _confirmPasswordController.text,
+                              userName: _nameController.text,
                             ));
                       },
                     ),
