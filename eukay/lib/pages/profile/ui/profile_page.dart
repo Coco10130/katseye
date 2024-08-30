@@ -55,6 +55,18 @@ class ProfilePageBody extends StatelessWidget {
             ),
           );
         }
+
+        if (state is ProfileUpdateSuccessfulState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              errorMessage: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
+            ),
+          );
+
+          fetchProfile();
+        }
       },
       builder: (context, state) {
         if (state is FetchProfileSuccessState) {
@@ -133,12 +145,7 @@ class ProfilePageBody extends StatelessWidget {
             ],
           );
         }
-
-        if (state is ProfileLoadingState) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        return const Center(child: Text('Error loading profile'));
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }

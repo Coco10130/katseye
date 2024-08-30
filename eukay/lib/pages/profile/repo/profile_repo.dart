@@ -1,8 +1,6 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:eukay/pages/profile/mappers/profile_model.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileRepo {
   static const String serverUrl = "http://192.168.1.21:8080";
@@ -43,23 +41,22 @@ class ProfileRepo {
     String userName,
     String email,
     String phoneNumber,
-    File? imageFile,
+    XFile? imageFile,
   ) async {
+    final formData = FormData.fromMap({
+      'userName': userName,
+      'email': email,
+      'phoneNumber': phoneNumber,
+      if (imageFile != null)
+        'image':
+            await MultipartFile.fromFile(imageFile.path, filename: "image.jpg"),
+    });
     try {
-      final formData = FormData.fromMap({
-        'userName': userName,
-        'email': email,
-        'phone': phoneNumber,
-        if (imageFile != null)
-          'image': MultipartFile.fromFileSync(imageFile.path),
-      });
-
       final response = await _dio.put(
         "$serverUrl/api/profile/update/$id",
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
-            "Content-Type": "application/json"
           },
         ),
         data: formData,

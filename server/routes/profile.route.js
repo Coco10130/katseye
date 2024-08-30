@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middlewares/auth.middleware.js");
-const uploadMiddleware = require("../middlewares/multer.middleware.js");
+const upload = require("../middlewares/multer.middleware.js");
 const {
   getProfile,
   updateProfile,
@@ -12,7 +12,7 @@ router.use(authMiddleware);
 
 router.get("/get", getProfile);
 
-router.put("/update/:id", uploadMiddleware.single("image"), updateProfile);
+router.put("/update/:id", upload.single("image"), updateProfile);
 
 router.post("/register-seller", registerSeller);
 

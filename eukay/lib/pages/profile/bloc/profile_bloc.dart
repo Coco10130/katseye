@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:eukay/pages/profile/mappers/profile_model.dart';
 import 'package:eukay/pages/profile/repo/profile_repo.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
@@ -28,19 +28,15 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   FutureOr<void> profileUpdateEvent(
       ProfileUpdateEvent event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoadingState());
     try {
-      File? imageFile;
-      if (event.image.isNotEmpty) {
-        imageFile = File(event.image);
-      }
-
       final response = await ProfileRepo().updateProfile(
         event.id,
         event.token,
         event.userName,
         event.email,
         event.phoneNumber,
-        imageFile,
+        event.image,
       );
 
       if (response) {

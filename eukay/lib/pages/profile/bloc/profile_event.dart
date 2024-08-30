@@ -10,14 +10,15 @@ final class ProfileInitialFetchEvent extends ProfileEvent {
 }
 
 final class ProfileUpdateEvent extends ProfileEvent {
-  final String id, userName, email, phoneNumber, image, token;
+  final String id, userName, email, phoneNumber, token;
+  final XFile? image;
 
   ProfileUpdateEvent({
     required this.id,
     required this.userName,
     required this.email,
     required this.phoneNumber,
-    required this.image,
+    this.image,
     required this.token,
   });
 }

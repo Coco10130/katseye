@@ -8,7 +8,6 @@ import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
 import 'package:eukay/uitls/curved_edges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditProfile extends StatelessWidget {
@@ -35,29 +34,40 @@ class EditProfile extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.secondary,
         textColor: Theme.of(context).colorScheme.onPrimary,
       ),
-      body: EditProfilBody(
+      body: EditProfileBody(
         token: token,
       ),
     );
   }
 }
 
-class EditProfilBody extends StatefulWidget {
+class EditProfileBody extends StatefulWidget {
   final String token;
-  const EditProfilBody({
+  const EditProfileBody({
     super.key,
     required this.token,
   });
 
   @override
-  State<EditProfilBody> createState() => _EditProfilBodyState();
+  State<EditProfileBody> createState() => _EditProfileBodyState();
 }
 
-class _EditProfilBodyState extends State<EditProfilBody> {
+class _EditProfileBodyState extends State<EditProfileBody> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
-  File? _imageFile;
+  XFile? _imageFile;
+  final picker = ImagePicker();
+
+  Future _pickImage() async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = XFile(pickedFile.path);
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -73,17 +83,6 @@ class _EditProfilBodyState extends State<EditProfilBody> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneNumberController.dispose();
-  }
-
-  Future<void> _pickImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
-    if (image != null) {
-      setState(() {
-        _imageFile = File(image.path);
-      });
-    }
   }
 
   @override
@@ -127,17 +126,16 @@ class _EditProfilBodyState extends State<EditProfilBody> {
                             child: GestureDetector(
                               onTap: _pickImage,
                               child: CircleAvatar(
+                                backgroundColor: Colors.transparent,
                                 radius: 45,
                                 backgroundImage: _imageFile != null
-                                    ? FileImage(_imageFile!)
-                                    : NetworkImage(state.profile.image),
-                                child: _imageFile == null
-                                    ? Icon(Iconsax.camera,
-                                        color: Colors.grey[600])
-                                    : null,
+                                    ? FileImage(File(_imageFile!.path))
+                                    : (state.profile.image.isNotEmpty
+                                        ? NetworkImage(state.profile.image)
+                                        : null),
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -169,7 +167,7 @@ class _EditProfilBodyState extends State<EditProfilBody> {
                         controller: _emailController,
                       ),
 
-                      // spcaing
+                      // spacing
                       const SizedBox(
                         height: spacing,
                       ),
@@ -191,16 +189,16 @@ class _EditProfilBodyState extends State<EditProfilBody> {
                           backgroundColor:
                               Theme.of(context).colorScheme.secondary,
                           onPressed: () {
-                            context.read<ProfileBloc>().add(ProfileUpdateEvent(
-                                  email: _emailController.text,
-                                  id: state.profile.id,
-                                  image: _imageFile != null
-                                      ? _imageFile!.path
-                                      : state.profile.image,
-                                  phoneNumber: _phoneNumberController.text,
-                                  token: widget.token,
-                                  userName: _nameController.text,
-                                ));
+                            context.read<ProfileBloc>().add(
+                                  ProfileUpdateEvent(
+                                    email: _emailController.text,
+                                    id: state.profile.id,
+                                    image: _imageFile,
+                                    phoneNumber: _phoneNumberController.text,
+                                    token: widget.token,
+                                    userName: _nameController.text,
+                                  ),
+                                );
                             Navigator.pop(context, true);
                           })
                     ],
