@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:eukay/pages/auth/repo/auth_repository.dart';
 import 'package:eukay/uitls/server.dart';
 
-class AuthRepo {
+class AuthRepo extends AuthRepository {
   final _dio = Dio();
 
+  @override
   Future<String> loginRequest(String email, String password) async {
     try {
       final payload = {"email": email, "password": password};
@@ -29,6 +31,7 @@ class AuthRepo {
     }
   }
 
+  @override
   Future<String> registerRequest(String userName, String email, String password,
       String confirmPassword) async {
     try {

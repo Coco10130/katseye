@@ -61,7 +61,9 @@ class NavigationController extends GetxController {
 
   List<Widget> get screens => [
         const DashboardPage(),
-        const ShopPage(),
+        ShopPage(
+          token: token,
+        ),
         ProfilePage(token: token),
       ];
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:eukay/pages/auth/repo/auth_repo.dart';
+import 'package:eukay/pages/auth/repo/auth_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
 
@@ -8,7 +9,8 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc() : super(AuthInitial()) {
+  final AuthRepository _authRepository;
+  AuthBloc(this._authRepository) : super(AuthInitial()) {
     on<AuthLoginRequest>(authLoginRequest);
     on<AuthRegisterRequest>(authRegisterRequest);
   }
@@ -18,7 +20,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final response =
-          await AuthRepo().loginRequest(event.email, event.password);
+          await _authRepository.loginRequest(event.email, event.password);
 
       if (response.isNotEmpty) {
         emit(AuthLoginSuccess(token: response));
@@ -34,7 +36,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       AuthRegisterRequest event, Emitter<AuthState> emit) async {
     emit(AuthLoading());
     try {
-      final response = await AuthRepo().registerRequest(
+      final response = await _authRepository.registerRequest(
           event.userName, event.email, event.password, event.confirmPassword);
 
       if (response.isNotEmpty) {

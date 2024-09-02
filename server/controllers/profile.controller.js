@@ -126,8 +126,9 @@ const registerSeller = async (req, res) => {
     }
 
     const { shopName, shopContact, shopEmail } = req.body;
+    const token = authorizationHeader.split(" ")[1];
 
-    const decode = jwt.verify(authorizationHeader, secretKey);
+    const decode = jwt.verify(token, secretKey);
 
     let formattedContact = shopContact;
 

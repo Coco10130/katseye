@@ -1,16 +1,17 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:eukay/pages/profile/mappers/profile_model.dart';
-import 'package:eukay/pages/profile/repo/profile_repo.dart';
+import 'package:eukay/pages/profile/repo/profile_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  ProfileBloc() : super(ProfileInitial()) {
+  final ProfileRepository _profileRepository;
+  ProfileBloc(this._profileRepository) : super(ProfileInitial()) {
     on<ProfileInitialFetchEvent>(profileInitialFetchEvent);
     on<ProfileUpdateEvent>(profileUpdateEvent);
   }
@@ -19,7 +20,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       ProfileInitialFetchEvent event, Emitter<ProfileState> emit) async {
     emit(ProfileLoadingState());
     try {
-      final response = await ProfileRepo().fetchProfile(event.token);
+      final response = await _profileRepository.fetchProfile(event.token);
       emit(FetchProfileSuccessState(profile: response));
     } catch (e) {
       emit(FetchProfileFailedState(errorMessage: e.toString()));
@@ -30,7 +31,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       ProfileUpdateEvent event, Emitter<ProfileState> emit) async {
     emit(ProfileLoadingState());
     try {
-      final response = await ProfileRepo().updateProfile(
+      final response = await _profileRepository.updateProfile(
         event.id,
         event.token,
         event.userName,

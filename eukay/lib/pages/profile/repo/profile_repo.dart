@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:eukay/pages/profile/mappers/profile_model.dart';
+import 'package:eukay/pages/profile/repo/profile_repository.dart';
 import 'package:eukay/uitls/server.dart';
 import 'package:image_picker/image_picker.dart';
 
-class ProfileRepo {
+class ProfileRepo extends ProfileRepository {
   final _dio = Dio();
 
+  @override
   Future<ProfileModel> fetchProfile(String token) async {
     try {
       final response = await _dio.get(
@@ -34,6 +36,7 @@ class ProfileRepo {
     }
   }
 
+  @override
   Future<bool> updateProfile(
     String id,
     String token,

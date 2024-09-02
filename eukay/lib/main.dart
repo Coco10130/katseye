@@ -1,8 +1,12 @@
 import 'package:eukay/navigation_menu.dart';
 import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
+import 'package:eukay/pages/auth/repo/auth_repo.dart';
 import 'package:eukay/pages/cart/bloc/cart_bloc.dart';
 import 'package:eukay/pages/auth/ui/auth_page.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
+import 'package:eukay/pages/profile/repo/profile_repo.dart';
+import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
+import 'package:eukay/pages/shop/repo/shop_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -26,13 +30,16 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => AuthBloc(),
+          create: (context) => AuthBloc(AuthRepo()),
         ),
         BlocProvider(
           create: (context) => CartBloc(),
         ),
         BlocProvider(
-          create: (context) => ProfileBloc(),
+          create: (context) => ProfileBloc(ProfileRepo()),
+        ),
+        BlocProvider(
+          create: (context) => ShopBloc(ShopRepo()),
         ),
       ],
       child: GetMaterialApp(
@@ -52,7 +59,7 @@ class MyApp extends StatelessWidget {
           ),
           useMaterial3: true,
         ),
-        home: (token != null && !JwtDecoder.isExpired(token!))
+        home: (token != null && JwtDecoder.isExpired(token!) == false)
             ? NavigationMenu(token: token!)
             : const AuthPage(),
       ),
