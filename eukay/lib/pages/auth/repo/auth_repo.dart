@@ -1,17 +1,16 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:eukay/uitls/server.dart';
 
 class AuthRepo {
-  static const String serverUrl = "http://192.168.1.21:8080";
-
   final _dio = Dio();
 
   Future<String> loginRequest(String email, String password) async {
     try {
       final payload = {"email": email, "password": password};
       final response = await _dio.post(
-        "$serverUrl/api/auth/login",
+        "${Server.serverUrl}/api/auth/login",
         options: Options(
           headers: {"Content-Type": "application/json"},
         ),
@@ -40,7 +39,7 @@ class AuthRepo {
         "confirmPassword": confirmPassword
       };
       final response = await _dio.post(
-        "$serverUrl/api/auth/register",
+        "${Server.serverUrl}/api/auth/register",
         options: Options(
           headers: {"Content-Type": "application/json"},
         ),

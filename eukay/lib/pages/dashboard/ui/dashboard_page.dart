@@ -3,7 +3,7 @@ import 'package:eukay/components/my_searchbox.dart';
 import 'package:eukay/components/product_cards/product_card.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/cart/ui/cart_page.dart';
-import 'package:eukay/pages/search_page/ui/search_page.dart';
+import 'package:eukay/pages/search/ui/search_page.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatelessWidget {

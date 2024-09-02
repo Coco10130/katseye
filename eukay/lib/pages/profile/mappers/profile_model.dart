@@ -1,6 +1,6 @@
 class ProfileModel {
   final String userName, email, id, image;
-  final String? phoneNumber, shopName, shopEmail;
+  final String? phoneNumber, shopName, shopEmail, shopContact;
 
   ProfileModel({
     required this.userName,
@@ -10,6 +10,7 @@ class ProfileModel {
     required this.image,
     this.shopEmail,
     this.shopName,
+    this.shopContact,
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
@@ -17,10 +18,11 @@ class ProfileModel {
       id: json["_id"],
       userName: json['userName'],
       email: json['email'],
-      phoneNumber: json['shopContact'],
+      phoneNumber: json['phoneNumber'],
       image: json['image'],
       shopEmail: json['shopEmail'],
       shopName: json['shopName'],
+      shopContact: json['shopContact'],
     );
   }
 }

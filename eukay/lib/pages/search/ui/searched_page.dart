@@ -1,6 +1,8 @@
 import 'package:eukay/components/my_searchbox.dart';
 import 'package:eukay/components/product_cards/product_card.dart';
+import 'package:eukay/pages/search/ui/view_product.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SearchedPage extends StatelessWidget {
   const SearchedPage({super.key});
@@ -131,7 +133,9 @@ class SearchedBody extends StatelessWidget {
               rating: 4.6,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.onSecondary,
-              onPressed: () {},
+              onPressed: () {
+                Get.to(const ViewProduct());
+              },
             );
           },
         ),

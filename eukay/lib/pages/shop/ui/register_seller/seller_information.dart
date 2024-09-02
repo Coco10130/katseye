@@ -1,5 +1,5 @@
 import 'package:eukay/components/buttons/my_button.dart';
-import 'package:eukay/components/my-appBar.dart';
+import 'package:eukay/components/appbar/my_app_bar.dart';
 import 'package:eukay/components/my_input.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/shop/ui/register_seller/verification_page.dart';

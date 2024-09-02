@@ -4,7 +4,7 @@ class MyTextField extends StatelessWidget {
   final String label, hint;
   final double widthFactor, height;
   final TextEditingController controller;
-  final bool password, email;
+  final bool password, email, enabled;
   final Color textColor,
       underlineColor,
       backgroundColor,
@@ -23,6 +23,7 @@ class MyTextField extends StatelessWidget {
     this.widthFactor = 0.85,
     this.password = false,
     this.email = false,
+    this.enabled = true,
     this.cursorColor = Colors.black,
     this.underlineColor = Colors.white,
   });
@@ -55,6 +56,7 @@ class MyTextField extends StatelessWidget {
 
             // Input field
             TextField(
+              enabled: enabled,
               controller: controller,
               obscureText: password,
               keyboardType: email ? TextInputType.emailAddress : null,

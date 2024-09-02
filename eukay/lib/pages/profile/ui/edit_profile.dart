@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:eukay/components/buttons/my_button.dart';
-import 'package:eukay/components/my-appBar.dart';
+import 'package:eukay/components/appbar/my_app_bar.dart';
 import 'package:eukay/components/my_input.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
@@ -81,8 +81,8 @@ class _EditProfileBodyState extends State<EditProfileBody> {
   void dispose() {
     super.dispose();
     _nameController.dispose();
+    _nameController.dispose();
     _emailController.dispose();
-    _phoneNumberController.dispose();
   }
 
   @override
@@ -165,6 +165,7 @@ class _EditProfileBodyState extends State<EditProfileBody> {
                         label: "Email",
                         hint: "Enter Email",
                         controller: _emailController,
+                        enabled: false,
                       ),
 
                       // spacing

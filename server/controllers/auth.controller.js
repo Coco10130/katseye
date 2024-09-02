@@ -33,11 +33,10 @@ const login = async (req, res) => {
           email: user.email,
           id: user._id,
           userName: user.userName,
-          isSeller: user.isSeller,
           role: user.role,
         },
         process.env.JWT_SECRET,
-        { expiresIn: "1h" },
+        { expiresIn: "3h" },
         (err, token) => {
           if (err) {
             throw err;

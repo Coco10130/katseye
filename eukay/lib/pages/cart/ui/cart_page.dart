@@ -1,4 +1,4 @@
-import 'package:eukay/components/my-appBar.dart';
+import 'package:eukay/components/appbar/my_app_bar.dart';
 import 'package:eukay/pages/cart/bloc/cart_bloc.dart';
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/product_cards/cart_product.dart';

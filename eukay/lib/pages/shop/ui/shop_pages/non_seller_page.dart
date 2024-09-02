@@ -1,7 +1,6 @@
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/shop/ui/register_seller/seller_information.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 import '../../../../components/buttons/my_button.dart';
 

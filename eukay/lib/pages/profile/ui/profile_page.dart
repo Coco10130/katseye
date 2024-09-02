@@ -5,6 +5,7 @@ import 'package:eukay/pages/profile/ui/edit_profile.dart';
 import 'package:eukay/uitls/curved_edges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iconsax/iconsax.dart';
 
 class ProfilePage extends StatefulWidget {
   final String token;
@@ -124,6 +125,58 @@ class ProfilePageBody extends StatelessWidget {
                 height: 30,
               ),
 
+              // orders label
+              const Padding(
+                padding: EdgeInsets.only(left: 20),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "My Orders",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontFamily: "Poppins",
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ),
+              ),
+
+              // spacing
+              const SizedBox(
+                height: 10,
+              ),
+
+              // order status
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _icons(
+                      const Icon(
+                        Iconsax.box,
+                        size: 25,
+                      ),
+                      "To Prepare"),
+                  _icons(
+                      const Icon(
+                        Iconsax.truck,
+                        size: 25,
+                      ),
+                      "To Recieve"),
+                  _icons(
+                      const Icon(
+                        Iconsax.star,
+                        size: 25,
+                      ),
+                      "To Rate"),
+                ],
+              ),
+
+              // spacing
+              const SizedBox(
+                height: 30,
+              ),
+
               // edit profile
               _myContainer("Edit Profile", "assets/icons/user.png", () {
                 navigateWithSlideTransition(
@@ -147,6 +200,27 @@ class ProfilePageBody extends StatelessWidget {
         }
         return const Center(child: CircularProgressIndicator());
       },
+    );
+  }
+
+  Widget _icons(Icon icon, String label) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CircleAvatar(
+          backgroundColor: Colors.transparent,
+          radius: 20,
+          child: icon,
+        ),
+        Text(
+          label,
+          style: const TextStyle(
+            fontFamily: "Poppins",
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+          ),
+        )
+      ],
     );
   }
 

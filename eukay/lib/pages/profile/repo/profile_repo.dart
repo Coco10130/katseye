@@ -1,16 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:eukay/pages/profile/mappers/profile_model.dart';
+import 'package:eukay/uitls/server.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfileRepo {
-  static const String serverUrl = "http://192.168.1.21:8080";
-
   final _dio = Dio();
 
   Future<ProfileModel> fetchProfile(String token) async {
     try {
       final response = await _dio.get(
-        "$serverUrl/api/profile/get",
+        "${Server.serverUrl}/api/profile/get",
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -53,7 +52,7 @@ class ProfileRepo {
     });
     try {
       final response = await _dio.put(
-        "$serverUrl/api/profile/update/$id",
+        "${Server.serverUrl}/api/profile/update/$id",
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',
@@ -71,9 +70,9 @@ class ProfileRepo {
       if (e is DioException && e.response != null) {
         final errorMessage =
             e.response?.data["errorMessage"] ?? "Unknown error";
-        throw Exception("DioException: $errorMessage");
+        throw errorMessage;
       } else {
-        throw Exception("Error: ${e.toString()}");
+        throw Exception(e.toString());
       }
     }
   }

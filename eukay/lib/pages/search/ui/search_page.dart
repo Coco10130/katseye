@@ -1,5 +1,5 @@
 import 'package:eukay/components/transitions/navigation_transition.dart';
-import 'package:eukay/pages/searched_product/ui/searched_page.dart';
+import 'package:eukay/pages/search/ui/searched_page.dart';
 import 'package:flutter/material.dart';
 
 class SearchPage extends StatelessWidget {

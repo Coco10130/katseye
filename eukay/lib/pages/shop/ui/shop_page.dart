@@ -1,5 +1,5 @@
-import 'package:eukay/components/my-appBar.dart';
-import 'package:eukay/pages/shop/ui/shop_pages/non_seller_page.dart';
+import 'package:eukay/components/appbar/my_app_bar.dart';
+import 'package:eukay/pages/shop/ui/shop_pages/seller_page.dart';
 import 'package:flutter/material.dart';
 
 class ShopPage extends StatelessWidget {
@@ -13,8 +13,7 @@ class ShopPage extends StatelessWidget {
         label: "My Shop",
         backgroundColor: Theme.of(context).colorScheme.secondary,
       ),
-      body: const NonSellerPage(),
+      body: const SellerPage(),
     );
   }
 }
-
