@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:eukay/pages/auth/repo/auth_repo.dart';
 import 'package:eukay/pages/auth/repo/auth_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';

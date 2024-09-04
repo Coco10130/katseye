@@ -36,7 +36,7 @@ const login = async (req, res) => {
           role: user.role,
         },
         process.env.JWT_SECRET,
-        { expiresIn: "3h" },
+        { expiresIn: "2h" },
         (err, token) => {
           if (err) {
             throw err;

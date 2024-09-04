@@ -1,7 +1,7 @@
 import 'package:eukay/navigation_menu.dart';
 import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
 import 'package:eukay/components/buttons/my_button.dart';
-import 'package:eukay/components/my_input.dart';
+import 'package:eukay/components/inputs/my_input.dart';
 import 'package:eukay/components/buttons/my_text_button.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:flutter/material.dart';

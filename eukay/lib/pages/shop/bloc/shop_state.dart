@@ -6,9 +6,9 @@ sealed class ShopState {}
 final class ShopInitial extends ShopState {}
 
 final class RegisterShopSuccessState extends ShopState {
-  final String successMessage;
+  final String successMessage, token;
 
-  RegisterShopSuccessState({required this.successMessage});
+  RegisterShopSuccessState({required this.successMessage, required this.token});
 }
 
 final class RegisterShopFailedState extends ShopState {
@@ -17,4 +17,31 @@ final class RegisterShopFailedState extends ShopState {
   RegisterShopFailedState({required this.errorMessage});
 }
 
-final class RegistrationLoadingState extends ShopState {}
+final class OtpSentSuccessState extends ShopState {
+  final String otpHash, successMessage;
+
+  OtpSentSuccessState({
+    required this.otpHash,
+    required this.successMessage,
+  });
+}
+
+final class OtpSentFailedState extends ShopState {
+  final String errorMessage;
+
+  OtpSentFailedState({required this.errorMessage});
+}
+
+final class FetchSellerSuccessState extends ShopState {
+  final SellerModel seller;
+
+  FetchSellerSuccessState({required this.seller});
+}
+
+final class FetchSellerFailedState extends ShopState {
+  final String errorMessage;
+
+  FetchSellerFailedState({required this.errorMessage});
+}
+
+final class ShopLoadingState extends ShopState {}

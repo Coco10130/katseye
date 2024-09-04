@@ -3,7 +3,7 @@ import 'package:eukay/components/buttons/my_text_button.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:eukay/components/buttons/my_button.dart';
-import 'package:eukay/components/my_input.dart';
+import 'package:eukay/components/inputs/my_input.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RegisterPage extends StatefulWidget {

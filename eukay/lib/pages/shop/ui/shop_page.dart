@@ -19,7 +19,11 @@ class ShopPage extends StatelessWidget {
         label: "My Shop",
         backgroundColor: Theme.of(context).colorScheme.secondary,
       ),
-      body: role == "seller" ? const SellerPage() : const NonSellerPage(),
+      body: role == "seller"
+          ? SellerPage(
+              token: token,
+            )
+          : const NonSellerPage(),
     );
   }
 }

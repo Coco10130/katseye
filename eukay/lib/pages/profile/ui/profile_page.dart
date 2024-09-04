@@ -82,6 +82,8 @@ class ProfilePageBody extends StatelessWidget {
                     width: double.infinity,
                     child: Stack(
                       children: [
+                        // TODO: LOGOUT BUTTON
+
                         // Profile picture
                         Align(
                           alignment: Alignment.center,

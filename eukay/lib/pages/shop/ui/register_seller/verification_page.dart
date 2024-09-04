@@ -1,9 +1,24 @@
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/appbar/my_app_bar.dart';
+import 'package:eukay/components/inputs/otp_input.dart';
+import 'package:eukay/components/my_snackbar.dart';
+import 'package:eukay/navigation_menu.dart';
+import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class VerificationPage extends StatelessWidget {
-  const VerificationPage({super.key});
+  final String shopEmail, shopContact, shopName, token, otpHash;
+  const VerificationPage({
+    super.key,
+    required this.shopEmail,
+    required this.shopContact,
+    required this.shopName,
+    required this.token,
+    required this.otpHash,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,119 +30,130 @@ class VerificationPage extends StatelessWidget {
           onPressed: () {
             Navigator.pop(context);
           }),
-      body: const BodyPage(),
+      body: BodyPage(
+        otpHash: otpHash,
+        shopContact: shopContact,
+        shopEmail: shopEmail,
+        shopName: shopName,
+        token: token,
+      ),
     );
   }
 }
 
 class BodyPage extends StatefulWidget {
-  const BodyPage({super.key});
+  final String shopEmail, shopContact, shopName, token, otpHash;
+  const BodyPage(
+      {super.key,
+      required this.shopEmail,
+      required this.shopContact,
+      required this.shopName,
+      required this.token,
+      required this.otpHash});
 
   @override
   State<BodyPage> createState() => _BodyPageState();
 }
 
 class _BodyPageState extends State<BodyPage> {
-  final List<TextEditingController> _codeController =
-      List.generate(5, (index) => TextEditingController());
+  final TextEditingController _otpController = TextEditingController();
+  late SharedPreferences pref;
 
   @override
   void dispose() {
     super.dispose();
+    _otpController.dispose();
+  }
+
+  Future<void> updateToken(String newToken) async {
+    pref = await SharedPreferences.getInstance();
+    await pref.setString("token", newToken);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 20, right: 20, top: 40),
-            child: Text(
-              "We sent a reset link to your email.\nEnter the 5-digit code mentioned in the email.",
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "Poppins",
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
+    return BlocConsumer<ShopBloc, ShopState>(
+      listener: (context, state) async {
+        if (state is RegisterShopSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              errorMessage: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+
+          await updateToken(state.token);
+
+          Get.offAll(NavigationMenu(
+            token: pref.getString("token")!,
+          ));
+        }
+      },
+      builder: (context, state) {
+        if (state is ShopLoadingState) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // spacing
+              const SizedBox(
+                height: 100,
               ),
-            ),
-          ),
 
-          // spacing
-          const SizedBox(
-            height: 20,
-          ),
+              // otp input
+              OtpInput(
+                labelText:
+                    "We sent a reset link to your email.\nEnter the 4-digit code mentioned in the email.",
+                controller: _otpController,
+              ),
 
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(5, (index) {
-              return SizedBox(
-                width: 50,
-                child: TextField(
-                  controller: _codeController[index],
-                  keyboardType: TextInputType.number,
-                  maxLength: 1,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: "Poppins",
-                    fontSize: 24,
-                    color: Colors.black,
-                  ),
-                  decoration: InputDecoration(
-                    counterText: "",
-                    enabledBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 2, color: Colors.grey),
-                        borderRadius: BorderRadius.circular(8)),
-                    focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(width: 2, color: Colors.blue),
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
-                  onChanged: (value) {
-                    if (value.length == 1 && index < 4) {
-                      FocusScope.of(context).nextFocus();
-                    }
-                  },
+              // spacing
+              const SizedBox(
+                height: 30,
+              ),
+
+              // buttons
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    MyButton(
+                      title: "Back",
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      textColor: Theme.of(context).colorScheme.onSecondary,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      widthFactor: 0.30,
+                    ),
+                    MyButton(
+                      title: "Submit",
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      onPressed: () {
+                        context.read<ShopBloc>().add(RegisterShopEvent(
+                            otpCode: _otpController.text,
+                            otpHash: widget.otpHash,
+                            shopContact: widget.shopContact,
+                            shopName: widget.shopName,
+                            token: widget.token,
+                            shopEmail: widget.shopEmail));
+                      },
+                      widthFactor: 0.30,
+                    )
+                  ],
                 ),
-              );
-            }),
+              ),
+            ],
           ),
-
-          // spacing
-          const SizedBox(
-            height: 30,
-          ),
-
-          // buttons
-          Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                MyButton(
-                  title: "Back",
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  textColor: Theme.of(context).colorScheme.onSecondary,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  widthFactor: 0.30,
-                ),
-                MyButton(
-                  title: "Submit",
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  onPressed: () {},
-                  widthFactor: 0.30,
-                )
-              ],
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

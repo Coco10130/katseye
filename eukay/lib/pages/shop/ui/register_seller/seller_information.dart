@@ -1,7 +1,10 @@
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/appbar/my_app_bar.dart';
-import 'package:eukay/components/my_input.dart';
+import 'package:eukay/components/inputs/my_input.dart';
+import 'package:eukay/components/my_snackbar.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
+import 'package:eukay/pages/shop/ui/register_seller/verification_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -59,9 +62,29 @@ class _BodyPageState extends State<BodyPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<ShopBloc, ShopState>(
       listener: (context, state) {
-        // TODO: implement listener
+        if (state is OtpSentSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              errorMessage: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+          navigateWithSlideTransition(
+              context: context,
+              page: VerificationPage(
+                shopContact: _numberController.text,
+                shopEmail: _emailController.text,
+                shopName: _nameController.text,
+                token: pref.getString("token")!,
+                otpHash: state.otpHash,
+              ));
+        }
       },
       builder: (context, state) {
+        if (state is ShopLoadingState) {
+          return const Center(child: CircularProgressIndicator());
+        }
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           child: Column(
@@ -105,15 +128,12 @@ class _BodyPageState extends State<BodyPage> {
                   title: "Next",
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   onPressed: () {
-                    // TODO: EMAIL VALIDATION
-                    // context.read<ShopBloc>().add(
-                    //       RegisterShopEvent(
-                    //         token: pref.getString("token")!,
-                    //         shopName: _nameController.text,
-                    //         shopEmail: _emailController.text,
-                    //         shopContact: _numberController.text,
-                    //       ),
-                    //     );
+                    context.read<ShopBloc>().add(
+                          SendOTPRegistrationEvent(
+                            token: pref.getString("token")!,
+                            email: _emailController.text,
+                          ),
+                        );
                   },
                   widthFactor: 0.38,
                 ),
