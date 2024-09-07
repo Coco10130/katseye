@@ -27,3 +27,19 @@ final class FetchSellerProfileEvent extends ShopEvent {
 
   FetchSellerProfileEvent({required this.token});
 }
+
+final class AddProductEvent extends ShopEvent {
+  final List<XFile> images;
+  final List<String> sizes, categories;
+  final String productName, description, quantity, price, token;
+
+  AddProductEvent(
+      {required this.images,
+      required this.sizes,
+      required this.categories,
+      required this.price,
+      required this.token,
+      required this.quantity,
+      required this.productName,
+      required this.description});
+}

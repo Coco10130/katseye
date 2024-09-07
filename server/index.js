@@ -11,6 +11,7 @@ const authRouters = require("./routes/auth.route.js");
 const profileRouters = require("./routes/profile.route.js");
 const productRouters = require("./routes/product.route.js");
 const cartRouters = require("./routes/cart.route.js");
+const sellerRouters = require("./routes/seller.route.js");
 
 // middlewares
 app.use(express.json());
@@ -33,6 +34,7 @@ app.use("/api/auth/", authRouters);
 app.use("/api/profile/", profileRouters);
 app.use("/api/product/", productRouters);
 app.use("/api/cart/", cartRouters);
+app.use("/api/seller/", sellerRouters);
 
 mongoose
   .connect(process.env.MONGODB)

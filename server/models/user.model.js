@@ -38,21 +38,6 @@ const UserSchema = mongoose.Schema(
       required: false,
     },
 
-    shopName: {
-      type: String,
-      required: false,
-    },
-
-    shopEmail: {
-      type: String,
-      required: false,
-    },
-
-    shopContact: {
-      type: String,
-      required: false,
-    },
-
     cartItems: {
       type: Number,
       reqruire: false,

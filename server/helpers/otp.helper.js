@@ -18,7 +18,6 @@ const sendOTP = async (params, cb) => {
   const data = `${params.shopEmail}.${otp}.${expires}`;
   const hash = crypto.createHmac("sha256", key).update(data).digest("hex");
   const fullHash = `${hash}.${expires}`;
-  console.log(fullHash);
 
   const otpMessage = `Dear User, your one time password is "${otp}" this will expire within 5 minutes`;
   const model = {
@@ -47,9 +46,6 @@ const verifyOTP = async (params, cb) => {
     .createHmac("sha256", key)
     .update(data)
     .digest("hex");
-
-  console.log("Expected Hash:", hashValue);
-  console.log("New Calculated Hash:", newCalculatedHash);
 
   if (newCalculatedHash === hashValue) {
     return cb(null, "Success");

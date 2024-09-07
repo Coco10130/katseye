@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 class MyTabBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget> tabs;
   final double height;
-  const MyTabBar({super.key, required this.tabs, this.height = kToolbarHeight});
+  final bool isScrollable;
+  const MyTabBar(
+      {super.key,
+      required this.tabs,
+      this.height = kToolbarHeight,
+      this.isScrollable = false});
 
   @override
   Widget build(BuildContext context) {
@@ -13,11 +18,11 @@ class MyTabBar extends StatelessWidget implements PreferredSizeWidget {
         height: height,
         child: TabBar(
           tabs: tabs,
-          isScrollable: true,
+          isScrollable: isScrollable,
           indicatorColor: Theme.of(context).colorScheme.secondary,
           unselectedLabelColor: Theme.of(context).colorScheme.onSecondary,
           labelColor: Theme.of(context).colorScheme.secondary,
-          padding: const EdgeInsets.symmetric(horizontal: 0),
+          labelPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
       ),
     );

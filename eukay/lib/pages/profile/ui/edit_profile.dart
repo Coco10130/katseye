@@ -66,6 +66,7 @@ class _EditProfileBodyState extends State<EditProfileBody> {
       setState(() {
         _imageFile = XFile(pickedFile.path);
       });
+      print(pickedFile.path);
     }
   }
 

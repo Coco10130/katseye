@@ -37,6 +37,12 @@ const ProductSchema = mongoose.Schema(
       required: true,
     },
 
+    status: {
+      type: String,
+      required: true,
+      default: "live",
+    },
+
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

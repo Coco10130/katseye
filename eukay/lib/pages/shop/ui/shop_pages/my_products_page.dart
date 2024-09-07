@@ -10,7 +10,7 @@ class MyProducts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 5,
+      length: 3,
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.onSurface,
         appBar: AppBar(
@@ -29,8 +29,6 @@ class MyProducts extends StatelessWidget {
             tabs: [
               _tab("Live", "0"),
               _tab("Sold Out", "0"),
-              _tab("Reviewing", "0"),
-              _tab("Violation", "0"),
               _tab("Delisted", "0"),
             ],
             height: 70,
@@ -40,8 +38,6 @@ class MyProducts extends StatelessWidget {
           children: [
             SoldOutProducts(),
             ReviewsPage(),
-            DelistedPage(),
-            DelistedPage(),
             DelistedPage(),
           ],
         ),

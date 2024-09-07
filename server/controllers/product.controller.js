@@ -1,4 +1,5 @@
 const Product = require("../models/product.model.js");
+const Seller = require("../models/seller.model.js");
 const jwt = require("jsonwebtoken");
 
 const secretKey = process.env.JWT_SECRET;
@@ -11,7 +12,10 @@ const addProduct = async (req, res) => {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const decode = jwt.verify(authorizationHeader, secretKey);
+    const token = authorizationHeader.split(" ")[1];
+    const decode = jwt.verify(token, secretKey);
+
+    const seller = await Seller.findOne({ userId: decode.id });
 
     const {
       productName,
@@ -22,21 +26,20 @@ const addProduct = async (req, res) => {
       sizes,
     } = req.body;
 
-    const productImages =
+    const images =
       req.files && req.files.length > 0
         ? req.files.map((file) => file.filename)
         : [];
-    console.log("Product image:", productImages);
 
     const data = {
-      productImage: productImages,
+      productImage: images,
       productName,
       quantity,
       price,
       productDescription,
       categories,
       sizes,
-      sellerId: decode.id,
+      sellerId: seller.id,
     };
 
     await Product.create(data);

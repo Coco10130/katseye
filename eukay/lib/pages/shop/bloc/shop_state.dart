@@ -44,4 +44,16 @@ final class FetchSellerFailedState extends ShopState {
   FetchSellerFailedState({required this.errorMessage});
 }
 
+final class AddProductSuccessState extends ShopState {
+  final String successMessage;
+
+  AddProductSuccessState({required this.successMessage});
+}
+
+final class AddProductFailedState extends ShopState {
+  final String errorMessage;
+
+  AddProductFailedState({required this.errorMessage});
+}
+
 final class ShopLoadingState extends ShopState {}

@@ -1,11 +1,14 @@
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
+import 'package:eukay/pages/auth/ui/auth_page.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
 import 'package:eukay/pages/profile/ui/edit_profile.dart';
 import 'package:eukay/uitls/curved_edges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
   final String token;
@@ -42,6 +45,12 @@ class ProfilePageBody extends StatelessWidget {
   final String token;
   const ProfilePageBody(
       {super.key, required this.fetchProfile, required this.token});
+
+  void _logout() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    await pref.remove("token");
+    Get.offAll(const AuthPage());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +91,23 @@ class ProfilePageBody extends StatelessWidget {
                     width: double.infinity,
                     child: Stack(
                       children: [
-                        // TODO: LOGOUT BUTTON
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 30, right: 20),
+                            child: GestureDetector(
+                              onTap: _logout,
+                              child: const CircleAvatar(
+                                backgroundColor: Colors.red,
+                                radius: 22,
+                                child: Icon(
+                                  Iconsax.logout,
+                                  size: 25,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
 
                         // Profile picture
                         Align(

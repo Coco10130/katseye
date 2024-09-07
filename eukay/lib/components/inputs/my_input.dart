@@ -33,66 +33,64 @@ class MyTextField extends StatelessWidget {
     final double parentWidth = MediaQuery.of(context).size.width;
 
     return Container(
+      width: parentWidth * widthFactor,
+      height: height,
       color: Colors.transparent,
-      child: SizedBox(
-        width: parentWidth * widthFactor,
-        height: height,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            // Label
-            Text(
-              label,
-              style: TextStyle(
-                color: textColor,
-                fontSize: 15,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          // Label
+          Text(
+            label,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 15,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+
+          // Spacing
+          const SizedBox(height: 10),
+
+          // Input field
+          TextField(
+            enabled: enabled,
+            controller: controller,
+            obscureText: password,
+            keyboardType: email ? TextInputType.emailAddress : null,
+            style: TextStyle(
+              color: textColor,
+              fontFamily: "Poppins",
+            ),
+            cursorColor: cursorColor,
+            decoration: InputDecoration(
+              hintText: hint,
+              filled: true,
+              fillColor: backgroundColor,
+              hintStyle: TextStyle(
+                color: hintColor,
                 fontFamily: "Poppins",
-                fontWeight: FontWeight.w600,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 12.0,
+              ),
+              border: UnderlineInputBorder(
+                borderSide: BorderSide(color: underlineColor),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: underlineColor),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: underlineColor),
+              ),
+              errorBorder: const UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.red),
               ),
             ),
-
-            // Spacing
-            const SizedBox(height: 10),
-
-            // Input field
-            TextField(
-              enabled: enabled,
-              controller: controller,
-              obscureText: password,
-              keyboardType: email ? TextInputType.emailAddress : null,
-              style: TextStyle(
-                color: textColor,
-                fontFamily: "Poppins",
-              ),
-              cursorColor: cursorColor,
-              decoration: InputDecoration(
-                hintText: hint,
-                filled: true,
-                fillColor: backgroundColor,
-                hintStyle: TextStyle(
-                  color: hintColor,
-                  fontFamily: "Poppins",
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 12.0,
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: underlineColor),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: underlineColor),
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: underlineColor),
-                ),
-                errorBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red),
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

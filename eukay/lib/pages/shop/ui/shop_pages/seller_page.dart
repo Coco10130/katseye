@@ -130,22 +130,22 @@ class _SellerPageState extends State<SellerPage> {
                         children: [
                           _myBox(
                             "Pending",
-                            "02",
+                            "${state.seller.pendingOrders}",
                             Theme.of(context).colorScheme.onSecondary,
                           ),
                           _myBox(
                             "To Prepare",
-                            "02",
+                            "${state.seller.prepareOrders}",
                             Theme.of(context).colorScheme.onSecondary,
                           ),
                           _myBox(
                             "To Deliver",
-                            "02",
+                            "${state.seller.deliverOrders}",
                             Theme.of(context).colorScheme.onSecondary,
                           ),
                           _myBox(
                             "Reviews",
-                            "102",
+                            "${state.seller.reviewOrders}",
                             Theme.of(context).colorScheme.onSecondary,
                           ),
                         ],
@@ -193,7 +193,7 @@ class _SellerPageState extends State<SellerPage> {
                   height: 20,
                 ),
 
-                // TODO: Displat all products here
+                // TODO: Display all products here
 
                 const Text(
                   "Display all products here",
