@@ -1,5 +1,6 @@
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
+import 'package:eukay/navigation_menu.dart';
 import 'package:eukay/pages/auth/ui/auth_page.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
 import 'package:eukay/pages/profile/ui/edit_profile.dart';
@@ -47,9 +48,11 @@ class ProfilePageBody extends StatelessWidget {
       {super.key, required this.fetchProfile, required this.token});
 
   void _logout() async {
+    final NavigationController controller = Get.find<NavigationController>();
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.remove("token");
     Get.offAll(const AuthPage());
+    controller.selectedIndex.value = 0;
   }
 
   @override

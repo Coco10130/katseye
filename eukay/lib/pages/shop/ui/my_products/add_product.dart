@@ -45,8 +45,8 @@ class _AddProductBodyState extends State<AddProductBody> {
   List<String> sizes = [];
   List<String> categoryItems = [
     "Shirt",
-    "Pant",
-    "Shoe",
+    "Pants",
+    "Shoes",
     "Accessories",
     "Watch",
     "Men",
@@ -278,9 +278,9 @@ class _AddProductBodyState extends State<AddProductBody> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     // price
-                    _input("Price", _productPriceController),
+                    _input("Price", true, _productPriceController),
                     // stock
-                    _input("Stock", _productStockController),
+                    _input("Stock", false, _productStockController),
                   ],
                 ),
 
@@ -369,27 +369,30 @@ class _AddProductBodyState extends State<AddProductBody> {
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 18),
+        height: 35,
+        width: 35,
         decoration: BoxDecoration(
           color: selected
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.onPrimary,
           borderRadius: BorderRadius.circular(30),
         ),
-        child: Text(
-          size,
-          style: TextStyle(
-            fontFamily: "Poppins",
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onSecondary,
+        child: Center(
+          child: Text(
+            size,
+            style: TextStyle(
+              fontFamily: "Poppins",
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSecondary,
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _input(String label, TextEditingController controller) {
+  Widget _input(String label, bool decimal, TextEditingController controller) {
     return SizedBox(
       width: 120,
       child: TextField(
@@ -421,8 +424,12 @@ class _AddProductBodyState extends State<AddProductBody> {
             ),
           ),
         ),
-        keyboardType: TextInputType.number,
-        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        keyboardType: decimal
+            ? TextInputType.numberWithOptions(decimal: decimal)
+            : TextInputType.number,
+        inputFormatters: decimal
+            ? [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))]
+            : [FilteringTextInputFormatter.digitsOnly],
       ),
     );
   }

@@ -43,6 +43,17 @@ const ProductSchema = mongoose.Schema(
       default: "live",
     },
 
+    rating: {
+      type: Number,
+      required: false,
+      default: 0.0,
+    },
+
+    sellerName: {
+      type: String,
+      required: true,
+    },
+
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

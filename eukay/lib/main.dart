@@ -3,8 +3,12 @@ import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
 import 'package:eukay/pages/auth/repo/auth_repo.dart';
 import 'package:eukay/pages/cart/bloc/cart_bloc.dart';
 import 'package:eukay/pages/auth/ui/auth_page.dart';
+import 'package:eukay/pages/dashboard/bloc/dashboard_bloc.dart';
+import 'package:eukay/pages/dashboard/repo/dashboard_repo.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
 import 'package:eukay/pages/profile/repo/profile_repo.dart';
+import 'package:eukay/pages/search/bloc/search_bloc.dart';
+import 'package:eukay/pages/search/repo/search_repo.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
 import 'package:eukay/pages/shop/repo/shop_repo.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +44,12 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => ShopBloc(ShopRepo()),
+        ),
+        BlocProvider(
+          create: (context) => DashboardBloc(DashboardRepo()),
+        ),
+        BlocProvider(
+          create: (context) => SearchBloc(SearchRepo()),
         ),
       ],
       child: GetMaterialApp(

@@ -1,18 +1,22 @@
 import 'package:eukay/components/transitions/navigation_transition.dart';
+import 'package:eukay/pages/search/bloc/search_bloc.dart';
 import 'package:eukay/pages/search/ui/searched_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController _searchController = TextEditingController();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
         title: Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: TextField(
+            controller: _searchController,
             style: const TextStyle(
               fontFamily: "Poppins",
               fontSize: 15,
@@ -35,8 +39,14 @@ class SearchPage extends StatelessWidget {
             child: IconButton(
               padding: const EdgeInsets.all(5),
               onPressed: () {
-                navigateWithSlideTransition(
-                    context: context, page: const SearchedPage());
+                final prompt = _searchController.text;
+                if (prompt.isNotEmpty) {
+                  context.read<SearchBloc>().add(FetchSearchedProductEvent(
+                      searchPrompt: _searchController.text));
+                  navigateWithSlideTransition(
+                      context: context,
+                      page: SearchedPage(searchPrompt: _searchController.text));
+                }
               },
               icon: const Icon(
                 Icons.search_rounded,

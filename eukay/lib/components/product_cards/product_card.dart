@@ -30,7 +30,7 @@ class ProductCard extends StatelessWidget {
     final double parentWidth = MediaQuery.of(context).size.width;
     final formatCurrency = NumberFormat.currency(
       locale: "en_PH",
-      symbol: "₱",
+      symbol: "₱ ",
     );
 
     return GestureDetector(
@@ -64,7 +64,7 @@ class ProductCard extends StatelessWidget {
                   topRight: Radius.circular(borderRadius),
                 ),
                 image: DecorationImage(
-                  image: AssetImage(image),
+                  image: NetworkImage(image),
                   fit: BoxFit.fill,
                 ),
               ),
@@ -120,40 +120,41 @@ class ProductCard extends StatelessWidget {
                         ),
                       ),
                       Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Colors.white,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              // star icon
-                              const Icon(
-                                Icons.star,
-                                color: Colors.yellow,
-                                size: 13,
-                              ),
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.white,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            // star icon
+                            const Icon(
+                              Icons.star,
+                              color: Colors.yellow,
+                              size: 13,
+                            ),
 
-                              // spacing
-                              const SizedBox(
-                                width: 3,
-                              ),
+                            // spacing
+                            const SizedBox(
+                              width: 3,
+                            ),
 
-                              // rating
-                              Text(
-                                "$rating",
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                  fontFamily: "Poppins",
-                                  fontSize: 12,
-                                  letterSpacing: 0.2,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                            // rating
+                            Text(
+                              "$rating",
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontFamily: "Poppins",
+                                fontSize: 12,
+                                letterSpacing: 0.2,
+                                fontWeight: FontWeight.bold,
                               ),
-                            ],
-                          ))
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                   // Product price

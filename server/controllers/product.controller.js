@@ -39,6 +39,7 @@ const addProduct = async (req, res) => {
       productDescription,
       categories,
       sizes,
+      sellerName: seller.shopName,
       sellerId: seller.id,
     };
 
@@ -54,23 +55,79 @@ const addProduct = async (req, res) => {
 
 const searchProduct = async (req, res) => {
   try {
-    const authorizationHeader = req.headers.authorization;
-
-    if (!authorizationHeader) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
     const { searchedProduct } = req.params;
 
     const products = await Product.find({
       productName: { $regex: new RegExp(searchedProduct, "i") },
     });
 
-    if (!products) {
+    if (!products || products.length === 0) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    res.status(200).json({ success: true, data: products });
+    const productsWithImageUrl = products.map((product) => {
+      const imageUrls = product.productImage.map(
+        (image) =>
+          `${req.protocol}://${req.get("host")}/images/products/${image}`
+      );
+
+      return {
+        ...product.toObject(),
+        productImage: imageUrls,
+      };
+    });
+
+    res.status(200).json({ success: true, data: productsWithImageUrl });
+  } catch (error) {
+    res.status(500).json({ errorMessage: error.message });
+  }
+};
+
+const getAllProducts = async (req, res) => {
+  try {
+    const products = await Product.find({});
+
+    const productsWithImageUrl = products.map((product) => {
+      const imageUrls = product.productImage.map(
+        (image) =>
+          `${req.protocol}://${req.get("host")}/images/products/${image}`
+      );
+
+      return {
+        ...product.toObject(),
+        productImage: imageUrls,
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      data: productsWithImageUrl,
+    });
+  } catch (error) {
+    res.status(500).json({ errorMessage: error.message });
+  }
+};
+
+const getViewProduct = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const imageUrls = product.productImage.map(
+      (image) => `${req.protocol}://${req.get("host")}/images/products/${image}`
+    );
+
+    res.status(200).json({
+      success: true,
+      data: {
+        ...product.toObject(),
+        productImage: imageUrls,
+      },
+    });
   } catch (error) {
     res.status(500).json({ errorMessage: error.message });
   }
@@ -79,4 +136,6 @@ const searchProduct = async (req, res) => {
 module.exports = {
   addProduct,
   searchProduct,
+  getAllProducts,
+  getViewProduct,
 };
