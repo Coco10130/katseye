@@ -26,10 +26,7 @@ class _SellerPageState extends State<SellerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ShopBloc, ShopState>(
-      listener: (context, state) {
-        // TODO: implement listener
-      },
+    return BlocBuilder<ShopBloc, ShopState>(
       builder: (context, state) {
         if (state is FetchSellerSuccessState) {
           return Padding(
@@ -206,7 +203,6 @@ class _SellerPageState extends State<SellerPage> {
             ),
           );
         }
-
         return const Center(child: CircularProgressIndicator());
       },
     );

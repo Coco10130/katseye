@@ -1,4 +1,5 @@
 import 'package:eukay/components/my_searchbox.dart';
+import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/product_cards/product_card.dart';
 import 'package:eukay/pages/search/bloc/search_bloc.dart';
 import 'package:eukay/pages/search/ui/view_product.dart';
@@ -29,15 +30,25 @@ class SearchedPage extends StatelessWidget {
           ),
         ),
       ),
-      body: const SearchedBody(),
+      body: SearchedBody(prompt: searchPrompt),
     );
   }
 }
 
-class SearchedBody extends StatelessWidget {
-  const SearchedBody({
-    super.key,
-  });
+class SearchedBody extends StatefulWidget {
+  final String prompt;
+  const SearchedBody({super.key, required this.prompt});
+
+  @override
+  State<SearchedBody> createState() => _SearchedBodyState();
+}
+
+class _SearchedBodyState extends State<SearchedBody> {
+  void fetchSearchProducts() {
+    context
+        .read<SearchBloc>()
+        .add(FetchSearchedProductEvent(searchPrompt: widget.prompt));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +60,13 @@ class SearchedBody extends StatelessWidget {
 
     return BlocConsumer<SearchBloc, SearchState>(
       listener: (context, state) {
-        // TODO: implement listener
+        if (state is SearchProductFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
+            errorMessage: state.errorMessage,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            textColor: Theme.of(context).colorScheme.error,
+          ));
+        }
       },
       builder: (context, state) {
         if (state is SearchProductSuccessState) {
@@ -80,8 +97,13 @@ class SearchedBody extends StatelessWidget {
                     rating: product.rating,
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     textColor: Theme.of(context).colorScheme.onSecondary,
-                    onPressed: () {
-                      Get.to(ViewProduct(productId: product.id));
+                    onPressed: () async {
+                      final response =
+                          await Get.to(ViewProduct(productId: product.id));
+
+                      if (response == true) {
+                        fetchSearchProducts();
+                      }
                     },
                   );
                 },

@@ -1,7 +1,8 @@
-import 'package:eukay/pages/dashboard/mappers/product_model.dart';
+import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/pages/search/bloc/search_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 
@@ -14,6 +15,12 @@ class ViewProduct extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.onSurface,
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Get.back(result: true);
+          },
+        ),
         backgroundColor: Theme.of(context).colorScheme.secondary,
         actions: [
           // cart action button
@@ -62,7 +69,13 @@ class _BodyPageState extends State<BodyPage> {
 
     return BlocConsumer<SearchBloc, SearchState>(
       listener: (context, state) {
-        // TODO: implement listener
+        if (state is ViewProductFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
+            errorMessage: state.errorMessage,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            textColor: Theme.of(context).colorScheme.error,
+          ));
+        }
       },
       builder: (context, state) {
         if (state is ViewProductSuccessState) {
