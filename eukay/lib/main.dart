@@ -3,6 +3,7 @@ import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
 import 'package:eukay/pages/auth/repo/auth_repo.dart';
 import 'package:eukay/pages/cart/bloc/cart_bloc.dart';
 import 'package:eukay/pages/auth/ui/auth_page.dart';
+import 'package:eukay/pages/cart/repo/cart_repo.dart';
 import 'package:eukay/pages/dashboard/bloc/dashboard_bloc.dart';
 import 'package:eukay/pages/dashboard/repo/dashboard_repo.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
           create: (context) => AuthBloc(AuthRepo()),
         ),
         BlocProvider(
-          create: (context) => CartBloc(),
+          create: (context) => CartBloc(CartRepo()),
         ),
         BlocProvider(
           create: (context) => ProfileBloc(ProfileRepo()),

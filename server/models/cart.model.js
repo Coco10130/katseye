@@ -11,14 +11,22 @@ const CartSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+
     quantity: {
       type: Number,
       required: true,
     },
+
     price: {
       type: Number,
       required: true,
     },
+
+    subTotal: {
+      type: Number,
+      required: true,
+    },
+
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

@@ -95,7 +95,6 @@ class _SearchedBodyState extends State<SearchedBody> {
                     price: product.price,
                     shop: "Shop: ${product.sellerName}",
                     rating: product.rating,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
                     textColor: Theme.of(context).colorScheme.onSecondary,
                     onPressed: () async {
                       final response =

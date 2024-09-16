@@ -24,27 +24,40 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (response.isNotEmpty) {
         emit(AuthLoginSuccess(token: response));
       } else {
-        emit(AuthLoginFailure("Login failed. Please try again."));
+        emit(AuthLoginFailure(errorMessage: "Login failed. Please try again."));
       }
     } catch (e) {
-      emit(AuthLoginFailure(e.toString()));
+      emit(AuthLoginFailure(errorMessage: e.toString()));
     }
   }
 
   FutureOr<void> authRegisterRequest(
       AuthRegisterRequest event, Emitter<AuthState> emit) async {
-    emit(AuthLoading());
     try {
+      emit(AuthLoading());
+
+      if (event.email.isEmpty ||
+          event.userName.isEmpty ||
+          event.password.isEmpty ||
+          event.confirmPassword.isEmpty) {
+        return emit(
+            AuthRegisterFailure(errorMessage: "Please fill up all fields"));
+      } else if (event.password != event.confirmPassword) {
+        return emit(
+            AuthRegisterFailure(errorMessage: "Passwords do not match"));
+      }
+
       final response = await _authRepository.registerRequest(
           event.userName, event.email, event.password, event.confirmPassword);
 
       if (response.isNotEmpty) {
         emit(AuthRegisterSuccess(successMessage: response));
       } else {
-        emit(AuthRegisterFailure("Login failed. Please try again"));
+        emit(AuthRegisterFailure(
+            errorMessage: "Login failed. Please try again"));
       }
     } catch (e) {
-      emit(AuthRegisterFailure(e.toString()));
+      emit(AuthRegisterFailure(errorMessage: e.toString()));
     }
   }
 }

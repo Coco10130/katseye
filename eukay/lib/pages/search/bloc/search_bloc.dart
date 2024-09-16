@@ -12,6 +12,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc(this._searchRepository) : super(SearchInitial()) {
     on<FetchSearchedProductEvent>(fetchSearchedProductEvent);
     on<FetchViewProductEvent>(fetchViewProductEvent);
+    on<AddToCartEvent>(addToCartEvent);
   }
 
   FutureOr<void> fetchSearchedProductEvent(
@@ -37,6 +38,19 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       emit(ViewProductSuccessState(product: response));
     } catch (e) {
       emit(ViewProductFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> addToCartEvent(
+      AddToCartEvent event, Emitter<SearchState> emit) async {
+    emit(SearchLoadingState());
+    try {
+      await _searchRepository.addToCart(event.token, event.productId);
+
+      emit(
+          AddToCartSuccessState(successMessage: "Product Added Successfully!"));
+    } catch (e) {
+      emit(AddToCartFailedState(errorMessage: e.toString()));
     }
   }
 }

@@ -9,43 +9,66 @@ const addToCart = async (req, res) => {
   try {
     const authorizationHeader = req.headers.authorization;
 
-    if (!authorizationHeader) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    const { productId } = req.params.productId;
+    const token = authorizationHeader.split(" ")[1];
+    const { productId } = req.params;
     const { quantity } = req.body;
-    const decode = jwt.verify(authorizationHeader, secretKey);
+    const decode = jwt.verify(token, process.env.JWT_SECRET);
 
     const product = await Product.findById(productId);
-    const user = await User.findById(decode.id);
-    const existingProduct = await Cart.findOne({
+    const user = await User.findOne({ _id: decode.id });
+    const cart = await Cart.findOne({
       productId: productId,
-      userId: decode.id,
+      userId: user._id,
     });
 
-    if (!existingProduct) {
-      const totalPrice = product.price * quantity;
+    const existingCart = await Cart.findOne({ userId: user._id });
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const image = product.productImage[0];
+    const subTotal = 1 * parseInt(product.price);
+
+    if (cart) {
+      if (!existingCart) {
+        const data = {
+          productName: product.productName,
+          price: product.price,
+          quantity: 1,
+          productImage: image,
+          productId: productId,
+          userId: decode.id,
+          subTotal,
+        };
+        user.cartItems += 1;
+
+        await user.save();
+        await Cart.create(data);
+        res.status(201).json({ success: true });
+      }
+
+      cart.quantity += 1;
+      cart.subTotal = cart.quantity * product.price;
+
+      await cart.save();
+      res.status(201).json({ success: true });
+    } else {
+      console.log("test");
       const data = {
         productName: product.productName,
-        productImage: product.productImage[1],
-        quantity: quantity,
-        price: totalPrice,
-        productId: product.productId,
-        userId: user._id,
+        price: product.price,
+        quantity: 1,
+        productImage: image,
+        productId: productId,
+        userId: decode.id,
+        subTotal,
       };
-
       user.cartItems += 1;
+
       await user.save();
       await Cart.create(data);
-
-      return res.status(201).json({ message: "Product added successfully" });
-    } else {
-      existingProduct.quantity += quantity;
-      existingProduct.price = existingProduct.quantity * product.price;
-
-      await existingProduct.save();
-      return res.status(201).json({ message: "Product added successfully" });
+      res.status(201).json({ success: true });
     }
   } catch (error) {
     res.status(500).json({ errorMessage: error.message });
@@ -56,13 +79,25 @@ const showCart = async (req, res) => {
   try {
     const authorizationHeader = req.headers.authorization;
 
-    if (!authorizationHeader) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    const token = authorizationHeader.split(" ")[1];
+    const decode = jwt.verify(token, secretKey);
 
-    const cart = await Cart.find({ userId: jwt.decode.id });
+    const cart = await Cart.find({ userId: decode.id });
 
-    res.status(200).json({ success: true, data: cart });
+    const cartItems = cart.map((item) => {
+      const imageUrl = `${req.protocol}://${req.get("host")}/images/products/${
+        item.productImage
+      }`;
+      return {
+        ...item.toObject(),
+        productImage: imageUrl,
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      data: cartItems,
+    });
   } catch (error) {
     res.status(500).json({ errorMessage: error.message });
   }

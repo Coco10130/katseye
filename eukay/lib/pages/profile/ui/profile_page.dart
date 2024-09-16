@@ -35,7 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.secondary,
       body: ProfilePageBody(fetchProfile: fetchProfile, token: widget.token),
     );
   }
@@ -51,6 +51,7 @@ class ProfilePageBody extends StatelessWidget {
     final NavigationController controller = Get.find<NavigationController>();
     SharedPreferences pref = await SharedPreferences.getInstance();
     await pref.remove("token");
+    print(pref.getString("token"));
     Get.offAll(const AuthPage());
     controller.selectedIndex.value = 0;
   }

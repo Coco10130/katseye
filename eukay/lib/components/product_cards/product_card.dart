@@ -7,7 +7,6 @@ class ProductCard extends StatelessWidget {
   final String image;
   final String shop;
   final double rating;
-  final Color backgroundColor;
   final Color textColor;
   final VoidCallback onPressed;
 
@@ -19,7 +18,6 @@ class ProductCard extends StatelessWidget {
     required this.onPressed,
     required this.shop,
     required this.rating,
-    this.backgroundColor = Colors.white,
     this.textColor = Colors.black,
   });
 
@@ -41,7 +39,11 @@ class ProductCard extends StatelessWidget {
           maxWidth: parentWidth * 0.4,
         ),
         decoration: BoxDecoration(
-            color: backgroundColor,
+            color: Theme.of(context).colorScheme.onPrimary,
+            border: Border.all(
+              width: 1.5,
+              color: Theme.of(context).colorScheme.onSecondary,
+            ),
             borderRadius: BorderRadius.circular(borderRadius),
             boxShadow: [
               BoxShadow(

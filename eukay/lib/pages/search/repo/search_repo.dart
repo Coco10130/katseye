@@ -52,4 +52,28 @@ class SearchRepo extends SearchRepository {
       }
     }
   }
+
+  @override
+  Future<bool> addToCart(String token, String productId) async {
+    try {
+      final response = await _dio.post(
+        "${Server.serverUrl}/api/cart/addToCart/$productId",
+        options: Options(headers: {"Authorization": "Bearer $token"}),
+      );
+
+      if (response.statusCode == 201 && response.data["success"]) {
+        return true;
+      } else {
+        throw Exception("Something went wrong");
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["errorMessage"] ?? "Unknown error";
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
 }

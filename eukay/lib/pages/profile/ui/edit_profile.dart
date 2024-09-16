@@ -25,7 +25,7 @@ class EditProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.secondary,
       appBar: MyAppBar(
         label: "Edit Profile",
         onPressed: () {
@@ -153,6 +153,8 @@ class _EditProfileBodyState extends State<EditProfileBody> {
                       MyTextField(
                         label: "Name",
                         hint: "Enter Name",
+                        hintColor: Theme.of(context).colorScheme.onPrimary,
+                        textColor: Theme.of(context).colorScheme.onPrimary,
                         controller: _nameController,
                       ),
 
@@ -165,6 +167,8 @@ class _EditProfileBodyState extends State<EditProfileBody> {
                       MyTextField(
                         label: "Email",
                         hint: "Enter Email",
+                        hintColor: Theme.of(context).colorScheme.onPrimary,
+                        textColor: Theme.of(context).colorScheme.onPrimary,
                         controller: _emailController,
                         enabled: false,
                       ),
@@ -178,18 +182,21 @@ class _EditProfileBodyState extends State<EditProfileBody> {
                       MyTextField(
                         label: "Phone Number",
                         hint: "Enter Phone Number",
+                        hintColor: Theme.of(context).colorScheme.onPrimary,
+                        textColor: Theme.of(context).colorScheme.onPrimary,
                         controller: _phoneNumberController,
                       ),
 
                       // spacing
                       const SizedBox(
-                        height: spacing,
+                        height: spacing + 10,
                       ),
 
                       MyButton(
                           title: "Update",
+                          textColor: Theme.of(context).colorScheme.onSecondary,
                           backgroundColor:
-                              Theme.of(context).colorScheme.secondary,
+                              Theme.of(context).colorScheme.onPrimary,
                           onPressed: () {
                             context.read<ProfileBloc>().add(
                                   ProfileUpdateEvent(

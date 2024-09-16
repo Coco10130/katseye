@@ -90,7 +90,7 @@ class _RegisterPageState extends State<RegisterPage>
             textColor: Theme.of(context).colorScheme.onPrimary,
           ));
           _isVisible = false;
-          widget.onLoginTap();
+          _loginTransition();
         }
       },
       builder: (context, state) {
@@ -190,12 +190,15 @@ class _RegisterPageState extends State<RegisterPage>
                       backgroundColor: Theme.of(context).colorScheme.secondary,
                       textColor: Theme.of(context).colorScheme.onPrimary,
                       onPressed: () {
-                        context.read<AuthBloc>().add(AuthRegisterRequest(
-                              email: _emailController.text,
-                              password: _passwordController.text,
-                              confirmPassword: _confirmPasswordController.text,
-                              userName: _nameController.text,
-                            ));
+                        context.read<AuthBloc>().add(
+                              AuthRegisterRequest(
+                                email: _emailController.text,
+                                password: _passwordController.text,
+                                confirmPassword:
+                                    _confirmPasswordController.text,
+                                userName: _nameController.text,
+                              ),
+                            );
                       },
                     ),
 

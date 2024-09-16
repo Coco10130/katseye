@@ -5,8 +5,16 @@ sealed class CartState {}
 
 final class CartInitalState extends CartState {}
 
-final class CartUpdateState extends CartState {
-  final List<Map<String, dynamic>> cartItems;
+final class FetchCartSuccessState extends CartState {
+  final List<CartModel> cartItems;
 
-  CartUpdateState({required this.cartItems});
+  FetchCartSuccessState({required this.cartItems});
 }
+
+final class FetchCartFailedState extends CartState {
+  final String errorMessage;
+
+  FetchCartFailedState({required this.errorMessage});
+}
+
+final class CartLoadingState extends CartState {}

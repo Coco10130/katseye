@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class MySeach extends StatelessWidget {
   final String label;
   final double widthFactor;
-  final Color backgroundColor, hintColor, textColor;
+  final Color backgroundColor, hintColor;
   final VoidCallback onPressed;
   final double? height;
   final double padding;
@@ -13,7 +13,6 @@ class MySeach extends StatelessWidget {
     required this.onPressed,
     this.widthFactor = 0.9,
     this.backgroundColor = const Color(0xFF373737),
-    this.textColor = const Color(0xFFFFFFFF),
     this.hintColor = Colors.white54,
     this.height,
     this.padding = 12,
@@ -35,7 +34,8 @@ class MySeach extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             color: backgroundColor,
             border: Border.all(
-              color: Colors.grey,
+              color: Theme.of(context).colorScheme.onSecondary,
+              width: 1.5,
             ),
           ),
           child: Row(

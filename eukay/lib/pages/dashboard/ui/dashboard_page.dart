@@ -5,11 +5,14 @@ import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/cart/ui/cart_page.dart';
 import 'package:eukay/pages/dashboard/bloc/dashboard_bloc.dart';
 import 'package:eukay/pages/search/ui/search_page.dart';
+import 'package:eukay/pages/search/ui/view_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/get.dart';
 
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  final String token;
+  const DashboardPage({super.key, required this.token});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +46,9 @@ class DashboardPage extends StatelessWidget {
               onPressed: () {
                 navigateWithSlideTransition(
                   context: context,
-                  page: const CartPage(),
+                  page: CartPage(
+                    token: token,
+                  ),
                 );
               },
             ),
@@ -121,7 +126,8 @@ class _DashboardBodyState extends State<DashboardBody> {
                     // search box
                     MySeach(
                       label: "Search product",
-                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                      hintColor: Theme.of(context).colorScheme.onSecondary,
                       onPressed: () {
                         navigateWithSlideTransition(
                             context: context, page: const SearchPage());
@@ -240,10 +246,12 @@ class _DashboardBodyState extends State<DashboardBody> {
                           price: product.price,
                           shop: "Shop: ${product.sellerName}",
                           rating: product.rating,
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
                           textColor: Theme.of(context).colorScheme.onSecondary,
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.to(ViewProduct(
+                              productId: product.id,
+                            ));
+                          },
                         );
                       },
                     ),

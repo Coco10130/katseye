@@ -29,4 +29,16 @@ final class ViewProductSuccessState extends SearchState {
   ViewProductSuccessState({required this.product});
 }
 
+final class AddToCartSuccessState extends SearchState {
+  final String successMessage;
+
+  AddToCartSuccessState({required this.successMessage});
+}
+
+final class AddToCartFailedState extends SearchState {
+  final String errorMessage;
+
+  AddToCartFailedState({required this.errorMessage});
+}
+
 final class SearchLoadingState extends SearchState {}

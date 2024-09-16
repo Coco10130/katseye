@@ -20,7 +20,9 @@ class NavigationMenu extends StatelessWidget {
           data: NavigationBarThemeData(
             iconTheme: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {
-                return const IconThemeData(color: Colors.black54);
+                return IconThemeData(
+                  color: Theme.of(context).colorScheme.onSecondary,
+                );
               }
               return const IconThemeData(color: Colors.black);
             }),
@@ -32,10 +34,10 @@ class NavigationMenu extends StatelessWidget {
                 color: Colors.black,
               ),
             ),
-            indicatorColor: Colors.grey[300],
+            indicatorColor: Theme.of(context).colorScheme.onSurface,
           ),
           child: NavigationBar(
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.onPrimary,
             height: 75,
             elevation: 0,
             selectedIndex: controller.selectedIndex.value,
@@ -60,7 +62,9 @@ class NavigationController extends GetxController {
   NavigationController(this.token);
 
   List<Widget> get screens => [
-        const DashboardPage(),
+        DashboardPage(
+          token: token,
+        ),
         ShopPage(
           token: token,
         ),

@@ -7,86 +7,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 class CartPage extends StatefulWidget {
-  const CartPage({super.key});
+  final String token;
+  const CartPage({super.key, required this.token});
 
   @override
   State<CartPage> createState() => _CartPageState();
 }
 
 class _CartPageState extends State<CartPage> {
-  final List<Map<String, dynamic>> cartProducts = [
-    {
-      "title": "Stylish Shoe",
-      "price": 9999,
-      "image": "assets/images/shoe.jpg",
-      "quantity": 1,
-      "toCheckOut": false,
-    },
-    {
-      "title": "Stylish Shirt",
-      "price": 499,
-      "image": "assets/images/shirt.png",
-      "quantity": 1,
-      "toCheckOut": false,
-    },
-    {
-      "title": "Black shirt",
-      "price": 499,
-      "image": "assets/images/colet.jpeg",
-      "quantity": 1,
-      "toCheckOut": false,
-    },
-    {
-      "title": "Stylish Shoe",
-      "price": 9999,
-      "image": "assets/images/shoe.jpg",
-      "quantity": 1,
-      "toCheckOut": false,
-    },
-    {
-      "title": "Stylish Shirt",
-      "price": 499,
-      "image": "assets/images/shirt.png",
-      "quantity": 1,
-      "toCheckOut": false,
-    },
-    {
-      "title": "Black shirt",
-      "price": 499,
-      "image": "assets/images/colet.jpeg",
-      "quantity": 1,
-      "toCheckOut": false,
-    },
-    {
-      "title": "Stylish Shoe",
-      "price": 9999.90,
-      "image": "assets/images/shoe.jpg",
-      "quantity": 1,
-      "toCheckOut": false,
-    },
-    {
-      "title": "Stylish Shirt",
-      "price": 499,
-      "image": "assets/images/shirt.png",
-      "quantity": 1,
-      "toCheckOut": false,
-    },
-    {
-      "title": "Black shirt",
-      "price": 499,
-      "image": "assets/images/colet.jpeg",
-      "quantity": 1,
-      "toCheckOut": false,
-    },
-    {
-      "title": "Stylish Shoe",
-      "price": 9999,
-      "image": "assets/images/shoe.jpg",
-      "quantity": 1,
-      "toCheckOut": false,
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -99,16 +27,14 @@ class _CartPageState extends State<CartPage> {
         backgroundColor: Theme.of(context).colorScheme.secondary,
         textColor: Theme.of(context).colorScheme.onPrimary,
       ),
-      body: CartBody(
-        cartProducts: cartProducts,
-      ),
+      body: CartBody(token: widget.token),
     );
   }
 }
 
 class CartBody extends StatefulWidget {
-  final List<Map<String, dynamic>> cartProducts;
-  const CartBody({super.key, required this.cartProducts});
+  final String token;
+  const CartBody({super.key, required this.token});
 
   @override
   State<CartBody> createState() => _CartBodyState();
@@ -118,80 +44,76 @@ class _CartBodyState extends State<CartBody> {
   @override
   void initState() {
     super.initState();
-    context
-        .read<CartBloc>()
-        .add(InitializeCart(cartItems: widget.cartProducts));
+    fetchCart();
+  }
+
+  Future fetchCart() async {
+    context.read<CartBloc>().add(InitialCartFetchEvent(token: widget.token));
   }
 
   @override
   Widget build(BuildContext context) {
     final double parentWidth = MediaQuery.of(context).size.width;
 
-    return BlocBuilder<CartBloc, CartState>(
+    return BlocConsumer<CartBloc, CartState>(
+      listener: (context, state) {},
       builder: (context, state) {
-        if (state is CartUpdateState) {
-          return Stack(
-            children: <Widget>[
-              // cart products
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10,
-                  right: 10,
-                  top: 20,
-                  bottom: 130,
-                ),
-                child: BlocBuilder<CartBloc, CartState>(
-                  builder: (context, state) {
-                    return ListView.builder(
-                      itemCount: widget.cartProducts.length,
-                      itemBuilder: (context, index) {
-                        final product = widget.cartProducts[index];
-                        final int quantity = product["quantity"];
-                        final double price = product["price"].toDouble();
-                        final double totalPrice = price * quantity;
-
-                        return CartProduct(
-                          name: product["title"]!,
-                          price: totalPrice,
-                          image: product["image"]!,
-                          countity: "$quantity",
-                          marked: product["toCheckOut"],
-                          toCheckOut: () => context
-                              .read<CartBloc>()
-                              .add(CartToggleCheckOut(index: index)),
-                          addFunction: () => context
-                              .read<CartBloc>()
-                              .add(CartAddQuantity(index: index)),
-                          minusFunction: () => context
-                              .read<CartBloc>()
-                              .add(CartMinusQuantity(index: index)),
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-              // floating navigation bar
-              Align(
-                alignment: AlignmentDirectional.bottomCenter,
-                child: _navigationBar(parentWidth),
-              )
-            ],
+        if (state is FetchCartFailedState) {
+          return Text(
+            state.errorMessage,
+            style: const TextStyle(color: Colors.red, fontSize: 18),
           );
-        } else {
-          return const Center(child: CircularProgressIndicator());
         }
+        if (state is FetchCartSuccessState) {
+          final cartProducts = state.cartItems;
+          return RefreshIndicator(
+            onRefresh: fetchCart,
+            child: Stack(
+              children: <Widget>[
+                // cart products
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 10,
+                    right: 10,
+                    top: 20,
+                    bottom: 130,
+                  ),
+                  child: ListView.builder(
+                    itemCount: cartProducts.length,
+                    itemBuilder: (context, index) {
+                      final cart = cartProducts[index];
+
+                      return CartProduct(
+                        name: cart.productName,
+                        price: cart.subTotal,
+                        image: cart.productImage,
+                        quantity: cart.quantity,
+                        marked: false,
+                        toCheckOut: () => {},
+                        addFunction: () {},
+                        minusFunction: () {},
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        textColor: Theme.of(context).colorScheme.onSecondary,
+                      );
+                    },
+                  ),
+                ),
+                // floating navigation bar
+                Align(
+                  alignment: AlignmentDirectional.bottomCenter,
+                  child: _navigationBar(parentWidth),
+                )
+              ],
+            ),
+          );
+        }
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }
 
   Widget _navigationBar(double width) {
-    final double totalCheckedPrice = widget.cartProducts
-        .where((product) => product["toCheckOut"] == true)
-        .fold(0,
-            (sum, product) => sum + (product["price"] * product["quantity"]));
+    // for fomating price
     final formatCurrency = NumberFormat.currency(
       locale: "en_PH",
       symbol: "₱",
@@ -225,7 +147,7 @@ class _CartBodyState extends State<CartBody> {
           children: [
             // display total
             Text(
-              "Total: ${formatCurrency.format(totalCheckedPrice)}",
+              "Total: ₱0",
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontFamily: "Poppins",

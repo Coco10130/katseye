@@ -27,20 +27,22 @@ class ShopPage extends StatelessWidget {
               token: token,
             )
           : const NonSellerPage(),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).colorScheme.secondary,
-        onPressed: () {
-          navigateWithSlideTransition(
-            context: context,
-            page: const AddProduct(),
-          );
-        },
-        tooltip: "Add New Product",
-        child: const Icon(
-          Iconsax.add_circle,
-          size: 35,
-        ),
-      ),
+      floatingActionButton: role == "seller"
+          ? FloatingActionButton(
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              onPressed: () {
+                navigateWithSlideTransition(
+                  context: context,
+                  page: const AddProduct(),
+                );
+              },
+              tooltip: "Add New Product",
+              child: const Icon(
+                Iconsax.add_circle,
+                size: 35,
+              ),
+            )
+          : null,
     );
   }
 }

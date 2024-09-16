@@ -3,26 +3,8 @@ part of 'cart_bloc.dart';
 @immutable
 sealed class CartEvent {}
 
-final class InitializeCart extends CartEvent {
-  final List<Map<String, dynamic>> cartItems;
+final class InitialCartFetchEvent extends CartEvent {
+  final String token;
 
-  InitializeCart({required this.cartItems});
-}
-
-final class CartAddQuantity extends CartEvent {
-  final int index;
-
-  CartAddQuantity({required this.index});
-}
-
-final class CartMinusQuantity extends CartEvent {
-  final int index;
-
-  CartMinusQuantity({required this.index});
-}
-
-final class CartToggleCheckOut extends CartEvent {
-  final int index;
-
-  CartToggleCheckOut({required this.index});
+  InitialCartFetchEvent({required this.token});
 }

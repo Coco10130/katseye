@@ -1,3 +1,4 @@
+import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/pages/search/bloc/search_bloc.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ViewProduct extends StatelessWidget {
   final String productId;
@@ -50,10 +52,16 @@ class BodyPage extends StatefulWidget {
 }
 
 class _BodyPageState extends State<BodyPage> {
+  late SharedPreferences pref;
   @override
   void initState() {
     super.initState();
+    initPreference();
     fetchProduct();
+  }
+
+  Future<void> initPreference() async {
+    pref = await SharedPreferences.getInstance();
   }
 
   void fetchProduct() {
@@ -75,6 +83,15 @@ class _BodyPageState extends State<BodyPage> {
             backgroundColor: Theme.of(context).colorScheme.primary,
             textColor: Theme.of(context).colorScheme.error,
           ));
+        }
+
+        if (state is AddToCartSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
+            errorMessage: state.successMessage,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            textColor: Theme.of(context).colorScheme.onSecondary,
+          ));
+          fetchProduct();
         }
       },
       builder: (context, state) {
@@ -204,6 +221,82 @@ class _BodyPageState extends State<BodyPage> {
                     ),
                   ),
                 ),
+
+                // spacing
+                const SizedBox(
+                  height: spacing + 10,
+                ),
+
+                // seller details
+                const Padding(
+                  padding: EdgeInsets.only(left: 10, bottom: 10),
+                  child: Text(
+                    "Seller Detail",
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    "Sold by: ${product.sellerName}",
+                    style: TextStyle(
+                      fontFamily: "Poppins",
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+
+                // spacing
+                const SizedBox(
+                  height: spacing + 10,
+                ),
+
+                // buy and add to cart buttons
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: SizedBox(
+                    width: 270,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // buy now button
+                        MyButton(
+                          title: "Buy Now",
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          textColor: Theme.of(context).colorScheme.onPrimary,
+                          widthFactor: 0.30,
+                          fontSize: 11,
+                          onPressed: () {},
+                        ),
+
+                        // add to cart button
+                        MyButton(
+                          title: "Add to Cart",
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          textColor: Theme.of(context).colorScheme.onPrimary,
+                          widthFactor: 0.35,
+                          fontSize: 11,
+                          onPressed: () async {
+                            context.read<SearchBloc>().add(AddToCartEvent(
+                                productId: state.product.id,
+                                token: pref.getString("token")!));
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           );
@@ -212,30 +305,6 @@ class _BodyPageState extends State<BodyPage> {
           child: CircularProgressIndicator(),
         );
       },
-    );
-  }
-
-  Widget _size(String size) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          width: 1.5,
-          color: const Color(0xFF252525),
-        ),
-      ),
-      child: CircleAvatar(
-        backgroundColor: Colors.transparent,
-        radius: 20,
-        child: Text(
-          size,
-          style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              fontFamily: "Poppins"),
-        ),
-      ),
     );
   }
 }

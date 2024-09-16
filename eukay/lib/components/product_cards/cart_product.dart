@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 class CartProduct extends StatefulWidget {
   final String name;
   final double price;
-  final String countity;
+  final int quantity;
   final String image;
   final bool marked;
   final VoidCallback toCheckOut;
@@ -18,7 +18,7 @@ class CartProduct extends StatefulWidget {
     super.key,
     required this.name,
     required this.price,
-    required this.countity,
+    required this.quantity,
     required this.image,
     required this.addFunction,
     required this.minusFunction,
@@ -41,7 +41,7 @@ class _CartProductState extends State<CartProduct> {
     const double spacing = 10;
     final formatCurrency = NumberFormat.currency(
       locale: "en_PH",
-      symbol: "₱",
+      symbol: "₱ ",
     );
 
     return Padding(
@@ -53,7 +53,7 @@ class _CartProductState extends State<CartProduct> {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          padding: const EdgeInsets.all(10),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
@@ -64,13 +64,13 @@ class _CartProductState extends State<CartProduct> {
 
               // image
               Container(
-                width: 60,
-                height: 60,
+                width: 95,
+                height: 95,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
-                    image: AssetImage(widget.image),
-                    fit: BoxFit.cover,
+                    image: NetworkImage(widget.image),
+                    fit: BoxFit.fill,
                   ),
                 ),
               ),
@@ -90,7 +90,7 @@ class _CartProductState extends State<CartProduct> {
                       widget.name,
                       style: TextStyle(
                         color: widget.textColor,
-                        fontSize: 16,
+                        fontSize: 18,
                         fontFamily: "Poppins",
                         fontWeight: FontWeight.w700,
                       ),
@@ -105,7 +105,7 @@ class _CartProductState extends State<CartProduct> {
                       formatCurrency.format(widget.price),
                       style: TextStyle(
                         color: widget.textColor,
-                        fontSize: 15,
+                        fontSize: 14,
                         fontFamily: "Poppins",
                         fontWeight: FontWeight.w600,
                       ),
@@ -117,7 +117,7 @@ class _CartProductState extends State<CartProduct> {
 
                     //product quantity
                     QuantityLabel(
-                      quantity: widget.countity,
+                      quantity: "${widget.quantity}",
                       addFunction: widget.addFunction,
                       minusFunction: widget.minusFunction,
                     )

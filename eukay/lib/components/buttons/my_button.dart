@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 
 class MyButton extends StatelessWidget {
   final String title;
-  final Color backgroundColor;
-  final Color textColor;
+  final Color backgroundColor, textColor;
   final VoidCallback onPressed;
   final double widthFactor;
-  final double verticalPadding;
-  final double elevation;
+  final double verticalPadding, elevation, fontSize;
 
   const MyButton({
     super.key,
@@ -18,6 +16,7 @@ class MyButton extends StatelessWidget {
     this.widthFactor = 0.85,
     this.verticalPadding = 15,
     this.elevation = 0,
+    this.fontSize = 15,
   });
 
   @override
@@ -25,23 +24,25 @@ class MyButton extends StatelessWidget {
     final double parentWidth = MediaQuery.of(context).size.width;
     final double buttonWidth = parentWidth * widthFactor;
 
-    return SizedBox(
-      width: buttonWidth,
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          elevation: elevation,
-          backgroundColor: backgroundColor,
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: buttonWidth,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: verticalPadding),
-          child: Text(
-            title,
-            style: TextStyle(
-              fontFamily: "Poppins",
-              fontSize: 15,
-              color: textColor,
-              fontWeight: FontWeight.bold,
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: verticalPadding),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontFamily: "Poppins",
+                fontSize: fontSize,
+                color: textColor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ),
