@@ -32,11 +32,19 @@ class _ProfilePageState extends State<ProfilePage> {
         .add(ProfileInitialFetchEvent(token: widget.token));
   }
 
+  void onLogout() {
+    context.read<ProfileBloc>().add(ProfileLogoutEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.secondary,
-      body: ProfilePageBody(fetchProfile: fetchProfile, token: widget.token),
+      body: ProfilePageBody(
+        fetchProfile: fetchProfile,
+        token: widget.token,
+        onLogout: onLogout,
+      ),
     );
   }
 }
@@ -44,16 +52,20 @@ class _ProfilePageState extends State<ProfilePage> {
 class ProfilePageBody extends StatelessWidget {
   final VoidCallback fetchProfile;
   final String token;
+  final VoidCallback onLogout;
   const ProfilePageBody(
-      {super.key, required this.fetchProfile, required this.token});
+      {super.key,
+      required this.fetchProfile,
+      required this.token,
+      required this.onLogout});
 
   void _logout() async {
     final NavigationController controller = Get.find<NavigationController>();
     SharedPreferences pref = await SharedPreferences.getInstance();
-    await pref.remove("token");
-    print(pref.getString("token"));
-    Get.offAll(const AuthPage());
+    await pref.clear();
+    onLogout();
     controller.selectedIndex.value = 0;
+    Get.offAll(const AuthPage());
   }
 
   @override

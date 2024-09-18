@@ -87,7 +87,7 @@ class _RegisterPageState extends State<RegisterPage>
           ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
             errorMessage: state.successMessage,
             backgroundColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.onPrimary,
+            textColor: Theme.of(context).colorScheme.onSecondary,
           ));
           _isVisible = false;
           _loginTransition();

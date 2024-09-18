@@ -85,9 +85,7 @@ class _BodyPageState extends State<BodyPage> {
 
           await updateToken(state.token);
 
-          Get.offAll(NavigationMenu(
-            token: pref.getString("token")!,
-          ));
+          Get.offAll(NavigationMenu(token: pref.getString("token")!));
         }
       },
       builder: (context, state) {

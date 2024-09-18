@@ -14,6 +14,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileBloc(this._profileRepository) : super(ProfileInitial()) {
     on<ProfileInitialFetchEvent>(profileInitialFetchEvent);
     on<ProfileUpdateEvent>(profileUpdateEvent);
+    on<ProfileLogoutEvent>((event, emit) {
+      emit(ProfileInitial());
+    });
   }
 
   FutureOr<void> profileInitialFetchEvent(

@@ -22,3 +22,5 @@ final class ProfileUpdateEvent extends ProfileEvent {
     required this.token,
   });
 }
+
+final class ProfileLogoutEvent extends ProfileEvent {}
