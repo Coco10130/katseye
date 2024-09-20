@@ -1,7 +1,10 @@
 const User = require("../models/user.model.js");
 const Seller = require("../models/seller.model.js");
+const Product = require("../models/product.model.js");
 const jwt = require("jsonwebtoken");
 const { sendOTP, verifyOTP } = require("../helpers/otp.helper.js");
+const fs = require("fs");
+const path = require("path");
 
 const secretKey = process.env.JWT_SECRET;
 
@@ -58,6 +61,27 @@ const registerSeller = (req, res) => {
         return res.status(400).json({ message: "Invalid contact number" });
       }
 
+      let sellerImage = user.image;
+
+      if (sellerImage) {
+        const sourcePath = path.join(
+          __dirname,
+          "../images/profiles",
+          sellerImage
+        );
+        const destinationPath = path.join(
+          __dirname,
+          "../images/sellers",
+          sellerImage
+        );
+
+        fs.copyFile(sourcePath, destinationPath, (copyError) => {
+          if (copyError) {
+            return res.status(500).json({ message: "Failed to copy image" });
+          }
+        });
+      }
+
       const data = {
         shopName,
         shopContact: formattedContact,
@@ -87,7 +111,7 @@ const registerSeller = (req, res) => {
           role: user.role,
         },
         secretKey,
-        { expiresIn: "2h" }
+        { expiresIn: "30d" }
       );
 
       res.status(200).json({
@@ -112,6 +136,10 @@ const getSellerProfile = async (req, res) => {
     const token = authorizationHeader.split(" ")[1];
     const decode = jwt.verify(token, secretKey);
     const seller = await Seller.findOne({ userId: decode.id });
+    const products = await Product.find({
+      sellerId: seller.id,
+      status: "live",
+    });
 
     const imageUrl = seller.image
       ? `${req.protocol}://${req.get("host")}/images/sellers/${seller.image}`
@@ -123,11 +151,24 @@ const getSellerProfile = async (req, res) => {
       return res.status(404).json({ message: "Seller profile not found" });
     }
 
+    if (!products || products.length === 0) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    const updatedProducts = products.map((product) => {
+      const imageUrls = product.productImage.map(
+        (image) =>
+          `${req.protocol}://${req.get("host")}/images/products/${image}`
+      );
+      return { ...product.toObject(), productImage: imageUrls };
+    });
+
     res.status(200).json({
       success: true,
       data: {
         ...seller.toObject(),
         image: imageUrl,
+        products: updatedProducts,
       },
     });
   } catch (error) {

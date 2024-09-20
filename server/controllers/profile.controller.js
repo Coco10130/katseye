@@ -8,11 +8,6 @@ const secretKey = process.env.JWT_SECRET;
 const getProfile = async (req, res) => {
   try {
     const authorizationHeader = req.headers.authorization;
-
-    if (!authorizationHeader) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
     const token = authorizationHeader.split(" ")[1];
     const user = jwt.verify(token, secretKey);
 
@@ -47,38 +42,9 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const authorizationHeader = req.headers.authorization;
-
-    if (!authorizationHeader) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    const { userName, phoneNumber, email, birthdate } = req.body;
+    const { userName, phoneNumber, email } = req.body;
     const image = req.file ? req.file.filename : null;
     const { id } = req.params;
-    let formattedBirthdate;
-
-    if (birthdate) {
-      const dateObject = new Date(birthdate);
-      const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
-
-      formattedBirthdate = `${
-        monthNames[dateObject.getMonth()]
-      } ${dateObject.getDate()}, ${dateObject.getFullYear()}`;
-    }
 
     let formattedContact = phoneNumber;
 

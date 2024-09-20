@@ -19,7 +19,10 @@ final class RegisterShopEvent extends ShopEvent {
 final class SendOTPRegistrationEvent extends ShopEvent {
   final String email, token;
 
-  SendOTPRegistrationEvent({required this.email, required this.token});
+  SendOTPRegistrationEvent({
+    required this.email,
+    required this.token,
+  });
 }
 
 final class FetchSellerProfileEvent extends ShopEvent {
@@ -42,4 +45,10 @@ final class AddProductEvent extends ShopEvent {
       required this.quantity,
       required this.productName,
       required this.description});
+}
+
+final class FetchLiveProductEvent extends ShopEvent {
+  final String token, sellerId;
+
+  FetchLiveProductEvent({required this.token, required this.sellerId});
 }

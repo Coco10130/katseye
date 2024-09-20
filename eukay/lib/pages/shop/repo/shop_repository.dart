@@ -1,3 +1,4 @@
+import 'package:eukay/pages/dashboard/mappers/product_model.dart';
 import 'package:eukay/pages/shop/mappers/seller_model.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -15,4 +16,5 @@ abstract class ShopRepository {
       List<String> categories,
       List<String> sizes,
       List<XFile> images);
+  Future<List<ProductModel>> fetchLiveProducts(String sellerId, String token);
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:eukay/pages/dashboard/mappers/product_model.dart';
 import 'package:eukay/pages/shop/mappers/seller_model.dart';
 import 'package:eukay/pages/shop/repo/shop_repository.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
     on<SendOTPRegistrationEvent>(sendOTPRegistrationEvent);
     on<FetchSellerProfileEvent>(fetchSellerProfileEvent);
     on<AddProductEvent>(addProductEvent);
+    on<FetchLiveProductEvent>(fetchLiveProductEvent);
   }
 
   FutureOr<void> registerShopEvent(
@@ -107,6 +109,19 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
       }
     } catch (e) {
       emit(AddProductFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> fetchLiveProductEvent(
+      FetchLiveProductEvent event, Emitter<ShopState> emit) async {
+    emit(ShopLoadingState());
+    try {
+      final response =
+          await _shopRepository.fetchLiveProducts(event.sellerId, event.token);
+
+      emit(FetchLiveProductsSuccessState(products: response));
+    } catch (e) {
+      emit(FetchLiveProductsFailedState(errorMessage: e.toString()));
     }
   }
 }

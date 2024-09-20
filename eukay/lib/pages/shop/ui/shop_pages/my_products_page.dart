@@ -1,11 +1,12 @@
 import 'package:eukay/components/appbar/my_tab_bar.dart';
 import 'package:eukay/pages/shop/ui/my_products/delisted_page.dart';
-import 'package:eukay/pages/shop/ui/my_products/reviews_page.dart';
+import 'package:eukay/pages/shop/ui/my_products/live_products.dart';
 import 'package:eukay/pages/shop/ui/my_products/sold_out_products.dart';
 import 'package:flutter/material.dart';
 
 class MyProducts extends StatelessWidget {
-  const MyProducts({super.key});
+  final String sellerId, token;
+  const MyProducts({super.key, required this.sellerId, required this.token});
 
   @override
   Widget build(BuildContext context) {
@@ -33,12 +34,21 @@ class MyProducts extends StatelessWidget {
             ],
             height: 70,
           ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context, true);
+            },
+          ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            SoldOutProducts(),
-            ReviewsPage(),
-            DelistedPage(),
+            LivePage(
+              sellerId: sellerId,
+              token: token,
+            ),
+            const SoldOutProducts(),
+            const DelistedPage(),
           ],
         ),
       ),

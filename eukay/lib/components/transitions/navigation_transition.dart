@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 void navigateWithSlideTransition({
   required BuildContext context,
@@ -29,7 +28,7 @@ void navigateWithSlideTransition({
     ),
   );
 
-  if (result == true) {
+  if (result != null && result == true) {
     onFetch?.call();
   }
 }

@@ -17,11 +17,6 @@ const UserSchema = mongoose.Schema(
       required: true,
     },
 
-    birthdate: {
-      type: Date,
-      required: false,
-    },
-
     role: {
       type: String,
       required: false,

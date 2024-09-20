@@ -79,13 +79,25 @@ class _BodyPageState extends State<BodyPage> {
             mySnackBar(
               errorMessage: state.successMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
-              textColor: Theme.of(context).colorScheme.error,
+              textColor: Theme.of(context).colorScheme.onSecondary,
             ),
           );
 
           await updateToken(state.token);
 
           Get.offAll(NavigationMenu(token: pref.getString("token")!));
+        }
+
+        if (state is RegisterShopFailedState) {
+          if (!context.mounted) return;
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              errorMessage: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
         }
       },
       builder: (context, state) {

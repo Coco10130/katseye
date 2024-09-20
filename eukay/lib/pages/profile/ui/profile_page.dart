@@ -53,11 +53,12 @@ class ProfilePageBody extends StatelessWidget {
   final VoidCallback fetchProfile;
   final String token;
   final VoidCallback onLogout;
-  const ProfilePageBody(
-      {super.key,
-      required this.fetchProfile,
-      required this.token,
-      required this.onLogout});
+  const ProfilePageBody({
+    super.key,
+    required this.fetchProfile,
+    required this.token,
+    required this.onLogout,
+  });
 
   void _logout() async {
     final NavigationController controller = Get.find<NavigationController>();

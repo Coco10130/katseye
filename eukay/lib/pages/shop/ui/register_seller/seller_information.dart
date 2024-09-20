@@ -67,7 +67,7 @@ class _BodyPageState extends State<BodyPage> {
             mySnackBar(
               errorMessage: state.successMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
-              textColor: Theme.of(context).colorScheme.error,
+              textColor: Theme.of(context).colorScheme.onSecondary,
             ),
           );
           navigateWithSlideTransition(

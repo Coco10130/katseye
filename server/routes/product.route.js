@@ -7,6 +7,7 @@ const {
   searchProduct,
   getAllProducts,
   getViewProduct,
+  getLiveProducts,
 } = require("../controllers/product.controller.js");
 
 router.post(
@@ -21,5 +22,7 @@ router.get("/search/:searchedProduct", searchProduct);
 router.get("/get", getAllProducts);
 
 router.get("/get/:productId", getViewProduct);
+
+router.get("/get/live/:sellerId", authMiddleware, getLiveProducts);
 
 module.exports = router;

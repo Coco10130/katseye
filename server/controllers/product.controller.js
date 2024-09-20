@@ -8,10 +8,6 @@ const addProduct = async (req, res) => {
   try {
     const authorizationHeader = req.headers.authorization;
 
-    if (!authorizationHeader) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
     const token = authorizationHeader.split(" ")[1];
     const decode = jwt.verify(token, secretKey);
 
@@ -44,6 +40,8 @@ const addProduct = async (req, res) => {
     };
 
     await Product.create(data);
+    seller.products += 1;
+    await seller.save();
 
     res
       .status(201)
@@ -85,7 +83,7 @@ const searchProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find({});
+    const products = await Product.find({ status: "live" });
 
     const productsWithImageUrl = products.map((product) => {
       const imageUrls = product.productImage.map(
@@ -133,9 +131,36 @@ const getViewProduct = async (req, res) => {
   }
 };
 
+const getLiveProducts = async (req, res) => {
+  try {
+    const { sellerId } = req.params;
+
+    const products = await Product.find({
+      sellerId: sellerId,
+      status: "live",
+    });
+
+    const updatedProducts = products.map((product) => {
+      const imageUrls = product.productImage.map(
+        (image) =>
+          `${req.protocol}://${req.get("host")}/images/products/${image}`
+      );
+      return { ...product.toObject(), productImage: imageUrls };
+    });
+
+    res.status(200).json({
+      success: true,
+      data: updatedProducts,
+    });
+  } catch (error) {
+    res.status(500).json({ errorMessage: error.message });
+  }
+};
+
 module.exports = {
   addProduct,
   searchProduct,
   getAllProducts,
   getViewProduct,
+  getLiveProducts,
 };
