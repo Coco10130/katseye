@@ -1,7 +1,8 @@
 class CartModel {
-  final String id, productImage, productName, productId;
+  final String id, productImage, productName, productId, size;
   final double price, subTotal;
   final int quantity;
+  final bool toCheckOut;
 
   CartModel({
     required this.id,
@@ -11,6 +12,8 @@ class CartModel {
     required this.price,
     required this.quantity,
     required this.subTotal,
+    required this.toCheckOut,
+    required this.size,
   });
 
   factory CartModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +29,8 @@ class CartModel {
           ? (json["subTotal"] as int).toDouble()
           : json["price"].toDouble(),
       quantity: json['quantity'],
+      toCheckOut: json['toCheckOut'],
+      size: json['size'],
     );
   }
 }

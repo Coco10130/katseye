@@ -1,4 +1,5 @@
 import 'package:eukay/components/buttons/my_icon_button.dart';
+import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_searchbox.dart';
 import 'package:eukay/components/product_cards/product_card.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
@@ -9,13 +10,47 @@ import 'package:eukay/pages/search/ui/view_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class DashboardPage extends StatelessWidget {
-  final String token;
-  const DashboardPage({super.key, required this.token});
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key});
+
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  late SharedPreferences pref;
+  late String cartCount;
+  bool initializedToken = false;
+
+  Future<void> initPref() async {
+    pref = await SharedPreferences.getInstance();
+    setState(() {
+      initializedToken = true;
+    });
+  }
+
+  void initCartCount() {
+    final Map<String, dynamic> jwtDecocded =
+        JwtDecoder.decode(pref.getString("token")!);
+    cartCount = jwtDecocded["cartItems"].toString();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initPref().then((_) {
+      initCartCount();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (!initializedToken) {
+      return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
+    }
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.onSurface,
       appBar: AppBar(
@@ -35,23 +70,38 @@ class DashboardPage extends StatelessWidget {
         ),
         actions: [
           // cart action button
-          Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: IconButton(
-              icon: const ImageIcon(
-                AssetImage("assets/icons/shopping-cart.png"),
-                size: 24,
-                color: Color(0xFFFFFFFF),
-              ),
-              onPressed: () {
-                navigateWithSlideTransition(
-                  context: context,
-                  page: CartPage(
-                    token: token,
+          Stack(
+            children: [
+              Positioned(
+                right: 15,
+                child: Text(
+                  cartCount,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontFamily: "Poppins",
+                    color: Colors.white,
                   ),
-                );
-              },
-            ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: IconButton(
+                  icon: const ImageIcon(
+                    AssetImage("assets/icons/shopping-cart.png"),
+                    size: 24,
+                    color: Color(0xFFFFFFFF),
+                  ),
+                  onPressed: () {
+                    navigateWithSlideTransition(
+                      context: context,
+                      page: CartPage(
+                        token: pref.getString("token")!,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -261,9 +311,7 @@ class _DashboardBodyState extends State<DashboardBody> {
             ),
           );
         }
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
       },
     );
   }

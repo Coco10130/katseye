@@ -1,4 +1,5 @@
 import 'package:eukay/components/buttons/my_button.dart';
+import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/pages/search/bloc/search_bloc.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,8 @@ class BodyPage extends StatefulWidget {
 
 class _BodyPageState extends State<BodyPage> {
   late SharedPreferences pref;
+  String selectedSize = "";
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +65,11 @@ class _BodyPageState extends State<BodyPage> {
 
   Future<void> initPreference() async {
     pref = await SharedPreferences.getInstance();
+  }
+
+  Future<void> updateToken(String newToken) async {
+    await pref.remove("token");
+    await pref.setString("token", newToken);
   }
 
   void fetchProduct() {
@@ -85,18 +93,28 @@ class _BodyPageState extends State<BodyPage> {
           ));
         }
 
+        if (state is AddToCartFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
+            errorMessage: state.errorMessage,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            textColor: Theme.of(context).colorScheme.error,
+          ));
+        }
+
         if (state is AddToCartSuccessState) {
           ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
             errorMessage: state.successMessage,
             backgroundColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.onSecondary,
+            textColor: Theme.of(context).colorScheme.onPrimary,
           ));
+          updateToken(state.token);
           fetchProduct();
         }
       },
       builder: (context, state) {
         if (state is ViewProductSuccessState) {
           final product = state.product;
+          final List<String> sizes = product.sizes;
           final formatCurrency = NumberFormat.currency(
             locale: "en_PH",
             symbol: "₱ ",
@@ -259,6 +277,20 @@ class _BodyPageState extends State<BodyPage> {
                   height: spacing + 10,
                 ),
 
+                // display sizes
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    for (var size in sizes) _size(size),
+                  ],
+                ),
+
+                // spacing
+                const SizedBox(
+                  height: spacing + 10,
+                ),
+
                 // buy and add to cart buttons
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -272,7 +304,7 @@ class _BodyPageState extends State<BodyPage> {
                         MyButton(
                           title: "Buy Now",
                           backgroundColor:
-                              Theme.of(context).colorScheme.primary,
+                              Theme.of(context).colorScheme.secondary,
                           textColor: Theme.of(context).colorScheme.onPrimary,
                           widthFactor: 0.30,
                           fontSize: 11,
@@ -283,14 +315,28 @@ class _BodyPageState extends State<BodyPage> {
                         MyButton(
                           title: "Add to Cart",
                           backgroundColor:
-                              Theme.of(context).colorScheme.primary,
+                              Theme.of(context).colorScheme.secondary,
                           textColor: Theme.of(context).colorScheme.onPrimary,
                           widthFactor: 0.35,
                           fontSize: 11,
                           onPressed: () async {
-                            context.read<SearchBloc>().add(AddToCartEvent(
-                                productId: state.product.id,
-                                token: pref.getString("token")!));
+                            if (selectedSize.isNotEmpty) {
+                              context.read<SearchBloc>().add(
+                                    AddToCartEvent(
+                                      productId: state.product.id,
+                                      size: selectedSize,
+                                      token: pref.getString("token")!,
+                                    ),
+                                  );
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(mySnackBar(
+                                errorMessage: "Select size",
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                textColor: Theme.of(context).colorScheme.error,
+                              ));
+                            }
                           },
                         ),
                       ],
@@ -301,10 +347,45 @@ class _BodyPageState extends State<BodyPage> {
             ),
           );
         }
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
       },
+    );
+  }
+
+  Widget _size(String size) {
+    bool selected = size == selectedSize;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            selectedSize = selected ? "" : size;
+          });
+        },
+        child: Container(
+          height: 35,
+          width: 35,
+          decoration: BoxDecoration(
+            color: selected
+                ? Theme.of(context).colorScheme.secondary
+                : Theme.of(context).colorScheme.onPrimary,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Center(
+            child: Text(
+              size,
+              style: TextStyle(
+                fontFamily: "Poppins",
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: selected
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onSecondary,
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

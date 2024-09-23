@@ -22,6 +22,11 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       final response =
           await _searchRepository.fetchSearchedProduct(event.searchPrompt);
 
+      if (response.isEmpty) {
+        return emit(
+            SearchProductSuccessEmptyState(message: "No product found"));
+      }
+
       emit(SearchProductSuccessState(products: response));
     } catch (e) {
       emit(SearchProductFailedState(errorMessage: e.toString()));
@@ -45,10 +50,15 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       AddToCartEvent event, Emitter<SearchState> emit) async {
     emit(SearchLoadingState());
     try {
-      await _searchRepository.addToCart(event.token, event.productId);
+      final response = await _searchRepository.addToCart(
+          event.token, event.productId, event.size);
 
-      emit(
-          AddToCartSuccessState(successMessage: "Product Added Successfully!"));
+      if (response.isNotEmpty) {
+        emit(AddToCartSuccessState(
+            successMessage: "Product Added Successfully!", token: response));
+      } else {
+        emit(AddToCartFailedState(errorMessage: "Something went wrong"));
+      }
     } catch (e) {
       emit(AddToCartFailedState(errorMessage: e.toString()));
     }

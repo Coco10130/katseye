@@ -1,3 +1,4 @@
+import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
 import 'package:eukay/components/buttons/my_text_button.dart';
 import 'package:eukay/components/my_snackbar.dart';
@@ -95,7 +96,8 @@ class _RegisterPageState extends State<RegisterPage>
       },
       builder: (context, state) {
         if (state is AuthLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return LoadingScreen(
+              color: Theme.of(context).colorScheme.onSecondary);
         }
 
         return Center(

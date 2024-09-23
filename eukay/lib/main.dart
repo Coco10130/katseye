@@ -12,6 +12,8 @@ import 'package:eukay/pages/search/bloc/search_bloc.dart';
 import 'package:eukay/pages/search/repo/search_repo.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
 import 'package:eukay/pages/shop/repo/shop_repo.dart';
+import 'package:eukay/pages/to-check-out/bloc/to_check_out_bloc.dart';
+import 'package:eukay/pages/to-check-out/repo/to_cehck_out_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
@@ -52,6 +54,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => SearchBloc(SearchRepo()),
         ),
+        BlocProvider(
+          create: (context) => ToCheckOutBloc(ToCehckOutRepo()),
+        ),
       ],
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,
@@ -60,7 +65,7 @@ class MyApp extends StatelessWidget {
           colorScheme: const ColorScheme(
             primary: Color(0xFFADB4BF),
             secondary: Color(0xFF164BA1),
-            surface: Color(0xFFFFFEFF),
+            surface: Color.fromARGB(255, 69, 62, 69),
             onSurface: Color(0xFFF0F4FA),
             onPrimary: Color(0xFFF8F8FF),
             onSecondary: Color(0xFF252525),
@@ -71,7 +76,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         home: (token != null && JwtDecoder.isExpired(token!) == false)
-            ? NavigationMenu(token: token!)
+            ? const NavigationMenu()
             : const AuthPage(),
       ),
     );

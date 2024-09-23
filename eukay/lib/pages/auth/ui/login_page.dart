@@ -1,3 +1,4 @@
+import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/navigation_menu.dart';
 import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
 import 'package:eukay/components/buttons/my_button.dart';
@@ -94,15 +95,13 @@ class _LoginPageState extends State<LoginPage>
           final myToken = state.token.toString();
           prefs.setString("token", myToken);
           Get.to(
-            () => NavigationMenu(
-              token: myToken,
-            ),
+            () => const NavigationMenu(),
           );
         }
       },
       builder: (context, state) {
         if (state is AuthLoading) {
-          return const Center(child: CircularProgressIndicator());
+          return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
         }
 
         return Center(

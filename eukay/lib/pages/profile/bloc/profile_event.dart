@@ -23,4 +23,35 @@ final class ProfileUpdateEvent extends ProfileEvent {
   });
 }
 
+final class FetchMunicipalitiesSuccessState extends ProfileState {
+  final List<MunicipalityModel> municipalities;
+
+  FetchMunicipalitiesSuccessState({required this.municipalities});
+}
+
+final class FetchBarangaysSccessState extends ProfileState {
+  final List<BarangayModel> barangays;
+
+  FetchBarangaysSccessState({required this.barangays});
+}
+
+final class AddUserAddressEvent extends ProfileEvent {
+  final String fullName, contact, municipality, barangay, street, token;
+
+  AddUserAddressEvent({
+    required this.fullName,
+    required this.contact,
+    required this.municipality,
+    required this.barangay,
+    required this.street,
+    required this.token,
+  });
+}
+
+final class FetchUserAddressEvent extends ProfileEvent {
+  final String token, userId;
+
+  FetchUserAddressEvent({required this.token, required this.userId});
+}
+
 final class ProfileLogoutEvent extends ProfileEvent {}

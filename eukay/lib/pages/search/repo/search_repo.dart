@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:eukay/pages/dashboard/mappers/product_model.dart';
 import 'package:eukay/pages/search/repo/search_repository.dart';
@@ -54,15 +56,20 @@ class SearchRepo extends SearchRepository {
   }
 
   @override
-  Future<bool> addToCart(String token, String productId) async {
+  Future<String> addToCart(String token, String productId, String size) async {
     try {
+      final payload = {"size": size};
+
       final response = await _dio.post(
         "${Server.serverUrl}/api/cart/addToCart/$productId",
-        options: Options(headers: {"Authorization": "Bearer $token"}),
+        options: Options(
+          headers: {"Authorization": "Bearer $token"},
+        ),
+        data: jsonEncode(payload),
       );
 
       if (response.statusCode == 201 && response.data["success"]) {
-        return true;
+        return response.data["token"];
       } else {
         throw Exception("Something went wrong");
       }

@@ -1,3 +1,4 @@
+import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_searchbox.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/product_cards/product_card.dart';
@@ -69,6 +70,19 @@ class _SearchedBodyState extends State<SearchedBody> {
         }
       },
       builder: (context, state) {
+        if (state is SearchProductSuccessEmptyState) {
+          return Center(
+            child: Text(
+              state.message,
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSecondary,
+              ),
+            ),
+          );
+        }
         if (state is SearchProductSuccessState) {
           final products = state.products;
           return SingleChildScrollView(
@@ -110,7 +124,7 @@ class _SearchedBodyState extends State<SearchedBody> {
             ),
           );
         }
-        return const Center(child: CircularProgressIndicator());
+        return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
       },
     );
   }

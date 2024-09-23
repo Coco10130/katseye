@@ -1,8 +1,8 @@
 import 'dart:io';
-
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/appbar/my_app_bar.dart';
 import 'package:eukay/components/inputs/my_input.dart';
+import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
 import 'package:eukay/uitls/curved_edges.dart';
@@ -218,7 +218,7 @@ class _EditProfileBodyState extends State<EditProfileBody> {
           );
         }
 
-        return const Center(child: CircularProgressIndicator());
+        return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
       },
     );
   }

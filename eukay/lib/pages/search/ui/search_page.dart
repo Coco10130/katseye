@@ -9,14 +9,15 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _searchController = TextEditingController();
+    final TextEditingController searchController = TextEditingController();
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.onSurface,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.secondary,
         title: Padding(
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: TextField(
-            controller: _searchController,
+            controller: searchController,
             style: const TextStyle(
               fontFamily: "Poppins",
               fontSize: 15,
@@ -39,13 +40,13 @@ class SearchPage extends StatelessWidget {
             child: IconButton(
               padding: const EdgeInsets.all(5),
               onPressed: () {
-                final prompt = _searchController.text;
+                final prompt = searchController.text;
                 if (prompt.isNotEmpty) {
                   context.read<SearchBloc>().add(FetchSearchedProductEvent(
-                      searchPrompt: _searchController.text));
+                      searchPrompt: searchController.text));
                   navigateWithSlideTransition(
                       context: context,
-                      page: SearchedPage(searchPrompt: _searchController.text));
+                      page: SearchedPage(searchPrompt: searchController.text));
                 }
               },
               icon: const Icon(

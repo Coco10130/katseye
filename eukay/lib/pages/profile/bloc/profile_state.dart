@@ -29,4 +29,42 @@ final class ProfileUpdateFailedState extends ProfileState {
   ProfileUpdateFailedState({required this.errorMessage});
 }
 
+final class FetchMunicipalitiesEvent extends ProfileEvent {}
+
+final class FetchBarangaysEvent extends ProfileEvent {
+  final String municipalityCode;
+
+  FetchBarangaysEvent({required this.municipalityCode});
+}
+
+final class FetchingFailedState extends ProfileState {
+  final String errorMessage;
+
+  FetchingFailedState({required this.errorMessage});
+}
+
+final class AddUserAddressSuccessState extends ProfileState {
+  final String successMessage;
+
+  AddUserAddressSuccessState({required this.successMessage});
+}
+
+final class AddUserAddressFailedState extends ProfileState {
+  final String errorMessage;
+
+  AddUserAddressFailedState({required this.errorMessage});
+}
+
+final class FetchUserAddressSuccessState extends ProfileState {
+  final List<AddressModel> addresses;
+
+  FetchUserAddressSuccessState({required this.addresses});
+}
+
+final class FetchUserAddressFailedState extends ProfileState {
+  final String errorMessage;
+
+  FetchUserAddressFailedState({required this.errorMessage});
+}
+
 final class ProfileLoadingState extends ProfileState {}

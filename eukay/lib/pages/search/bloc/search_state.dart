@@ -11,6 +11,12 @@ final class SearchProductSuccessState extends SearchState {
   SearchProductSuccessState({required this.products});
 }
 
+final class SearchProductSuccessEmptyState extends SearchState {
+  final String message;
+
+  SearchProductSuccessEmptyState({required this.message});
+}
+
 final class SearchProductFailedState extends SearchState {
   final String errorMessage;
 
@@ -30,9 +36,9 @@ final class ViewProductSuccessState extends SearchState {
 }
 
 final class AddToCartSuccessState extends SearchState {
-  final String successMessage;
+  final String successMessage, token;
 
-  AddToCartSuccessState({required this.successMessage});
+  AddToCartSuccessState({required this.successMessage, required this.token});
 }
 
 final class AddToCartFailedState extends SearchState {

@@ -13,6 +13,7 @@ class CartProduct extends StatefulWidget {
   final Color backgroundColor;
   final Color textColor;
   final double widthFactor;
+  final String size;
 
   const CartProduct({
     super.key,
@@ -24,6 +25,7 @@ class CartProduct extends StatefulWidget {
     required this.minusFunction,
     required this.toCheckOut,
     required this.marked,
+    required this.size,
     this.backgroundColor = const Color(0xFF373737),
     this.textColor = const Color(0xFFFFFFFF),
     this.widthFactor = 0.9,
@@ -34,6 +36,23 @@ class CartProduct extends StatefulWidget {
 }
 
 class _CartProductState extends State<CartProduct> {
+  String getSizeLabel(String size) {
+    switch (size) {
+      case "S":
+        return "Small";
+      case "M":
+        return "Medium";
+      case "L":
+        return "Large";
+      case "XL":
+        return "Extra Large";
+      case "XXL":
+        return "Double Extra Large";
+      default:
+        return "Unknown Size";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final double parentWidth = MediaQuery.of(context).size.width;
@@ -115,9 +134,24 @@ class _CartProductState extends State<CartProduct> {
                       height: spacing - 5,
                     ),
 
+                    // display size
+                    Text(
+                      getSizeLabel(widget.size),
+                      style: TextStyle(
+                        color: widget.textColor,
+                        fontSize: 13,
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+
+                    const SizedBox(
+                      height: 1,
+                    ),
+
                     //product quantity
                     QuantityLabel(
-                      quantity: "${widget.quantity}",
+                      quantity: widget.quantity,
                       addFunction: widget.addFunction,
                       minusFunction: widget.minusFunction,
                     )
@@ -127,6 +161,7 @@ class _CartProductState extends State<CartProduct> {
 
               // checkbox
               Checkbox(
+                checkColor: Theme.of(context).colorScheme.onPrimary,
                 value: widget.marked,
                 onChanged: (bool? value) {
                   setState(() {
@@ -143,7 +178,7 @@ class _CartProductState extends State<CartProduct> {
 }
 
 class QuantityLabel extends StatefulWidget {
-  final String quantity;
+  final int quantity;
   final VoidCallback addFunction;
   final VoidCallback minusFunction;
   const QuantityLabel({
@@ -163,11 +198,11 @@ class _QuantityLabelState extends State<QuantityLabel> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        //! plus button
+        // plus button
         ElevatedButton(
           onPressed: widget.addFunction,
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFFFFFF),
+            backgroundColor: Theme.of(context).colorScheme.onPrimary,
             padding: EdgeInsets.zero,
             minimumSize: const Size(25, 25),
           ),
@@ -186,12 +221,12 @@ class _QuantityLabelState extends State<QuantityLabel> {
         Container(
           width: 50,
           decoration: BoxDecoration(
-            color: const Color(0xFFFFFFFF),
+            color: Theme.of(context).colorScheme.onPrimary,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Center(
             child: Text(
-              widget.quantity,
+              "${widget.quantity}",
               style: const TextStyle(
                 color: Color(0xFF000000),
                 fontSize: 13,
@@ -204,9 +239,9 @@ class _QuantityLabelState extends State<QuantityLabel> {
 
         // minus button
         ElevatedButton(
-          onPressed: widget.minusFunction,
+          onPressed: widget.quantity > 1 ? widget.minusFunction : () {},
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFFFFFF),
+            backgroundColor: Theme.of(context).colorScheme.onPrimary,
             padding: EdgeInsets.zero,
             minimumSize: const Size(25, 25),
           ),

@@ -59,10 +59,6 @@ const searchProduct = async (req, res) => {
       productName: { $regex: new RegExp(searchedProduct, "i") },
     });
 
-    if (!products || products.length === 0) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
     const productsWithImageUrl = products.map((product) => {
       const imageUrls = product.productImage.map(
         (image) =>

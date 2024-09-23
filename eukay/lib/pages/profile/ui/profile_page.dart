@@ -1,9 +1,11 @@
+import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/navigation_menu.dart';
 import 'package:eukay/pages/auth/ui/auth_page.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
-import 'package:eukay/pages/profile/ui/edit_profile.dart';
+import 'package:eukay/pages/profile/ui/edit_user_information/edit_profile.dart';
+import 'package:eukay/pages/profile/ui/profile_pages/shipping_address.dart';
 import 'package:eukay/uitls/curved_edges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,24 +14,35 @@ import 'package:iconsax/iconsax.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
-  final String token;
-  const ProfilePage({super.key, required this.token});
+  const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late SharedPreferences pref;
+  bool initializedPref = false;
+  late String token;
+
   @override
   void initState() {
     super.initState();
-    fetchProfile();
+    initPref().then((_) {
+      fetchProfile(token);
+    });
   }
 
-  void fetchProfile() {
-    context
-        .read<ProfileBloc>()
-        .add(ProfileInitialFetchEvent(token: widget.token));
+  void fetchProfile(String token) {
+    context.read<ProfileBloc>().add(ProfileInitialFetchEvent(token: token));
+  }
+
+  Future<void> initPref() async {
+    pref = await SharedPreferences.getInstance();
+    setState(() {
+      token = pref.getString("token") ?? "";
+      initializedPref = true;
+    });
   }
 
   void onLogout() {
@@ -38,11 +51,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!initializedPref) {
+      return LoadingScreen(color: Theme.of(context).colorScheme.onPrimary);
+    }
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.secondary,
       body: ProfilePageBody(
-        fetchProfile: fetchProfile,
-        token: widget.token,
+        fetchProfile: () => fetchProfile(token),
+        token: token,
         onLogout: onLogout,
       ),
     );
@@ -222,27 +238,52 @@ class ProfilePageBody extends StatelessWidget {
               ),
 
               // edit profile
-              _myContainer("Edit Profile", "assets/icons/user.png", () {
-                navigateWithSlideTransition(
-                  context: context,
-                  page: EditProfile(
-                    token: token,
-                    name: state.profile.userName,
-                    email: state.profile.email,
-                    number: state.profile.phoneNumber,
-                    image: state.profile.image,
-                  ),
-                  onFetch: fetchProfile,
-                );
-              }),
               _myContainer(
-                  "Shipping Address", "assets/icons/location.png", () {}),
-              _myContainer("Wishlist", "assets/icons/heart.png", () {}),
-              _myContainer("Order History", "assets/icons/clip.png", () {}),
+                "Edit Profile",
+                "assets/icons/user.png",
+                Theme.of(context).colorScheme.onPrimary,
+                () {
+                  navigateWithSlideTransition(
+                    context: context,
+                    page: EditProfile(
+                      token: token,
+                      name: state.profile.userName,
+                      email: state.profile.email,
+                      number: state.profile.phoneNumber,
+                      image: state.profile.image,
+                    ),
+                    onFetch: fetchProfile,
+                  );
+                },
+              ),
+              _myContainer(
+                "Shipping Address",
+                "assets/icons/location.png",
+                Theme.of(context).colorScheme.onPrimary,
+                () {
+                  navigateWithSlideTransition(
+                    context: context,
+                    page: const ShippingAddress(),
+                    onFetch: fetchProfile,
+                  );
+                },
+              ),
+              _myContainer(
+                "Wishlist",
+                "assets/icons/heart.png",
+                Theme.of(context).colorScheme.onPrimary,
+                () {},
+              ),
+              _myContainer(
+                "Order History",
+                "assets/icons/clip.png",
+                Theme.of(context).colorScheme.onPrimary,
+                () {},
+              ),
             ],
           );
         }
-        return const Center(child: CircularProgressIndicator());
+        return LoadingScreen(color: Theme.of(context).colorScheme.onPrimary);
       },
     );
   }
@@ -271,6 +312,7 @@ class ProfilePageBody extends StatelessWidget {
   Widget _myContainer(
     String label,
     String icon,
+    Color iconColor,
     VoidCallback onPressed,
   ) {
     return Padding(
@@ -310,11 +352,10 @@ class ProfilePageBody extends StatelessWidget {
 
               Align(
                 alignment: Alignment.centerRight,
-                child: Image.asset(
-                  "assets/icons/next.png",
-                  width: 25,
-                  height: 25,
-                  color: const Color(0xFFFFFFFF),
+                child: Icon(
+                  Iconsax.arrow_right_3,
+                  color: iconColor,
+                  size: 28,
                 ),
               ),
             ],

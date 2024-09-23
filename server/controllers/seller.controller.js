@@ -111,7 +111,7 @@ const registerSeller = (req, res) => {
           role: user.role,
         },
         secretKey,
-        { expiresIn: "30d" }
+        { expiresIn: "7d" }
       );
 
       res.status(200).json({

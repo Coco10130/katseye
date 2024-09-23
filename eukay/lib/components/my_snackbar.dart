@@ -12,6 +12,8 @@ SnackBar mySnackBar({
         style: TextStyle(
           color: textColor,
           fontFamily: "Poppins",
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
         ),
       ),
     ),

@@ -27,6 +27,17 @@ const CartSchema = mongoose.Schema(
       required: true,
     },
 
+    toCheckOut: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+
+    size: {
+      type: String,
+      required: true,
+    },
+
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

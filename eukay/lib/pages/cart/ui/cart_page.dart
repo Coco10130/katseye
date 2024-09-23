@@ -1,7 +1,10 @@
 import 'package:eukay/components/appbar/my_app_bar.dart';
+import 'package:eukay/components/loading_screen.dart';
+import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/pages/cart/bloc/cart_bloc.dart';
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/product_cards/cart_product.dart';
+import 'package:eukay/pages/cart/mappers/cart_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -51,19 +54,49 @@ class _CartBodyState extends State<CartBody> {
     context.read<CartBloc>().add(InitialCartFetchEvent(token: widget.token));
   }
 
+  Future<void> addQuantity(String cartId) async {
+    context
+        .read<CartBloc>()
+        .add(CartItemAddQuantityEvent(cartItemId: cartId, token: widget.token));
+  }
+
+  Future<void> minusQuantity(String cartId, int quantity) async {
+    context.read<CartBloc>().add(CartItemMinusQuantityEvent(
+        cartItemId: cartId, token: widget.token, quantity: quantity));
+  }
+
+  Future<void> checkItemEvent(String cartId) async {
+    context.read<CartBloc>().add(
+        CartItemCheckOutItemEvent(cartItemId: cartId, token: widget.token));
+  }
+
   @override
   Widget build(BuildContext context) {
     final double parentWidth = MediaQuery.of(context).size.width;
 
     return BlocConsumer<CartBloc, CartState>(
-      listener: (context, state) {},
-      builder: (context, state) {
-        if (state is FetchCartFailedState) {
-          return Text(
-            state.errorMessage,
-            style: const TextStyle(color: Colors.red, fontSize: 18),
+      listener: (context, state) {
+        if (state is CartEventFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              errorMessage: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onPrimary,
+            ),
           );
         }
+
+        if (state is FetchCartFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              errorMessage: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onPrimary,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
         if (state is FetchCartSuccessState) {
           final cartProducts = state.cartItems;
           return RefreshIndicator(
@@ -86,14 +119,17 @@ class _CartBodyState extends State<CartBody> {
                       return CartProduct(
                         name: cart.productName,
                         price: cart.subTotal,
+                        size: cart.size,
                         image: cart.productImage,
                         quantity: cart.quantity,
-                        marked: false,
-                        toCheckOut: () => {},
-                        addFunction: () {},
-                        minusFunction: () {},
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        textColor: Theme.of(context).colorScheme.onSecondary,
+                        marked: cart.toCheckOut,
+                        toCheckOut: () => checkItemEvent(cart.id),
+                        addFunction: () => addQuantity(cart.id),
+                        minusFunction: () =>
+                            minusQuantity(cart.id, cart.quantity),
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary,
+                        textColor: Theme.of(context).colorScheme.onPrimary,
                       );
                     },
                   ),
@@ -101,22 +137,29 @@ class _CartBodyState extends State<CartBody> {
                 // floating navigation bar
                 Align(
                   alignment: AlignmentDirectional.bottomCenter,
-                  child: _navigationBar(parentWidth),
+                  child: _navigationBar(parentWidth, state.cartItems),
                 )
               ],
             ),
           );
         }
-        return const Center(child: CircularProgressIndicator());
+        return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
       },
     );
   }
 
-  Widget _navigationBar(double width) {
+  Widget _navigationBar(double width, List<CartModel> cartItems) {
+    // calculate total price of checked items
+    double totalPrice = 0;
+    for (var cart in cartItems) {
+      if (cart.toCheckOut) {
+        totalPrice += cart.subTotal;
+      }
+    }
     // for fomating price
     final formatCurrency = NumberFormat.currency(
       locale: "en_PH",
-      symbol: "₱",
+      symbol: "₱ ",
     );
 
     return Container(
@@ -127,7 +170,7 @@ class _CartBodyState extends State<CartBody> {
         bottom: 20,
       ),
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.secondary,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
@@ -147,7 +190,7 @@ class _CartBodyState extends State<CartBody> {
           children: [
             // display total
             Text(
-              "Total: ₱0",
+              "Total: ${formatCurrency.format(totalPrice)}",
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onPrimary,
                 fontFamily: "Poppins",
@@ -162,11 +205,13 @@ class _CartBodyState extends State<CartBody> {
             ),
 
             // checkout button
-            MyButton(
-              title: "Proceed to Checkout",
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-              textColor: Theme.of(context).colorScheme.onPrimary,
-              onPressed: () {},
+            Center(
+              child: MyButton(
+                title: "Proceed to Checkout",
+                backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                textColor: Theme.of(context).colorScheme.onSecondary,
+                onPressed: () {},
+              ),
             )
           ],
         ),

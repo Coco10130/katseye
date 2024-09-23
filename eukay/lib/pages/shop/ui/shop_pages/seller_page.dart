@@ -1,3 +1,4 @@
+import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
 import 'package:eukay/pages/shop/ui/shop_pages/my_products_page.dart';
@@ -214,7 +215,7 @@ class _SellerPageState extends State<SellerPage> {
             ),
           );
         }
-        return const Center(child: CircularProgressIndicator());
+        return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
       },
     );
   }

@@ -16,7 +16,8 @@ final class FetchViewProductEvent extends SearchEvent {
 }
 
 final class AddToCartEvent extends SearchEvent {
-  final String productId, token;
+  final String productId, token, size;
 
-  AddToCartEvent({required this.productId, required this.token});
+  AddToCartEvent(
+      {required this.productId, required this.token, required this.size});
 }

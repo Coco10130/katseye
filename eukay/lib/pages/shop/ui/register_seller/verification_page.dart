@@ -1,6 +1,7 @@
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/appbar/my_app_bar.dart';
 import 'package:eukay/components/inputs/otp_input.dart';
+import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/navigation_menu.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
@@ -85,7 +86,7 @@ class _BodyPageState extends State<BodyPage> {
 
           await updateToken(state.token);
 
-          Get.offAll(NavigationMenu(token: pref.getString("token")!));
+          Get.offAll(const NavigationMenu());
         }
 
         if (state is RegisterShopFailedState) {
@@ -102,9 +103,8 @@ class _BodyPageState extends State<BodyPage> {
       },
       builder: (context, state) {
         if (state is ShopLoadingState) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return LoadingScreen(
+              color: Theme.of(context).colorScheme.onSecondary);
         }
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
