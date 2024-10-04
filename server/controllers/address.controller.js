@@ -54,7 +54,30 @@ const addAddress = async (req, res) => {
   }
 };
 
+const deleteAddress = async (req, res) => {
+  try {
+    const authorizationHeader = req.headers.authorization;
+    const token = authorizationHeader.split(" ")[1];
+    const decode = jwt.verify(token, secretKey);
+
+    const { addressId } = req.params;
+
+    const address = await Address.findByIdAndDelete(addressId);
+
+    if (!address) {
+      return res.status(404).json({ message: "Address not found" });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: "Address deleted Successsfully" });
+  } catch (error) {
+    res.status(500).json({ errorMessage: error.message });
+  }
+};
+
 module.exports = {
   addAddress,
   getAddress,
+  deleteAddress,
 };

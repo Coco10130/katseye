@@ -47,4 +47,16 @@ final class AddToCartFailedState extends SearchState {
   AddToCartFailedState({required this.errorMessage});
 }
 
+final class WishlistSuccessState extends SearchState {
+  final String successMessage;
+
+  WishlistSuccessState({required this.successMessage});
+}
+
+final class WishlistFailedState extends SearchState {
+  final String errorMessage;
+
+  WishlistFailedState({required this.errorMessage});
+}
+
 final class SearchLoadingState extends SearchState {}

@@ -1,5 +1,4 @@
 import 'package:eukay/components/loading_screen.dart';
-import 'package:eukay/navigation_menu.dart';
 import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/inputs/my_input.dart';
@@ -7,7 +6,6 @@ import 'package:eukay/components/buttons/my_text_button.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -84,7 +82,7 @@ class _LoginPageState extends State<LoginPage>
         if (state is AuthLoginFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
-              errorMessage: state.errorMessage,
+              message: state.errorMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.error,
             ),
@@ -94,14 +92,13 @@ class _LoginPageState extends State<LoginPage>
         if (state is AuthLoginSuccess) {
           final myToken = state.token.toString();
           prefs.setString("token", myToken);
-          Get.to(
-            () => const NavigationMenu(),
-          );
+          Navigator.pop(context, true);
         }
       },
       builder: (context, state) {
         if (state is AuthLoading) {
-          return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
+          return LoadingScreen(
+              color: Theme.of(context).colorScheme.onSecondary);
         }
 
         return Center(
@@ -112,7 +109,7 @@ class _LoginPageState extends State<LoginPage>
                 width: screenWidth * 0.9,
                 height: _isVisible ? null : 0,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.secondary,
                   borderRadius: const BorderRadius.all(Radius.circular(20)),
                 ),
                 padding:
@@ -122,12 +119,12 @@ class _LoginPageState extends State<LoginPage>
                   children: <Widget>[
                     // card title
                     Text(
-                      "Welcome Back",
+                      "Login",
                       style: TextStyle(
                         fontFamily: "Poppins",
                         fontWeight: FontWeight.w700,
                         fontSize: 32,
-                        color: Theme.of(context).colorScheme.onSecondary,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
 
@@ -142,7 +139,9 @@ class _LoginPageState extends State<LoginPage>
                       hint: "Enter Email",
                       controller: _emailController,
                       email: true,
-                      textColor: Theme.of(context).colorScheme.onSecondary,
+                      cursorColor: Theme.of(context).colorScheme.onPrimary,
+                      hintColor: Theme.of(context).colorScheme.onPrimary,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
                     ),
 
                     // spacing
@@ -156,7 +155,9 @@ class _LoginPageState extends State<LoginPage>
                       hint: "Enter Password",
                       controller: _passwordController,
                       password: true,
-                      textColor: Theme.of(context).colorScheme.onSecondary,
+                      cursorColor: Theme.of(context).colorScheme.onPrimary,
+                      hintColor: Theme.of(context).colorScheme.onPrimary,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
                     ),
 
                     // spacing
@@ -169,7 +170,7 @@ class _LoginPageState extends State<LoginPage>
                       alignment: Alignment.centerRight,
                       child: MyTextButton(
                         title: "Forgot Password",
-                        textColor: Theme.of(context).colorScheme.onSecondary,
+                        textColor: Theme.of(context).colorScheme.onPrimary,
                         onPressed: () {},
                       ),
                     ),
@@ -182,7 +183,8 @@ class _LoginPageState extends State<LoginPage>
                     // login button
                     MyButton(
                       title: "Login",
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      textColor: Theme.of(context).colorScheme.onSecondary,
+                      backgroundColor: Theme.of(context).colorScheme.onPrimary,
                       onPressed: () {
                         context.read<AuthBloc>().add(
                               AuthLoginRequest(
@@ -199,26 +201,11 @@ class _LoginPageState extends State<LoginPage>
                     ),
 
                     // divider
-                    Text(
-                      "OR",
-                      style: TextStyle(
-                        fontFamily: "Poppins",
-                        fontSize: 15,
-                        color: Theme.of(context).colorScheme.onSecondary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
 
-                    // spacing
-                    const SizedBox(
-                      height: spacing,
-                    ),
-
-                    // register button
-                    MyButton(
-                      title: "Register",
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                    MyTextButton(
+                      title: "Haven't created an account yet? Sign up here",
                       onPressed: _registerTransition,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
                     ),
 
                     // padding bottom

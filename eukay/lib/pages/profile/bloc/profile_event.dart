@@ -54,4 +54,16 @@ final class FetchUserAddressEvent extends ProfileEvent {
   FetchUserAddressEvent({required this.token, required this.userId});
 }
 
+final class DeleteAddressEvent extends ProfileEvent {
+  final String addressId, token;
+
+  DeleteAddressEvent({required this.addressId, required this.token});
+}
+
+final class FetchUserWishlistsEvent extends ProfileEvent {
+  final String token;
+
+  FetchUserWishlistsEvent({required this.token});
+}
+
 final class ProfileLogoutEvent extends ProfileEvent {}

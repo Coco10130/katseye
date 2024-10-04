@@ -1,13 +1,28 @@
-import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
+import 'dart:async';
+
+import 'package:eukay/pages/check_out/mappers/order_model.dart';
+import 'package:eukay/pages/check_out/repo/check_out_repository.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'check_out_event.dart';
 part 'check_out_state.dart';
 
 class CheckOutBloc extends Bloc<CheckOutEvent, CheckOutState> {
-  CheckOutBloc() : super(CheckOutInitial()) {
-    on<CheckOutEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+  final CheckOutRepository _checkOutRepository;
+  CheckOutBloc(this._checkOutRepository) : super(CheckOutInitial()) {
+    on<FetchOrderSummaryEvent>(fetchOrderSummaryEvent);
+  }
+
+  FutureOr<void> fetchOrderSummaryEvent(
+      FetchOrderSummaryEvent event, Emitter<CheckOutState> emit) async {
+    emit(CheckOutLoadingState());
+    try {
+      final response = await _checkOutRepository.fetchOrders(event.token);
+
+      emit(FetchCheckOutSuccessState(products: response));
+    } catch (e) {
+      emit(FetchCheckOutFailedState(errorMessage: e.toString()));
+    }
   }
 }

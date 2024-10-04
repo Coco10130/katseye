@@ -1,4 +1,5 @@
 import 'package:eukay/components/loading_screen.dart';
+import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
 import 'package:eukay/pages/shop/ui/shop_pages/my_products_page.dart';
@@ -35,7 +36,18 @@ class _SellerPageState extends State<SellerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ShopBloc, ShopState>(
+    return BlocConsumer<ShopBloc, ShopState>(
+      listener: (context, state) {
+        if (state is FetchSellerFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        }
+      },
       builder: (context, state) {
         if (state is FetchSellerSuccessState) {
           return SingleChildScrollView(

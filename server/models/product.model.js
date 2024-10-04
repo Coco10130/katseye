@@ -39,19 +39,28 @@ const ProductSchema = mongoose.Schema(
 
     status: {
       type: String,
-      required: true,
       default: "live",
     },
 
     rating: {
       type: Number,
-      required: false,
       default: 0.0,
+    },
+
+    reviews: {
+      type: Number,
+      default: 0,
     },
 
     sellerName: {
       type: String,
       required: true,
+    },
+
+    wishedByUser: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "User",
+      default: [],
     },
 
     sellerId: {
@@ -65,6 +74,6 @@ const ProductSchema = mongoose.Schema(
   }
 );
 
-const Product = mongoose.model("product", ProductSchema);
+const Product = mongoose.model("Product", ProductSchema);
 
 module.exports = Product;

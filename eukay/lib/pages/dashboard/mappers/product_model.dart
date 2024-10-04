@@ -1,7 +1,7 @@
 class ProductModel {
-  final List<String> productImage, categories, sizes;
+  final List<String> productImage, categories, sizes, wishedByUser;
   final String productName, status, productDescription, id, sellerName;
-  final int quantity;
+  final int quantity, reviews;
   final double price, rating;
 
   const ProductModel({
@@ -16,6 +16,8 @@ class ProductModel {
     required this.id,
     required this.sellerName,
     required this.rating,
+    required this.reviews,
+    required this.wishedByUser,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
@@ -24,7 +26,9 @@ class ProductModel {
       productImage: List<String>.from(json["productImage"]),
       categories: List<String>.from(json["categories"]),
       sizes: List<String>.from(json["sizes"]),
+      wishedByUser: List<String>.from(json["wishedByUser"]),
       productName: json["productName"],
+      reviews: json["reviews"],
       status: json["status"],
       productDescription: json["productDescription"],
       price: (json["price"] is int)

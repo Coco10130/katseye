@@ -13,6 +13,7 @@ class NavigationMenu extends StatelessWidget {
     final controller = Get.put(NavigationController());
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.onSurface,
       body: Obx(() => controller.screens[controller.selectedIndex.value]),
       bottomNavigationBar: Obx(
         () => NavigationBarTheme(

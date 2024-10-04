@@ -9,9 +9,9 @@ const getProfile = async (req, res) => {
   try {
     const authorizationHeader = req.headers.authorization;
     const token = authorizationHeader.split(" ")[1];
-    const user = jwt.verify(token, secretKey);
+    const decode = jwt.verify(token, secretKey);
 
-    const userProfile = await User.findOne({ _id: user.id }).select(
+    const userProfile = await User.findOne({ _id: decode.id }).select(
       "-password"
     );
 
@@ -35,7 +35,6 @@ const getProfile = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Error in getProfile:", error.message);
     res.status(500).json({ errorMessage: error.message });
   }
 };
@@ -62,7 +61,6 @@ const updateProfile = async (req, res) => {
       userName,
       phoneNumber: formattedContact,
       email,
-      birthdate: formattedBirthdate,
     };
 
     if (image) {

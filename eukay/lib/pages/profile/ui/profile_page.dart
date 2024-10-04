@@ -1,11 +1,12 @@
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
+import 'package:eukay/components/navigate_to_auth.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/navigation_menu.dart';
-import 'package:eukay/pages/auth/ui/auth_page.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
 import 'package:eukay/pages/profile/ui/edit_user_information/edit_profile.dart';
 import 'package:eukay/pages/profile/ui/profile_pages/shipping_address.dart';
+import 'package:eukay/pages/profile/ui/profile_pages/wishlist_page.dart';
 import 'package:eukay/uitls/curved_edges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +24,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   late SharedPreferences pref;
   bool initializedPref = false;
-  late String token;
+  late String token = "";
 
   @override
   void initState() {
@@ -34,7 +35,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void fetchProfile(String token) {
-    context.read<ProfileBloc>().add(ProfileInitialFetchEvent(token: token));
+    if (token.isNotEmpty) {
+      context.read<ProfileBloc>().add(ProfileInitialFetchEvent(token: token));
+    }
   }
 
   Future<void> initPref() async {
@@ -56,11 +59,17 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.secondary,
-      body: ProfilePageBody(
-        fetchProfile: () => fetchProfile(token),
-        token: token,
-        onLogout: onLogout,
-      ),
+      body: token.isEmpty
+          ? NavigateAuthButtons(
+              backgroundColor: Theme.of(context).colorScheme.onPrimary,
+              textColor: Theme.of(context).colorScheme.onPrimary,
+              buttonTextColor: Theme.of(context).colorScheme.onSecondary,
+            )
+          : ProfilePageBody(
+              fetchProfile: () => fetchProfile(token),
+              token: token,
+              onLogout: onLogout,
+            ),
     );
   }
 }
@@ -82,7 +91,6 @@ class ProfilePageBody extends StatelessWidget {
     await pref.clear();
     onLogout();
     controller.selectedIndex.value = 0;
-    Get.offAll(const AuthPage());
   }
 
   @override
@@ -92,7 +100,7 @@ class ProfilePageBody extends StatelessWidget {
         if (state is FetchProfileFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
-              errorMessage: state.errorMessage,
+              message: state.errorMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.error,
             ),
@@ -102,7 +110,7 @@ class ProfilePageBody extends StatelessWidget {
         if (state is ProfileUpdateSuccessfulState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
-              errorMessage: state.successMessage,
+              message: state.successMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.onSecondary,
             ),
@@ -272,7 +280,13 @@ class ProfilePageBody extends StatelessWidget {
                 "Wishlist",
                 "assets/icons/heart.png",
                 Theme.of(context).colorScheme.onPrimary,
-                () {},
+                () {
+                  navigateWithSlideTransition(
+                    context: context,
+                    page: Wishlist(userId: state.profile.id),
+                    onFetch: fetchProfile,
+                  );
+                },
               ),
               _myContainer(
                 "Order History",

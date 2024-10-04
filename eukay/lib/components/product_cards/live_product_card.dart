@@ -22,7 +22,7 @@ class LiveProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double borderRadius = 10;
-    const double spacing = 10;
+    const double spacing = 5;
     final double parentWidth = MediaQuery.of(context).size.width;
     final formatCurrency = NumberFormat.currency(
       locale: "en_PH",
@@ -85,7 +85,7 @@ class LiveProductCard extends StatelessWidget {
                   Text(
                     name,
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: textColor,
                       fontFamily: "Poppins",
@@ -118,7 +118,7 @@ class LiveProductCard extends StatelessWidget {
                       Text(
                         formatCurrency.format(price),
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 13,
                           color: textColor,
                           fontWeight: FontWeight.bold,
                           fontFamily: "Poppins",

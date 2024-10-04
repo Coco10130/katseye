@@ -1,13 +1,23 @@
 const mongoose = require("mongoose");
 
-const CartSchema = mongoose.Schema(
+const OrderSchema = mongoose.Schema(
   {
+    productName: {
+      type: String,
+      required: true,
+    },
+
     productImage: {
       type: String,
       required: true,
     },
 
-    productName: {
+    totalPrice: {
+      type: Number,
+      required: true,
+    },
+
+    size: {
       type: String,
       required: true,
     },
@@ -17,29 +27,24 @@ const CartSchema = mongoose.Schema(
       required: true,
     },
 
-    price: {
-      type: Number,
-      required: true,
-    },
-
-    subTotal: {
-      type: Number,
-      required: true,
-    },
-
-    toCheckOut: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-
-    size: {
+    deliveryAddress: {
       type: String,
       required: true,
     },
 
-    sellerName: {
+    buyerContact: {
       type: String,
+      required: true,
+    },
+
+    buyerName: {
+      type: String,
+      required: true,
+    },
+
+    orderedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
 
@@ -49,16 +54,11 @@ const CartSchema = mongoose.Schema(
       required: true,
     },
 
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-
-    productId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
-      required: true,
+    status: {
+      type: String,
+      required: false,
+      enum: ["pending", "preparing", "to deliver", "delivered", "cancelled"],
+      default: "pending",
     },
   },
   {
@@ -66,6 +66,6 @@ const CartSchema = mongoose.Schema(
   }
 );
 
-const Cart = mongoose.model("Cart", CartSchema);
+const Order = mongoose.model("Order", OrderSchema);
 
-module.exports = Cart;
+module.exports = Order;

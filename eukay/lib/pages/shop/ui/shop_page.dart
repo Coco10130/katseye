@@ -1,6 +1,7 @@
-import 'package:eukay/components/appbar/my_app_bar.dart';
 import 'package:eukay/components/loading_screen.dart';
+import 'package:eukay/components/navigate_to_auth.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
+import 'package:eukay/pages/cart/ui/cart_page.dart';
 import 'package:eukay/pages/shop/ui/my_products/add_product.dart';
 import 'package:eukay/pages/shop/ui/shop_pages/non_seller_page.dart';
 import 'package:eukay/pages/shop/ui/shop_pages/seller_page.dart';
@@ -20,15 +21,20 @@ class _ShopPageState extends State<ShopPage> {
   late SharedPreferences pref;
   bool initializedPref = false;
   late String token;
-  late String role;
+  late String role = "";
+  late String cartCount = "0";
 
   Future<void> initPref() async {
     pref = await SharedPreferences.getInstance();
     setState(() {
       token = pref.getString("token") ?? "";
       initializedPref = true;
-      final Map<String, dynamic> jwtDecocded = JwtDecoder.decode(token);
-      role = jwtDecocded["role"];
+
+      if (token.isNotEmpty) {
+        final Map<String, dynamic> jwtDecoded = JwtDecoder.decode(token);
+        role = jwtDecoded["role"];
+        cartCount = jwtDecoded["cartItems"].toString();
+      }
     });
   }
 
@@ -46,17 +52,70 @@ class _ShopPageState extends State<ShopPage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.onSurface,
-      appBar: MyAppBar(
-        label: "My Shop",
+      appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.secondary,
+        automaticallyImplyLeading: false,
+        title: Padding(
+          padding: const EdgeInsets.only(left: 10),
+          child: Text(
+            "My Shop",
+            style: TextStyle(
+              fontSize: 24,
+              fontFamily: "Poppins",
+              fontWeight: FontWeight.w700,
+              color: Theme.of(context).colorScheme.onPrimary,
+            ),
+          ),
+        ),
+        actions: [
+          // Show cart action button if logged in
+          if (token.isNotEmpty) ...[
+            Stack(
+              children: [
+                Positioned(
+                  right: 15,
+                  child: Text(
+                    cartCount,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontFamily: "Poppins",
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: IconButton(
+                    icon: const ImageIcon(
+                      AssetImage("assets/icons/shopping-cart.png"),
+                      size: 24,
+                      color: Color(0xFFFFFFFF),
+                    ),
+                    onPressed: () {
+                      navigateWithSlideTransition(
+                        context: context,
+                        page: CartPage(
+                          token: token,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
       ),
-
-      // TODO: ADD LOGIC IF THE TOKEN IS NULL, ADD BUTTON TO NAVIGATE IN AUTH PAGE
-      body: role == "seller"
-          ? SellerPage(
-              token: token,
+      body: token.isEmpty
+          ? NavigateAuthButtons(
+              textColor: Theme.of(context).colorScheme.onSecondary,
+              buttonTextColor: Theme.of(context).colorScheme.onPrimary,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
             )
-          : const NonSellerPage(),
+          : (role == "seller"
+              ? SellerPage(token: token)
+              : const NonSellerPage()),
       floatingActionButton: role == "seller"
           ? FloatingActionButton(
               backgroundColor: Theme.of(context).colorScheme.secondary,

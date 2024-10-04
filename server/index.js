@@ -13,6 +13,8 @@ const productRouters = require("./routes/product.route.js");
 const cartRouters = require("./routes/cart.route.js");
 const sellerRouters = require("./routes/seller.route.js");
 const addressRouters = require("./routes/address.route.js");
+const wishlistRouters = require("./routes/wishlist.route.js");
+const ordersRouters = require("./routes/order.route.js");
 
 // middlewares
 app.use(express.json());
@@ -37,6 +39,8 @@ app.use("/api/product", productRouters);
 app.use("/api/cart", cartRouters);
 app.use("/api/seller", sellerRouters);
 app.use("/api/address", addressRouters);
+app.use("/api/wishlist", wishlistRouters);
+app.use("/api/orders", ordersRouters);
 
 mongoose
   .connect(process.env.MONGODB)

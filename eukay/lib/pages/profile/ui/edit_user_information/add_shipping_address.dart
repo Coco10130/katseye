@@ -90,7 +90,7 @@ class _AddAddressBodyState extends State<AddAddressBody> {
         } else if (state is FetchingFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
-              errorMessage: state.errorMessage,
+              message: state.errorMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.error,
             ),
@@ -98,7 +98,7 @@ class _AddAddressBodyState extends State<AddAddressBody> {
         } else if (state is AddUserAddressFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
-              errorMessage: state.errorMessage,
+              message: state.errorMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.error,
             ),
@@ -106,11 +106,12 @@ class _AddAddressBodyState extends State<AddAddressBody> {
         } else if (state is AddUserAddressSuccessState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
-              errorMessage: state.successMessage,
+              message: state.successMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.onSecondary,
             ),
           );
+          Navigator.pop(context, true);
         }
       },
       builder: (BuildContext context, ProfileState state) {

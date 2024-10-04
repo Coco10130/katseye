@@ -95,7 +95,7 @@ class _EditProfileBodyState extends State<EditProfileBody> {
         if (state is FetchProfileFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
-              errorMessage: state.errorMessage,
+              message: state.errorMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.error,
             ),

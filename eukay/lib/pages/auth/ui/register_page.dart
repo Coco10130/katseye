@@ -77,19 +77,23 @@ class _RegisterPageState extends State<RegisterPage>
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthRegisterFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
-            errorMessage: state.errorMessage,
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.error,
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
         }
 
         if (state is AuthRegisterSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
-            errorMessage: state.successMessage,
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.onSecondary,
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
+            ),
+          );
           _isVisible = false;
           _loginTransition();
         }
@@ -108,7 +112,7 @@ class _RegisterPageState extends State<RegisterPage>
                 width: screenWidth * 0.9,
                 height: _isVisible ? null : 0,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.secondary,
                   borderRadius: const BorderRadius.all(Radius.circular(20)),
                 ),
                 padding:
@@ -122,7 +126,7 @@ class _RegisterPageState extends State<RegisterPage>
                         fontFamily: "Poppins",
                         fontWeight: FontWeight.w700,
                         fontSize: 28,
-                        color: Theme.of(context).colorScheme.onSecondary,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
 
@@ -136,7 +140,9 @@ class _RegisterPageState extends State<RegisterPage>
                       label: "Name",
                       hint: "Your Name",
                       controller: _nameController,
-                      textColor: Theme.of(context).colorScheme.onSecondary,
+                      cursorColor: Theme.of(context).colorScheme.onPrimary,
+                      hintColor: Theme.of(context).colorScheme.onPrimary,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
                     ),
 
                     // spacing
@@ -150,7 +156,9 @@ class _RegisterPageState extends State<RegisterPage>
                       hint: "Your Email",
                       controller: _emailController,
                       email: true,
-                      textColor: Theme.of(context).colorScheme.onSecondary,
+                      cursorColor: Theme.of(context).colorScheme.onPrimary,
+                      hintColor: Theme.of(context).colorScheme.onPrimary,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
                     ),
 
                     // spacing
@@ -164,7 +172,9 @@ class _RegisterPageState extends State<RegisterPage>
                       hint: "Your Password",
                       controller: _passwordController,
                       password: true,
-                      textColor: Theme.of(context).colorScheme.onSecondary,
+                      cursorColor: Theme.of(context).colorScheme.onPrimary,
+                      hintColor: Theme.of(context).colorScheme.onPrimary,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
                     ),
 
                     // spacing
@@ -178,7 +188,9 @@ class _RegisterPageState extends State<RegisterPage>
                       hint: "Confirm Password",
                       controller: _confirmPasswordController,
                       password: true,
-                      textColor: Theme.of(context).colorScheme.onSecondary,
+                      cursorColor: Theme.of(context).colorScheme.onPrimary,
+                      hintColor: Theme.of(context).colorScheme.onPrimary,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
                     ),
 
                     // spacing
@@ -189,8 +201,8 @@ class _RegisterPageState extends State<RegisterPage>
                     // register button
                     MyButton(
                       title: "Register",
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                      textColor: Theme.of(context).colorScheme.onPrimary,
+                      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                      textColor: Theme.of(context).colorScheme.onSecondary,
                       onPressed: () {
                         context.read<AuthBloc>().add(
                               AuthRegisterRequest(
@@ -211,9 +223,9 @@ class _RegisterPageState extends State<RegisterPage>
 
                     // back to login button
                     MyTextButton(
-                      title: "Alrady have an account? Login Here",
+                      title: "Alrady have an account? Sign in here",
                       onPressed: _loginTransition,
-                      textColor: Theme.of(context).colorScheme.onSecondary,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
                     ),
 
                     // spacing

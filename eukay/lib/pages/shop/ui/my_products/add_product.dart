@@ -95,7 +95,7 @@ class _AddProductBodyState extends State<AddProductBody> {
         if (state is AddProductFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
-              errorMessage: state.errorMessage,
+              message: state.errorMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.error,
             ),
@@ -110,7 +110,7 @@ class _AddProductBodyState extends State<AddProductBody> {
           sizes = [];
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
-              errorMessage: state.successMessage,
+              message: state.successMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.onPrimary,
             ),

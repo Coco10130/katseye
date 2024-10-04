@@ -68,6 +68,7 @@ class _BodyPageState extends State<BodyPage> {
 
   Future<void> updateToken(String newToken) async {
     pref = await SharedPreferences.getInstance();
+    await pref.clear();
     await pref.setString("token", newToken);
   }
 
@@ -78,7 +79,7 @@ class _BodyPageState extends State<BodyPage> {
         if (state is RegisterShopSuccessState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
-              errorMessage: state.successMessage,
+              message: state.successMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.onSecondary,
             ),
@@ -94,7 +95,7 @@ class _BodyPageState extends State<BodyPage> {
 
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
-              errorMessage: state.errorMessage,
+              message: state.errorMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.error,
             ),

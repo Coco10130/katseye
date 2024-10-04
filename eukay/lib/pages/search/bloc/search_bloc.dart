@@ -13,6 +13,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     on<FetchSearchedProductEvent>(fetchSearchedProductEvent);
     on<FetchViewProductEvent>(fetchViewProductEvent);
     on<AddToCartEvent>(addToCartEvent);
+    on<AddWishlistEvent>(addWishlistEvent);
+    on<RemoveWishlistEvent>(removeWishlistEvent);
   }
 
   FutureOr<void> fetchSearchedProductEvent(
@@ -61,6 +63,39 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       }
     } catch (e) {
       emit(AddToCartFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> addWishlistEvent(
+      AddWishlistEvent event, Emitter<SearchState> emit) async {
+    emit(SearchLoadingState());
+    try {
+      final response =
+          await _searchRepository.addWishlist(event.token, event.productId);
+
+      if (response) {
+        emit(
+            WishlistSuccessState(successMessage: "Product added to wishlists"));
+      }
+    } catch (e) {
+      emit(WishlistFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> removeWishlistEvent(
+      RemoveWishlistEvent event, Emitter<SearchState> emit) async {
+    emit(SearchLoadingState());
+
+    try {
+      final response =
+          await _searchRepository.removeWishlist(event.token, event.productId);
+
+      if (response) {
+        emit(WishlistSuccessState(
+            successMessage: "Product removed from wishlists"));
+      }
+    } catch (e) {
+      emit(WishlistFailedState(errorMessage: e.toString()));
     }
   }
 }

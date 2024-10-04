@@ -5,13 +5,13 @@ class AddressContainer extends StatelessWidget {
   final String name, province, municipality, barangay, street, phoneNumber;
   final Color nameColor, informationTextColor;
   final VoidCallback onPressed;
-  final VoidCallback onDeltePressed;
+  final VoidCallback onDeletePressed;
 
   const AddressContainer({
     super.key,
     required this.name,
     required this.onPressed,
-    required this.onDeltePressed,
+    required this.onDeletePressed,
     required this.phoneNumber,
     required this.municipality,
     required this.street,
@@ -87,7 +87,7 @@ class AddressContainer extends StatelessWidget {
                 top: 5,
                 right: 10,
                 child: GestureDetector(
-                  onTap: onDeltePressed,
+                  onTap: onDeletePressed,
                   child: const Icon(
                     Iconsax.trash,
                     color: Colors.red,

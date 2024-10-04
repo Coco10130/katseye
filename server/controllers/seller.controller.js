@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const { sendOTP, verifyOTP } = require("../helpers/otp.helper.js");
 const fs = require("fs");
 const path = require("path");
+const signToken = require("../helpers/sign.new.token.helper.js");
 
 const secretKey = process.env.JWT_SECRET;
 
@@ -103,16 +104,7 @@ const registerSeller = (req, res) => {
         return res.status(500).json({ message: "Failed to update user role" });
       }
 
-      const newToken = jwt.sign(
-        {
-          email: user.email,
-          id: user._id,
-          userName: user.userName,
-          role: user.role,
-        },
-        secretKey,
-        { expiresIn: "7d" }
-      );
+      const newToken = signToken(user);
 
       res.status(200).json({
         success: true,
@@ -149,10 +141,6 @@ const getSellerProfile = async (req, res) => {
 
     if (!seller) {
       return res.status(404).json({ message: "Seller profile not found" });
-    }
-
-    if (!products || products.length === 0) {
-      return res.status(404).json({ message: "Product not found" });
     }
 
     const updatedProducts = products.map((product) => {

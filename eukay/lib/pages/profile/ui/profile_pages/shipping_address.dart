@@ -80,11 +80,29 @@ class _ShippingPageState extends State<ShippingPage> {
         if (state is FetchUserAddressFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
-              errorMessage: state.errorMessage,
+              message: state.errorMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.error,
             ),
           );
+        } else if (state is DeleteAddressSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
+            ),
+          );
+          fetchAddresses();
+        } else if (state is DeleteAddressFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+          fetchAddresses();
         }
       },
       builder: (context, state) {
@@ -101,7 +119,7 @@ class _ShippingPageState extends State<ShippingPage> {
                 children: [
                   // add addres button
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       navigateWithSlideTransition(
                         context: context,
                         page: const AddShippingAddress(),
@@ -164,7 +182,10 @@ class _ShippingPageState extends State<ShippingPage> {
                           nameColor: Theme.of(context).colorScheme.onSecondary,
                           informationTextColor: Colors.grey[600]!,
                           onPressed: () {},
-                          onDeltePressed: () {},
+                          onDeletePressed: () {
+                            context.read<ProfileBloc>().add(DeleteAddressEvent(
+                                addressId: address.id, token: token!));
+                          },
                         );
                       },
                     ),

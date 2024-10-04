@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:eukay/pages/dashboard/mappers/product_model.dart';
 import 'package:eukay/pages/profile/mappers/address_model.dart';
 import 'package:eukay/pages/profile/mappers/barangay_model.dart';
 import 'package:eukay/pages/profile/mappers/municipality_model.dart';
@@ -167,6 +168,63 @@ class ProfileRepo extends ProfileRepository {
         }).toList();
       } else {
         throw Exception("Failed to load addresses");
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<bool> deleteAddress(String addressId, String token) async {
+    try {
+      final response = await _dio.delete(
+        "${Server.serverUrl}/api/address/delete/$addressId",
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        return true;
+      } else {
+        throw Exception("Failed to delete address");
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<List<ProductModel>> fetchWishlists(String token) async {
+    try {
+      final response = await _dio.get(
+        "${Server.serverUrl}/api/wishlist/get/user",
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        final List<dynamic> productList = response.data["data"];
+        return productList
+            .map((product) => ProductModel.fromJson(product))
+            .toList();
+      } else {
+        throw Exception(response.data["message"]);
       }
     } catch (e) {
       if (e is DioException && e.response != null) {

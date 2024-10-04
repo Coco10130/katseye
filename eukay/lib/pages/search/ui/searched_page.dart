@@ -62,11 +62,13 @@ class _SearchedBodyState extends State<SearchedBody> {
     return BlocConsumer<SearchBloc, SearchState>(
       listener: (context, state) {
         if (state is SearchProductFailedState) {
-          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
-            errorMessage: state.errorMessage,
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.error,
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
         }
       },
       builder: (context, state) {

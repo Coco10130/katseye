@@ -1,5 +1,6 @@
 const User = require("../models/user.model.js");
 const jwt = require("jsonwebtoken");
+const signToken = require("../helpers/sign.new.token.helper.js");
 const {
   hashPassword,
   comparePassword,
@@ -28,24 +29,8 @@ const login = async (req, res) => {
     const match = await comparePassword(password, user.password);
 
     if (match) {
-      jwt.sign(
-        {
-          email: user.email,
-          id: user._id,
-          userName: user.userName,
-          cartItems: user.cartItems,
-          role: user.role,
-        },
-        process.env.JWT_SECRET,
-        { expiresIn: "7d" },
-        (err, token) => {
-          if (err) {
-            throw err;
-          }
-
-          res.status(200).json({ token: token });
-        }
-      );
+      const token = signToken(user);
+      return res.status(200).json({ token: token });
     } else {
       return res.status(401).json({ errorMessage: "Invalid credentials" });
     }

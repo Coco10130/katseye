@@ -24,7 +24,7 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const double borderRadius = 10;
-    const double spacing = 10;
+    const double spacing = 5;
     final double parentWidth = MediaQuery.of(context).size.width;
     final formatCurrency = NumberFormat.currency(
       locale: "en_PH",
@@ -62,8 +62,8 @@ class ProductCard extends StatelessWidget {
               height: parentWidth > 1200 ? 200 : parentWidth * 0.35,
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(borderRadius),
-                  topRight: Radius.circular(borderRadius),
+                  topLeft: Radius.circular(borderRadius - 2),
+                  topRight: Radius.circular(borderRadius - 2),
                 ),
                 image: DecorationImage(
                   image: NetworkImage(image),
@@ -82,7 +82,7 @@ class ProductCard extends StatelessWidget {
                   Text(
                     name,
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       color: textColor,
                       fontFamily: "Poppins",
@@ -92,7 +92,7 @@ class ProductCard extends StatelessWidget {
                   ),
 
                   // Spacing
-                  const SizedBox(height: 2),
+                  const SizedBox(height: spacing),
 
                   // display shop
                   Text(
@@ -115,7 +115,7 @@ class ProductCard extends StatelessWidget {
                       Text(
                         formatCurrency.format(price),
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 13,
                           color: textColor,
                           fontWeight: FontWeight.bold,
                           fontFamily: "Poppins",

@@ -94,11 +94,12 @@ class ShopRepo extends ShopRepository {
         final profile = response.data["data"];
         return SellerModel.fromJson(profile);
       } else {
-        throw Exception("Failed to load Profile: ${response.statusMessage}");
+        throw Exception("Failed to load Profile: ${response.data["message"]}");
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        final errorMessage =
+            e.response?.data["errorMessage"] ?? "Unknown error";
         throw errorMessage;
       } else {
         throw Exception(e.toString());

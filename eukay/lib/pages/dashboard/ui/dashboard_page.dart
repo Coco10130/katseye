@@ -1,8 +1,10 @@
+import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/buttons/my_icon_button.dart';
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_searchbox.dart';
 import 'package:eukay/components/product_cards/product_card.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
+import 'package:eukay/pages/auth/ui/auth_page.dart';
 import 'package:eukay/pages/cart/ui/cart_page.dart';
 import 'package:eukay/pages/dashboard/bloc/dashboard_bloc.dart';
 import 'package:eukay/pages/search/ui/search_page.dart';
@@ -23,19 +25,34 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   late SharedPreferences pref;
   late String cartCount;
+  String? token;
+  String? userId;
   bool initializedToken = false;
 
-  Future<void> initPref() async {
-    pref = await SharedPreferences.getInstance();
-    setState(() {
-      initializedToken = true;
+  void onSignIn() {
+    initPref().then((_) {
+      initCartCount();
     });
   }
 
+  Future<void> initPref() async {
+    try {
+      pref = await SharedPreferences.getInstance();
+      setState(() {
+        initializedToken = true;
+        token = pref.getString("token") ?? "";
+      });
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   void initCartCount() {
-    final Map<String, dynamic> jwtDecocded =
-        JwtDecoder.decode(pref.getString("token")!);
-    cartCount = jwtDecocded["cartItems"].toString();
+    if (token!.isNotEmpty) {
+      final Map<String, dynamic> jwtDecocded = JwtDecoder.decode(token!);
+      cartCount = jwtDecocded["cartItems"].toString();
+      userId = jwtDecocded["id"].toString();
+    }
   }
 
   @override
@@ -54,6 +71,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.onSurface,
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.secondary,
         automaticallyImplyLeading: false,
         title: Padding(
@@ -70,50 +88,73 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
         actions: [
           // cart action button
-          Stack(
-            children: [
-              Positioned(
-                right: 15,
-                child: Text(
-                  cartCount,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontFamily: "Poppins",
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: IconButton(
-                  icon: const ImageIcon(
-                    AssetImage("assets/icons/shopping-cart.png"),
-                    size: 24,
-                    color: Color(0xFFFFFFFF),
-                  ),
-                  onPressed: () {
-                    navigateWithSlideTransition(
-                      context: context,
-                      page: CartPage(
-                        token: pref.getString("token")!,
+          token! != ""
+              ? Stack(
+                  children: [
+                    Positioned(
+                      right: 15,
+                      child: Text(
+                        cartCount,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontFamily: "Poppins",
+                          color: Colors.white,
+                        ),
                       ),
-                    );
-                  },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: IconButton(
+                        icon: const ImageIcon(
+                          AssetImage("assets/icons/shopping-cart.png"),
+                          size: 24,
+                          color: Color(0xFFFFFFFF),
+                        ),
+                        onPressed: () {
+                          navigateWithSlideTransition(
+                            context: context,
+                            page: CartPage(
+                              token: pref.getString("token")!,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              : Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: MyButton(
+                    title: "Sign in",
+                    backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                    textColor: Theme.of(context).colorScheme.onSecondary,
+                    widthFactor: 0.20,
+                    fontSize: 12,
+                    height: 40,
+                    verticalPadding: 5,
+                    onPressed: () {
+                      navigateWithSlideTransition(
+                        context: context,
+                        page: const AuthPage(),
+                        onFetch: () => onSignIn(),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
-          ),
         ],
       ),
-      body: const DashboardBody(),
+      body: DashboardBody(
+        fetchProfile: () => onSignIn(),
+        userId: userId,
+      ),
     );
   }
 }
 
 class DashboardBody extends StatefulWidget {
-  const DashboardBody({
-    super.key,
-  });
+  final String? userId;
+  final VoidCallback fetchProfile;
+  const DashboardBody({super.key, this.userId, required this.fetchProfile});
 
   @override
   State<DashboardBody> createState() => _DashboardBodyState();
@@ -146,8 +187,9 @@ class _DashboardBodyState extends State<DashboardBody> {
     return BlocBuilder<DashboardBloc, DashboardState>(
       builder: (context, state) {
         if (state is DashboardLoadingState) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return Center(
+            child:
+                LoadingScreen(color: Theme.of(context).colorScheme.onSecondary),
           );
         } else if (state is DashboardFetchFailedState) {
           return Center(
@@ -297,10 +339,16 @@ class _DashboardBodyState extends State<DashboardBody> {
                           shop: "Shop: ${product.sellerName}",
                           rating: product.rating,
                           textColor: Theme.of(context).colorScheme.onSecondary,
-                          onPressed: () {
-                            Get.to(ViewProduct(
-                              productId: product.id,
-                            ));
+                          onPressed: () async {
+                            final response = await Get.to(
+                              ViewProduct(
+                                productId: product.id,
+                              ),
+                            );
+
+                            if (response == true) {
+                              widget.fetchProfile();
+                            }
                           },
                         );
                       },

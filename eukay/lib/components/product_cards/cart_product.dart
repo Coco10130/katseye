@@ -38,6 +38,8 @@ class CartProduct extends StatefulWidget {
 class _CartProductState extends State<CartProduct> {
   String getSizeLabel(String size) {
     switch (size) {
+      case "XS":
+        return "Extra Small";
       case "S":
         return "Small";
       case "M":
@@ -64,7 +66,7 @@ class _CartProductState extends State<CartProduct> {
     );
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.only(top: 5),
       child: Container(
         width: width,
         decoration: BoxDecoration(
@@ -113,6 +115,8 @@ class _CartProductState extends State<CartProduct> {
                         fontFamily: "Poppins",
                         fontWeight: FontWeight.w700,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
 
                     const SizedBox(

@@ -14,6 +14,20 @@ class ProductsBySeller extends StatelessWidget {
     final int crossAxisCount = (screenWidth / gridItemWidth).floor();
     final double productSpacing = screenWidth > 1200 ? 50 : 10;
 
+    if (products.isEmpty) {
+      return Center(
+        child: Text(
+          "No Products Yet",
+          style: TextStyle(
+            fontFamily: "Poppins",
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Theme.of(context).colorScheme.onSecondary,
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: GridView.builder(

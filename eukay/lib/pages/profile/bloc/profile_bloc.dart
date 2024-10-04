@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:eukay/pages/dashboard/mappers/product_model.dart';
 import 'package:eukay/pages/profile/mappers/address_model.dart';
 import 'package:eukay/pages/profile/mappers/barangay_model.dart';
 import 'package:eukay/pages/profile/mappers/municipality_model.dart';
@@ -21,6 +22,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<FetchBarangaysEvent>(fetchBarangaysEvent);
     on<AddUserAddressEvent>(addUserAddressEvent);
     on<FetchUserAddressEvent>(fetchUserAddressEvent);
+    on<FetchUserWishlistsEvent>(fetchUserWishlistsEvent);
+    on<DeleteAddressEvent>(deleteAddressEvent);
     on<ProfileLogoutEvent>((event, emit) {
       emit(ProfileInitial());
     });
@@ -119,6 +122,37 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(FetchUserAddressSuccessState(addresses: response));
     } catch (e) {
       emit(FetchUserAddressFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> deleteAddressEvent(
+      DeleteAddressEvent event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoadingState());
+    try {
+      final response =
+          await _profileRepository.deleteAddress(event.addressId, event.token);
+
+      if (response) {
+        emit(DeleteAddressSuccessState(
+            successMessage: "Address deleted successfully"));
+      } else {
+        throw Exception("Something went wrong");
+      }
+    } catch (e) {
+      emit(DeleteAddressFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> fetchUserWishlistsEvent(
+      FetchUserWishlistsEvent event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoadingState());
+
+    try {
+      final response = await _profileRepository.fetchWishlists(event.token);
+
+      emit(WishListSuccessState(products: response));
+    } catch (e) {
+      emit(WishListFailedState(errorMessage: e.toString()));
     }
   }
 }

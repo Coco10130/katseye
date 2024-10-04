@@ -1,3 +1,4 @@
+import 'package:eukay/pages/dashboard/mappers/product_model.dart';
 import 'package:eukay/pages/profile/mappers/address_model.dart';
 import 'package:eukay/pages/profile/mappers/barangay_model.dart';
 import 'package:eukay/pages/profile/mappers/municipality_model.dart';
@@ -19,4 +20,6 @@ abstract class ProfileRepository {
   Future<bool> addAddress(String token, String fullName, String municipality,
       String barangay, String contact, String street);
   Future<List<AddressModel>> fetchUserAddresses(String userId, String token);
+  Future<bool> deleteAddress(String addressId, String token);
+  Future<List<ProductModel>> fetchWishlists(String token);
 }

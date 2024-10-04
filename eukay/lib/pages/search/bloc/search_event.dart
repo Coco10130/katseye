@@ -21,3 +21,15 @@ final class AddToCartEvent extends SearchEvent {
   AddToCartEvent(
       {required this.productId, required this.token, required this.size});
 }
+
+final class AddWishlistEvent extends SearchEvent {
+  final String productId, token;
+
+  AddWishlistEvent({required this.productId, required this.token});
+}
+
+final class RemoveWishlistEvent extends SearchEvent {
+  final String productId, token;
+
+  RemoveWishlistEvent({required this.productId, required this.token});
+}

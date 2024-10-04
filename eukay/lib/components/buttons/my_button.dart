@@ -6,6 +6,7 @@ class MyButton extends StatelessWidget {
   final VoidCallback onPressed;
   final double widthFactor;
   final double verticalPadding, elevation, fontSize;
+  final double? height;
 
   const MyButton({
     super.key,
@@ -17,6 +18,7 @@ class MyButton extends StatelessWidget {
     this.verticalPadding = 15,
     this.elevation = 0,
     this.fontSize = 15,
+    this.height,
   });
 
   @override
@@ -28,6 +30,7 @@ class MyButton extends StatelessWidget {
       onTap: onPressed,
       child: Container(
         width: buttonWidth,
+        height: height,
         decoration: BoxDecoration(
           color: backgroundColor,
           borderRadius: BorderRadius.circular(20),

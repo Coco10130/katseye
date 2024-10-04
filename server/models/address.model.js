@@ -33,6 +33,11 @@ const AddressSchema = mongoose.Schema(
       required: true,
     },
 
+    inUse: {
+      type: Boolean,
+      default: false,
+    },
+
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -43,6 +48,6 @@ const AddressSchema = mongoose.Schema(
     timestamps: true,
   }
 );
-const Address = mongoose.model("address", AddressSchema);
+const Address = mongoose.model("Address", AddressSchema);
 
 module.exports = Address;

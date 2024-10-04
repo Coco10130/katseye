@@ -67,4 +67,28 @@ final class FetchUserAddressFailedState extends ProfileState {
   FetchUserAddressFailedState({required this.errorMessage});
 }
 
+final class DeleteAddressSuccessState extends ProfileState {
+  final String successMessage;
+
+  DeleteAddressSuccessState({required this.successMessage});
+}
+
+final class DeleteAddressFailedState extends ProfileState {
+  final String errorMessage;
+
+  DeleteAddressFailedState({required this.errorMessage});
+}
+
+final class WishListSuccessState extends ProfileState {
+  final List<ProductModel> products;
+
+  WishListSuccessState({required this.products});
+}
+
+final class WishListFailedState extends ProfileState {
+  final String errorMessage;
+
+  WishListFailedState({required this.errorMessage});
+}
+
 final class ProfileLoadingState extends ProfileState {}

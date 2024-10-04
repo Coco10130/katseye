@@ -66,7 +66,7 @@ class _BodyPageState extends State<BodyPage> {
         if (state is OtpSentSuccessState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
-              errorMessage: state.successMessage,
+              message: state.successMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.onSecondary,
             ),
