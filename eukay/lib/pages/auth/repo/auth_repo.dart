@@ -60,4 +60,84 @@ class AuthRepo extends AuthRepository {
       }
     }
   }
+
+  @override
+  Future<String?> sendOtp(String email) async {
+    try {
+      final payload = {"shopEmail": email};
+      final response = await _dio.post("${Server.serverUrl}/api/auth/send-otp",
+          data: jsonEncode(payload));
+
+      if (response.statusCode == 200) {
+        return response.data["data"];
+      } else {
+        return null;
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["errorMessage"] ?? "Unknown error";
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<bool> verifyOtp(String email, String otp, String otpHash) async {
+    try {
+      final payload = {"shopEmail": email, "otp": otp, "hash": otpHash};
+      final response = await _dio.post(
+          "${Server.serverUrl}/api/auth/verify-otp",
+          data: jsonEncode(payload));
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception("Failed to verify OTP: ${response.data["message"]}");
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["errorMessage"] ?? "Unknown error";
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<bool> resetPassword(String newPassword, String confirmPassword,
+      String email, bool otpVerified) async {
+    try {
+      final payload = {
+        "newPassword": newPassword,
+        "confirmPassword": confirmPassword,
+        "email": email,
+        "otpVerified": otpVerified
+      };
+
+      final response = await _dio.post(
+          "${Server.serverUrl}/api/auth/change-password",
+          data: jsonEncode(payload));
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        return true;
+      } else {
+        throw Exception(
+            "Failed to reset password: ${response.data["message"]}");
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["errorMessage"] ?? "Unknown error";
+        print(errorMessage);
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
 }

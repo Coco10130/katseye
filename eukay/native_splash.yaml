@@ -3,5 +3,5 @@ flutter_native_splash:
   ios: true
   web: false
 
-  color: "#000000"
+  color: "#F0F4FA"
   image: "assets/images/e-ukay.jpg"

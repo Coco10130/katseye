@@ -32,10 +32,6 @@ const registerSeller = (req, res) => {
   try {
     const authorizationHeader = req.headers.authorization;
 
-    if (!authorizationHeader) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
     const { shopName, shopContact, shopEmail } = req.body;
 
     verifyOTP(req.body, async (error, results) => {

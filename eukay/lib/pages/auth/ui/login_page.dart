@@ -1,9 +1,11 @@
 import 'package:eukay/components/loading_screen.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/inputs/my_input.dart';
 import 'package:eukay/components/buttons/my_text_button.dart';
 import 'package:eukay/components/my_snackbar.dart';
+import 'package:eukay/pages/auth/ui/forgot_password/forgot_password.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -171,7 +173,12 @@ class _LoginPageState extends State<LoginPage>
                       child: MyTextButton(
                         title: "Forgot Password",
                         textColor: Theme.of(context).colorScheme.onPrimary,
-                        onPressed: () {},
+                        onPressed: () {
+                          navigateWithSlideTransition(
+                            context: context,
+                            page: const ForgotPassword(),
+                          );
+                        },
                       ),
                     ),
 

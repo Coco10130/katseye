@@ -23,3 +23,31 @@ final class AuthRegisterRequest extends AuthEvent {
     required this.userName,
   });
 }
+
+final class SendOtpEvent extends AuthEvent {
+  final String email;
+
+  SendOtpEvent({required this.email});
+}
+
+final class VerifyOtpEvent extends AuthEvent {
+  final String email, otp, otpHash;
+
+  VerifyOtpEvent({
+    required this.email,
+    required this.otp,
+    required this.otpHash,
+  });
+}
+
+final class ResetPasswordEvent extends AuthEvent {
+  final String newPassword, confirmPassword, email;
+  final bool otpVerified;
+
+  ResetPasswordEvent({
+    required this.newPassword,
+    required this.confirmPassword,
+    required this.email,
+    required this.otpVerified,
+  });
+}

@@ -6,6 +6,6 @@ const { processOrder } = require("../controllers/order.controller.js");
 
 router.use(authMiddleware);
 
-router.get("/process", processOrder);
+router.post("/process", processOrder);
 
 module.exports = router;

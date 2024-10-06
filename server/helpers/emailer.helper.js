@@ -2,6 +2,7 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 const sendEmail = async (params, cb) => {
+  try{
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -11,7 +12,7 @@ const sendEmail = async (params, cb) => {
   });
 
   const mailOptions = {
-    from: "E-Ukay",
+    from: "Pocket Picks",
     to: params.email,
     subject: params.subject,
     text: params.body,
@@ -24,6 +25,9 @@ const sendEmail = async (params, cb) => {
       return cb(null, info.response);
     }
   });
+} catch(error) {
+  res.status(500).json({errorMessage: error.mesage })
+}
 };
 
 module.exports = { sendEmail };

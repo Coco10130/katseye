@@ -17,4 +17,16 @@ final class FetchCheckOutFailedState extends CheckOutState {
   FetchCheckOutFailedState({required this.errorMessage});
 }
 
+final class CheckOutFailedState extends CheckOutState {
+  final String errorMessage;
+
+  CheckOutFailedState({required this.errorMessage});
+}
+
+final class CheckOutSuccessState extends CheckOutState {
+  final String successMessage, newToken;
+
+  CheckOutSuccessState({required this.successMessage, required this.newToken});
+}
+
 final class CheckOutLoadingState extends CheckOutState {}

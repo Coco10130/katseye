@@ -4,8 +4,7 @@ class MyButton extends StatelessWidget {
   final String title;
   final Color backgroundColor, textColor;
   final VoidCallback onPressed;
-  final double widthFactor;
-  final double verticalPadding, elevation, fontSize;
+  final double verticalPadding, elevation, fontSize, widthFactor, borderRadius;
   final double? height;
 
   const MyButton({
@@ -18,6 +17,7 @@ class MyButton extends StatelessWidget {
     this.verticalPadding = 15,
     this.elevation = 0,
     this.fontSize = 15,
+    this.borderRadius = 20,
     this.height,
   });
 
@@ -33,7 +33,7 @@ class MyButton extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           color: backgroundColor,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(borderRadius),
         ),
         child: Center(
           child: Padding(

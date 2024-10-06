@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 const path = require("path");
 require("dotenv").config();
 const app = express();
@@ -18,6 +19,7 @@ const ordersRouters = require("./routes/order.route.js");
 
 // middlewares
 app.use(express.json());
+app.use(bodyParser.json());
 app.use(
   cors({
     credentials: true,

@@ -1,6 +1,7 @@
 const User = require("../models/user.model.js");
 const jwt = require("jsonwebtoken");
 const signToken = require("../helpers/sign.new.token.helper.js");
+const { sendOTP, verifyOTP } = require("../helpers/otp.helper.js");
 const {
   hashPassword,
   comparePassword,
@@ -94,4 +95,101 @@ const register = async (req, res) => {
   }
 };
 
-module.exports = { login, register };
+const sendOtp = async (req, res, next) => {
+  try {
+    const { shopEmail } = req.body;
+
+    if (!shopEmail) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await User.findOne({ email: shopEmail });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    sendOTP(req.body, (error, results) => {
+      if (error) {
+        return res.status(500).json({ message: error.message });
+      }
+      return res.status(200).json({ message: "OTP emailed", data: results });
+    });
+  } catch (error) {
+    res.status(500).json({ errorMessage: error.message });
+  }
+};
+
+const verifyOtp = async (req, res) => {
+  try {
+    const { otp, hash, shopEmail } = req.body;
+
+    if (!otp || !hash || !shopEmail) {
+      return res
+        .status(400)
+        .json({ message: "Otp, Otp hash, and Email are required." });
+    }
+
+    const user = await User.find({ email: shopEmail });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    verifyOTP(req.body, (error) => {
+      if (error) {
+        return res.status(400).json({ message: error.message });
+      }
+
+      res
+        .status(200)
+        .json({ message: "OTP verified successfully", success: true });
+    });
+  } catch (error) {
+    res.status(500).json({ errorMessage: error.message });
+  }
+};
+
+const changePassword = async (req, res) => {
+  try {
+    const { email, newPassword, confirmPassword, otpVerified } = req.body;
+
+    // Validation checks
+    if (!email || !newPassword || !confirmPassword) {
+      return res.status(400).json({
+        message: "Email, Password, and confirm password are required",
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+
+    // Find the user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if OTP is verified
+    if (!otpVerified) {
+      return res.status(403).json({ message: "OTP verification required" });
+    }
+
+    // Hash the new password
+    const hashedPassword = await hashPassword(newPassword);
+
+    // Update user password
+    user.password = hashedPassword;
+    await user.save();
+
+    // Send success response
+    res
+      .status(200)
+      .json({ message: "Password changed successfully", success: true });
+  } catch (error) {
+    res.status(500).json({ errorMessage: error.message });
+  }
+};
+
+module.exports = { login, register, sendOtp, verifyOtp, changePassword };

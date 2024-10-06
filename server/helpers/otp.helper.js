@@ -6,37 +6,40 @@ require("dotenv").config();
 const key = process.env.OTP_KEY;
 
 const sendOTP = async (params, cb) => {
-  const otp = otpGenerator.generate(4, {
-    digits: true,
-    upperCaseAlphabets: false,
-    specialChars: false,
-    lowerCaseAlphabets: false,
-  });
+  try {
+    const otp = otpGenerator.generate(4, {
+      digits: true,
+      upperCaseAlphabets: false,
+      specialChars: false,
+      lowerCaseAlphabets: false,
+    });
 
-  const ttl = 5 * 60 * 1000; // 5 minutes expiration
-  const expires = Date.now() + ttl;
-  const data = `${params.shopEmail}.${otp}.${expires}`;
-  const hash = crypto.createHmac("sha256", key).update(data).digest("hex");
-  const fullHash = `${hash}.${expires}`;
+    const ttl = 5 * 60 * 1000; // 5 minutes expiration
+    const expires = Date.now() + ttl;
+    const data = `${params.shopEmail}.${otp}.${expires}`;
+    const hash = crypto.createHmac("sha256", key).update(data).digest("hex");
+    const fullHash = `${hash}.${expires}`;
 
-  const otpMessage = `Dear User, your one time password is "${otp}" this will expire within 5 minutes`;
-  const model = {
-    email: params.shopEmail,
-    subject: "Email authentication",
-    body: otpMessage,
-  };
+    const otpMessage = `Dear User, your one time password is "${otp}" this will expire within 5 minutes`;
+    const model = {
+      email: params.shopEmail,
+      subject: "Email authentication",
+      body: otpMessage,
+    };
 
-  sendEmail(model, (error, result) => {
-    if (error) {
-      cb(error);
-    }
-    return cb(null, fullHash);
-  });
+    sendEmail(model, (error, result) => {
+      if (error) {
+        cb(error);
+      }
+      return cb(null, fullHash);
+    });
+  } catch (error) {
+    res.status(500).json({ errorMessage: error.message });
+  }
 };
 
 const verifyOTP = async (params, cb) => {
   const [hashValue, expires] = params.hash.split(".");
-
   const now = Date.now();
 
   if (now > parseInt(expires)) return cb("OTP Expired");

@@ -87,46 +87,45 @@ class _BodyPageState extends State<BodyPage> {
           return LoadingScreen(
               color: Theme.of(context).colorScheme.onSecondary);
         }
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // spacing
-              const SizedBox(height: 20),
-              MyTextField(
-                label: "Shop Name",
-                hint: "",
-                controller: _nameController,
-                underlineColor: Colors.black,
-              ),
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // spacing
+                const SizedBox(height: 20),
+                MyTextField(
+                  label: "Shop Name",
+                  hint: "",
+                  controller: _nameController,
+                  underlineColor: Colors.black,
+                ),
 
-              // spacing
-              const SizedBox(height: 10),
+                // spacing
+                const SizedBox(height: 10),
 
-              MyTextField(
-                label: "Shop Email",
-                hint: "",
-                controller: _emailController,
-                underlineColor: Colors.black,
-              ),
+                MyTextField(
+                  label: "Shop Email",
+                  hint: "",
+                  controller: _emailController,
+                  underlineColor: Colors.black,
+                ),
 
-              // spacing
-              const SizedBox(height: 10),
+                // spacing
+                const SizedBox(height: 10),
 
-              MyTextField(
-                label: "Shop Phone Number",
-                hint: "",
-                controller: _numberController,
-                underlineColor: Colors.black,
-              ),
+                MyTextField(
+                  label: "Shop Phone Number",
+                  hint: "",
+                  controller: _numberController,
+                  underlineColor: Colors.black,
+                ),
 
-              // spacing
-              const SizedBox(height: 30),
+                // spacing
+                const SizedBox(height: 30),
 
-              Align(
-                alignment: AlignmentDirectional.centerEnd,
-                child: MyButton(
+                MyButton(
                   title: "Next",
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   onPressed: () {
@@ -137,10 +136,9 @@ class _BodyPageState extends State<BodyPage> {
                           ),
                         );
                   },
-                  widthFactor: 0.38,
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         );
       },

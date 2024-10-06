@@ -8,3 +8,9 @@ final class FetchOrderSummaryEvent extends CheckOutEvent {
 
   FetchOrderSummaryEvent({required this.token});
 }
+
+final class CheckOutOrdersEvent extends CheckOutEvent {
+  final String token;
+
+  CheckOutOrdersEvent({required this.token});
+}

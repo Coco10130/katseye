@@ -1,5 +1,5 @@
 import 'package:eukay/components/buttons/my_button.dart';
-import 'package:eukay/components/buttons/my_icon_button.dart';
+import 'package:eukay/components/buttons/category_text_button.dart';
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_searchbox.dart';
 import 'package:eukay/components/product_cards/product_card.dart';
@@ -29,7 +29,7 @@ class _DashboardPageState extends State<DashboardPage> {
   String? userId;
   bool initializedToken = false;
 
-  void onSignIn() {
+  void onResetToken() {
     initPref().then((_) {
       initCartCount();
     });
@@ -77,7 +77,7 @@ class _DashboardPageState extends State<DashboardPage> {
         title: Padding(
           padding: const EdgeInsets.only(left: 10),
           child: Text(
-            "E-Ukay",
+            "Pocket Picks",
             style: TextStyle(
               fontSize: 24,
               fontFamily: "Poppins",
@@ -111,12 +111,15 @@ class _DashboardPageState extends State<DashboardPage> {
                           color: Color(0xFFFFFFFF),
                         ),
                         onPressed: () {
+                          initializedToken = false;
                           navigateWithSlideTransition(
-                            context: context,
-                            page: CartPage(
-                              token: pref.getString("token")!,
-                            ),
-                          );
+                              context: context,
+                              page: CartPage(
+                                token: pref.getString("token")!,
+                              ),
+                              onFetch: () {
+                                onResetToken();
+                              });
                         },
                       ),
                     ),
@@ -136,7 +139,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       navigateWithSlideTransition(
                         context: context,
                         page: const AuthPage(),
-                        onFetch: () => onSignIn(),
+                        onFetch: () => onResetToken(),
                       );
                     },
                   ),
@@ -144,7 +147,7 @@ class _DashboardPageState extends State<DashboardPage> {
         ],
       ),
       body: DashboardBody(
-        fetchProfile: () => onSignIn(),
+        fetchProfile: () => onResetToken(),
         userId: userId,
       ),
     );
@@ -248,52 +251,69 @@ class _DashboardBodyState extends State<DashboardBody> {
                     ),
                     // display categories
                     SizedBox(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      height: 50,
+                      child: ListView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
                         children: [
-                          // shirt icon
-                          MyIconBUtton(
-                            icon: "assets/icons/tshirt.png",
+                          // shirt label
+                          CategoryTextButton(
+                            label: "Shirts",
                             backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            iconColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                            textColor:
                                 Theme.of(context).colorScheme.onSecondary,
+                            onPressed: () {},
                           ),
+
                           // spacing
                           const SizedBox(
-                            width: spacing + 10,
+                            width: spacing - 5,
                           ),
-                          // pants icon
-                          MyIconBUtton(
-                            icon: "assets/icons/trousers.png",
+
+                          // shorts label
+                          CategoryTextButton(
+                            label: "Shorts",
                             backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            iconColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                            textColor:
                                 Theme.of(context).colorScheme.onSecondary,
+                            onPressed: () {},
                           ),
+
                           // spacing
                           const SizedBox(
-                            width: spacing + 10,
+                            width: spacing - 5,
                           ),
-                          // shoe icon
-                          MyIconBUtton(
-                            icon: "assets/icons/tshirt.png",
+
+                          // mens label
+                          CategoryTextButton(
+                            label: "Mens",
                             backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            iconColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                            textColor:
                                 Theme.of(context).colorScheme.onSecondary,
+                            onPressed: () {},
                           ),
+
                           // spacing
                           const SizedBox(
-                            width: spacing + 10,
+                            width: spacing - 5,
                           ),
-                          // underwear icon
-                          MyIconBUtton(
-                            icon: "assets/icons/trousers.png",
+
+                          // Womens label
+                          CategoryTextButton(
+                            label: "Womens",
                             backgroundColor:
-                                Theme.of(context).colorScheme.primary,
-                            iconColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                            textColor:
                                 Theme.of(context).colorScheme.onSecondary,
+                            onPressed: () {},
+                          ),
+
+                          // spacing
+                          const SizedBox(
+                            width: spacing - 5,
                           ),
                         ],
                       ),

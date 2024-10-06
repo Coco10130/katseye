@@ -5,6 +5,7 @@ class MyTextField extends StatelessWidget {
   final double widthFactor, height;
   final TextEditingController controller;
   final bool password, email, enabled;
+  final double fontSize;
   final Color textColor,
       underlineColor,
       backgroundColor,
@@ -21,6 +22,7 @@ class MyTextField extends StatelessWidget {
     this.textColor = Colors.black,
     this.height = 85,
     this.widthFactor = 0.85,
+    this.fontSize = 16,
     this.password = false,
     this.email = false,
     this.enabled = true,
@@ -44,7 +46,7 @@ class MyTextField extends StatelessWidget {
             label,
             style: TextStyle(
               color: textColor,
-              fontSize: 15,
+              fontSize: fontSize,
               fontFamily: "Poppins",
               fontWeight: FontWeight.w600,
             ),
@@ -76,17 +78,21 @@ class MyTextField extends StatelessWidget {
                 horizontal: 16.0,
                 vertical: 12.0,
               ),
-              border: UnderlineInputBorder(
+              border: OutlineInputBorder(
                 borderSide: BorderSide(color: underlineColor),
+                borderRadius: BorderRadius.circular(20),
               ),
-              focusedBorder: UnderlineInputBorder(
+              focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: underlineColor),
+                borderRadius: BorderRadius.circular(20),
               ),
-              enabledBorder: UnderlineInputBorder(
+              enabledBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: underlineColor),
+                borderRadius: BorderRadius.circular(20),
               ),
-              errorBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.red),
+              errorBorder: OutlineInputBorder(
+                borderSide: const BorderSide(color: Colors.red),
+                borderRadius: BorderRadius.circular(20),
               ),
             ),
           ),

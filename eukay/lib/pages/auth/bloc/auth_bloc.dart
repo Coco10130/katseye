@@ -12,6 +12,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(this._authRepository) : super(AuthInitial()) {
     on<AuthLoginRequest>(authLoginRequest);
     on<AuthRegisterRequest>(authRegisterRequest);
+    on<SendOtpEvent>(sendOtpEvent);
+    on<VerifyOtpEvent>(verifyOtpEvent);
+    on<ResetPasswordEvent>(resetPasswordEvent);
   }
 
   FutureOr<void> authLoginRequest(
@@ -58,6 +61,74 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     } catch (e) {
       emit(AuthRegisterFailure(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> sendOtpEvent(
+      SendOtpEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      final response = await _authRepository.sendOtp(event.email);
+
+      if (response != null) {
+        emit(SendOtpSuccessState(
+          otpHash: response,
+          successMessage: "OTP sent Successfuly!",
+          email: event.email,
+        ));
+      } else {
+        emit(ForgotPasswordFailedState(errorMessage: "Failed to send OTP"));
+      }
+    } catch (e) {
+      emit(ForgotPasswordFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> verifyOtpEvent(
+      VerifyOtpEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+
+    try {
+      final response = await _authRepository.verifyOtp(
+          event.email, event.otp, event.otpHash);
+
+      if (response) {
+        emit(VerifyOtpSuccessState(
+            successMessage: "OTP Verified Successfully",
+            otpVerified: response));
+      } else {
+        throw Exception(response);
+      }
+    } catch (e) {
+      emit(ForgotPasswordFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> resetPasswordEvent(
+      ResetPasswordEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
+    try {
+      if (event.newPassword != event.confirmPassword) {
+        return emit(
+            ForgotPasswordFailedState(errorMessage: "Password does not match"));
+      }
+
+      if (event.newPassword.isEmpty || event.confirmPassword.isEmpty) {
+        return emit(ForgotPasswordFailedState(
+            errorMessage: "Please fill in both password fields"));
+      }
+
+      final response = await _authRepository.resetPassword(event.newPassword,
+          event.confirmPassword, event.email, event.otpVerified);
+
+      if (response) {
+        emit(ResetPasswordSuccessState(
+            successMessage: "Password Changed Successfully"));
+      } else {
+        throw Exception(response);
+      }
+    } catch (e) {
+      emit(ForgotPasswordFailedState(errorMessage: e.toString()));
     }
   }
 }

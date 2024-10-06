@@ -31,4 +31,33 @@ final class AuthRegisterSuccess extends AuthState {
   });
 }
 
+final class SendOtpSuccessState extends AuthState {
+  final String otpHash, successMessage, email;
+
+  SendOtpSuccessState(
+      {required this.otpHash,
+      required this.successMessage,
+      required this.email});
+}
+
+final class ForgotPasswordFailedState extends AuthState {
+  final String errorMessage;
+
+  ForgotPasswordFailedState({required this.errorMessage});
+}
+
+final class VerifyOtpSuccessState extends AuthState {
+  final String successMessage;
+  final bool otpVerified;
+
+  VerifyOtpSuccessState(
+      {required this.successMessage, required this.otpVerified});
+}
+
+final class ResetPasswordSuccessState extends AuthState {
+  final String successMessage;
+
+  ResetPasswordSuccessState({required this.successMessage});
+}
+
 final class AuthLoading extends AuthState {}

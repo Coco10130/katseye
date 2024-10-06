@@ -1,6 +1,6 @@
 class Server {
   // api server url
-  static const serverUrl = "http://192.168.43.96:8080";
+  static const serverUrl = "http://192.168.1.21:8080";
 
   //! PSGC public api urls
   // server url for municipalities of pangasinan

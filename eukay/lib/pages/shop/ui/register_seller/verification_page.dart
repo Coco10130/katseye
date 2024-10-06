@@ -67,9 +67,13 @@ class _BodyPageState extends State<BodyPage> {
   }
 
   Future<void> updateToken(String newToken) async {
-    pref = await SharedPreferences.getInstance();
-    await pref.clear();
-    await pref.setString("token", newToken);
+    try {
+      pref = await SharedPreferences.getInstance();
+      await pref.clear();
+      await pref.setString("token", newToken);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
   }
 
   @override
@@ -112,16 +116,13 @@ class _BodyPageState extends State<BodyPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // spacing
-              const SizedBox(
-                height: 100,
-              ),
-
               // otp input
               OtpInput(
                 labelText:
-                    "We sent a reset link to your email.\nEnter the 4-digit code mentioned in the email.",
+                    "We sent a reset link to your email. Enter the 4-digit code mentioned in the email.",
                 controller: _otpController,
+                textColor: Theme.of(context).colorScheme.onSecondary,
+                borderColor: Theme.of(context).colorScheme.onSecondary,
               ),
 
               // spacing

@@ -56,6 +56,15 @@ class _BodyPageState extends State<BodyPage> {
     context.read<CheckOutBloc>().add(FetchOrderSummaryEvent(token: token!));
   }
 
+  Future<void> changeToken(String token) async {
+    try {
+      await pref.clear();
+      pref.setString("token", token);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
   Future<void> initPref() async {
     try {
       pref = await SharedPreferences.getInstance();
@@ -106,6 +115,25 @@ class _BodyPageState extends State<BodyPage> {
               textColor: Theme.of(context).colorScheme.error,
             ),
           );
+        } else if (state is CheckOutFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        } else if (state is CheckOutSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onPrimary,
+            ),
+          );
+
+          changeToken(state.newToken);
+          Navigator.pop(context, true);
         }
       },
       builder: (context, state) {
@@ -455,7 +483,11 @@ class _BodyPageState extends State<BodyPage> {
                   textColor: Theme.of(context).colorScheme.onPrimary,
                   verticalPadding: 10,
                   widthFactor: 0.30,
-                  onPressed: () {},
+                  onPressed: () {
+                    context
+                        .read<CheckOutBloc>()
+                        .add(CheckOutOrdersEvent(token: token!));
+                  },
                 )
               ],
             ),

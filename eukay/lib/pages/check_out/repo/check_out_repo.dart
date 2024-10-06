@@ -28,7 +28,36 @@ class CheckOutRepo extends CheckOutRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        final errorMessage =
+            e.response?.data["errorMessage"] ?? "Unknown error";
+        throw Exception("DioException: $errorMessage");
+      } else {
+        throw Exception("Error: ${e.toString()}");
+      }
+    }
+  }
+
+  @override
+  Future<String> checkOutOrders(String token) async {
+    try {
+      final response = await _dio.post(
+        "${Server.serverUrl}/api/orders/process",
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      if (response.statusCode == 201 && response.data["success"]) {
+        return response.data["newToken"];
+      } else {
+        throw Exception(response.data["message"]);
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["errorMessage"] ?? "Unknown error";
         throw Exception("DioException: $errorMessage");
       } else {
         throw Exception("Error: ${e.toString()}");

@@ -28,7 +28,7 @@ class _CartPageState extends State<CartPage> {
       appBar: MyAppBar(
         label: "Shopping Cart",
         onPressed: () {
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         },
         backgroundColor: Theme.of(context).colorScheme.secondary,
         textColor: Theme.of(context).colorScheme.onPrimary,

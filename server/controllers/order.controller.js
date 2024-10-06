@@ -4,6 +4,7 @@ const Cart = require("../models/cart.model.js");
 const jwt = require("jsonwebtoken");
 const Order = require("../models/order.model.js");
 const User = require("../models/user.model.js");
+const signToken = require("../helpers/sign.new.token.helper.js");
 const secretKey = process.env.JWT_SECRET;
 
 const processOrder = async (req, res) => {
@@ -19,7 +20,7 @@ const processOrder = async (req, res) => {
     const user = await User.findById(decode.id);
 
     if (!userAddress) {
-      return res.status(400).json({ errorMessage: "No active address found." });
+      return res.status(404).json({ message: "No active address found." });
     }
 
     const deliveryAddress = `${userAddress.province}, ${userAddress.municipality}, ${userAddress.barangay}, ${userAddress.street}`;
@@ -53,9 +54,15 @@ const processOrder = async (req, res) => {
       orders.push(newOrder);
     }
 
+    const newToken = signToken(user);
+
     await Cart.deleteMany({ userId: decode.id, toCheckOut: true });
 
-    res.status(200).json({ success: true, data: orders });
+    res.status(201).json({
+      success: true,
+      newToken: newToken,
+      successMessage: "Orders checked out successfully!",
+    });
   } catch (error) {
     res.status(500).json({ errorMessage: error.message });
   }
