@@ -231,8 +231,6 @@ const checkItem = async (req, res) => {
     });
 
     res.status(200).json({ success: true, data: cartItems });
-
-    res.status();
   } catch (error) {
     res.status(500).json({ errorMessage: error.message });
   }
@@ -268,67 +266,6 @@ const getCheckOutItems = async (req, res) => {
   }
 };
 
-const orderItem = async (req, res) => {
-  try {
-    const authorizationHeader = req.headers.authorization;
-    const token = authorizationHeader.split(" ")[1];
-    const decode = jwt.verify(token, secretKey);
-    const userId = decode.id;
-
-    const items = await Cart.find({ toCheckOut: true, userId: userId });
-
-    let invalidItems = [];
-    let orderItems = [];
-    for (const item of items) {
-      const product = await Product.findById(item.productId);
-      const user = await User.findById(userId);
-
-      const productImage = product.productImage[0];
-
-      if (!product) {
-        invalidItems.push(item._id);
-      } else {
-        const orderItem = {
-          productname: product.productName,
-          productImage: productImage,
-
-          orderedBy: userId,
-          sellerId: product.sellerId,
-          productId: product._id,
-          status: "pending",
-        };
-
-        orderItems.push(Order.create(orderItem));
-
-        const seller = await Seller.findById(product.sellerId);
-
-        seller.pendingOrders += 1;
-        user.cartItems -= 1;
-        await user.save();
-        await seller.save();
-      }
-    }
-
-    if (invalidItems.length > 0) {
-      return res.status(404).json({
-        message: "Some of the products are no longer available.",
-        invalidItems: invalidItems,
-      });
-    }
-
-    await Promise.all(orderItems);
-
-    // delete the items in cart
-    await Cart.deleteMany({ toCheckOut: true, userId: userId });
-
-    res
-      .status(200)
-      .json({ success: true, message: "Items ordered successfully" });
-  } catch (error) {
-    res.status(500).json({ errorMessage: error.message });
-  }
-};
-
 module.exports = {
   addToCart,
   showCart,
@@ -336,5 +273,4 @@ module.exports = {
   minusQuantity,
   checkItem,
   getCheckOutItems,
-  orderItem,
 };

@@ -2,7 +2,13 @@ import 'package:eukay/pages/dashboard/mappers/product_model.dart';
 
 class SellerModel {
   final String shopName, shopContact, shopEmail, image, id;
-  final int pendingOrders, prepareOrders, deliverOrders, reviewOrders;
+  final int pendingOrders,
+      prepareOrders,
+      deliverOrders,
+      reviewOrders,
+      live,
+      soldOut,
+      delisted;
   final List<ProductModel> products;
 
   SellerModel({
@@ -16,6 +22,9 @@ class SellerModel {
     required this.deliverOrders,
     required this.reviewOrders,
     required this.products,
+    required this.live,
+    required this.soldOut,
+    required this.delisted,
   });
 
   factory SellerModel.fromJson(Map<String, dynamic> json) {
@@ -32,6 +41,9 @@ class SellerModel {
       products: (json["products"] as List<dynamic>)
           .map((productJson) => ProductModel.fromJson(productJson))
           .toList(),
+      live: json["live"],
+      soldOut: json["soldOut"],
+      delisted: json["delisted"],
     );
   }
 }

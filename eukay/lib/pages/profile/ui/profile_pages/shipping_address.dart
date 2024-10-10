@@ -1,7 +1,7 @@
 import 'package:eukay/components/appbar/my_app_bar.dart';
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
-import 'package:eukay/components/shipping_address_container.dart';
+import 'package:eukay/components/containers/shipping_address_container.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
 import 'package:eukay/pages/profile/ui/edit_user_information/add_shipping_address.dart';
@@ -103,6 +103,24 @@ class _ShippingPageState extends State<ShippingPage> {
             ),
           );
           fetchAddresses();
+        } else if (state is UseAddressFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+          fetchAddresses();
+        } else if (state is UseAddressSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
+            ),
+          );
+          fetchAddresses();
         }
       },
       builder: (context, state) {
@@ -173,6 +191,7 @@ class _ShippingPageState extends State<ShippingPage> {
                       itemBuilder: (context, index) {
                         final address = addresses[index];
                         return AddressContainer(
+                          inUse: address.inUse,
                           name: address.fullName,
                           phoneNumber: address.contact,
                           province: address.province,
@@ -181,7 +200,14 @@ class _ShippingPageState extends State<ShippingPage> {
                           street: address.street,
                           nameColor: Theme.of(context).colorScheme.onSecondary,
                           informationTextColor: Colors.grey[600]!,
-                          onPressed: () {},
+                          onPressed: () {
+                            !address.inUse
+                                ? context.read<ProfileBloc>().add(
+                                      UseAddressEvent(
+                                          addressId: address.id, token: token!),
+                                    )
+                                : null;
+                          },
                           onDeletePressed: () {
                             context.read<ProfileBloc>().add(DeleteAddressEvent(
                                 addressId: address.id, token: token!));

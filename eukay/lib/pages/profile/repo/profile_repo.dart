@@ -7,6 +7,7 @@ import 'package:eukay/pages/profile/mappers/barangay_model.dart';
 import 'package:eukay/pages/profile/mappers/municipality_model.dart';
 import 'package:eukay/pages/profile/mappers/profile_model.dart';
 import 'package:eukay/pages/profile/repo/profile_repository.dart';
+import 'package:eukay/pages/shop/mappers/sales_product_model.dart';
 import 'package:eukay/uitls/server.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -33,10 +34,11 @@ class ProfileRepo extends ProfileRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage = e.response?.data["message"] ?? "Unknown error";
-        throw Exception("DioException: $errorMessage");
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        throw errorMessage;
       } else {
-        throw Exception("Error: ${e.toString()}");
+        throw Exception(e.toString());
       }
     }
   }
@@ -76,7 +78,8 @@ class ProfileRepo extends ProfileRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
         throw errorMessage;
       } else {
         throw Exception(e.toString());
@@ -139,7 +142,8 @@ class ProfileRepo extends ProfileRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
         throw errorMessage;
       } else {
         throw Exception(e.toString());
@@ -171,7 +175,8 @@ class ProfileRepo extends ProfileRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
         throw errorMessage;
       } else {
         throw Exception(e.toString());
@@ -198,7 +203,8 @@ class ProfileRepo extends ProfileRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
         throw errorMessage;
       } else {
         throw Exception(e.toString());
@@ -228,7 +234,68 @@ class ProfileRepo extends ProfileRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<bool> useAddress(String token, String addressId) async {
+    try {
+      final response = await _dio.put(
+        "${Server.serverUrl}/api/address/use-address/$addressId",
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        return true;
+      } else {
+        throw Exception(response.data["message"]);
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<List<SalesProductModel>> fetchOrdersProduct(
+      String token, String status) async {
+    try {
+      final response = await _dio.get(
+        "${Server.serverUrl}/api/product/get/orders/$status",
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        final List<dynamic> productList = response.data["data"];
+        return productList.map((product) {
+          return SalesProductModel.fromJson(product);
+        }).toList();
+      } else {
+        throw response.data["message"];
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
         throw errorMessage;
       } else {
         throw Exception(e.toString());

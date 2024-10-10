@@ -57,7 +57,10 @@ const getWishlistByUser = async (req, res) => {
 
     const productIds = wishlist.map((item) => item.productId);
 
-    const products = await Product.find({ _id: { $in: productIds } });
+    const products = await Product.find({
+      _id: { $in: productIds },
+      status: { $in: "live" },
+    });
 
     const productsWithImageUrl = products.map((product) => {
       const imageUrls = product.productImage.map(

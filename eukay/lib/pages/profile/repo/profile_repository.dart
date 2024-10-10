@@ -3,6 +3,7 @@ import 'package:eukay/pages/profile/mappers/address_model.dart';
 import 'package:eukay/pages/profile/mappers/barangay_model.dart';
 import 'package:eukay/pages/profile/mappers/municipality_model.dart';
 import 'package:eukay/pages/profile/mappers/profile_model.dart';
+import 'package:eukay/pages/shop/mappers/sales_product_model.dart';
 import 'package:image_picker/image_picker.dart';
 
 abstract class ProfileRepository {
@@ -22,4 +23,7 @@ abstract class ProfileRepository {
   Future<List<AddressModel>> fetchUserAddresses(String userId, String token);
   Future<bool> deleteAddress(String addressId, String token);
   Future<List<ProductModel>> fetchWishlists(String token);
+  Future<bool> useAddress(String token, String addressId);
+  Future<List<SalesProductModel>> fetchOrdersProduct(
+      String token, String status);
 }

@@ -28,9 +28,8 @@ class CartRepo extends CartRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
-        throw Exception("DioException: $errorMessage");
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        throw errorMessage;
       } else {
         throw Exception("Error: ${e.toString()}");
       }
@@ -60,7 +59,7 @@ class CartRepo extends CartRepository {
     } catch (e) {
       if (e is DioException && e.response != null) {
         final errorMessage = e.response?.data["message"] ?? "Unknown error";
-        throw Exception("DioException: $errorMessage");
+        throw errorMessage;
       } else {
         throw Exception("Error: ${e.toString()}");
       }
@@ -90,7 +89,7 @@ class CartRepo extends CartRepository {
     } catch (e) {
       if (e is DioException && e.response != null) {
         final errorMessage = e.response?.data["message"] ?? "Unknown error";
-        throw Exception("DioException: $errorMessage");
+        throw errorMessage;
       } else {
         throw Exception("Error: ${e.toString()}");
       }
@@ -120,7 +119,7 @@ class CartRepo extends CartRepository {
     } catch (e) {
       if (e is DioException && e.response != null) {
         final errorMessage = e.response?.data["message"] ?? "Unknown error";
-        throw Exception("DioException: $errorMessage");
+        throw errorMessage;
       } else {
         throw Exception("Error: ${e.toString()}");
       }

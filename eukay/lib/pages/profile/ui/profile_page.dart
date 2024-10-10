@@ -5,6 +5,7 @@ import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/navigation_menu.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
 import 'package:eukay/pages/profile/ui/edit_user_information/edit_profile.dart';
+import 'package:eukay/pages/profile/ui/orders/orders_page.dart';
 import 'package:eukay/pages/profile/ui/profile_pages/shipping_address.dart';
 import 'package:eukay/pages/profile/ui/profile_pages/wishlist_page.dart';
 import 'package:eukay/uitls/curved_edges.dart';
@@ -219,24 +220,59 @@ class ProfilePageBody extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
+                  // to prepare icon
                   _icons(
-                      const Icon(
-                        Iconsax.box,
-                        size: 25,
-                      ),
-                      "To Prepare"),
+                    const Icon(
+                      Iconsax.box,
+                      size: 25,
+                    ),
+                    "To Prepare",
+                    () {
+                      navigateWithSlideTransition(
+                        context: context,
+                        page: const OrdersPage(
+                          initialIndex: 0,
+                        ),
+                        onFetch: fetchProfile,
+                      );
+                    },
+                  ),
+
+                  // to recieve icon
                   _icons(
-                      const Icon(
-                        Iconsax.truck,
-                        size: 25,
-                      ),
-                      "To Recieve"),
+                    const Icon(
+                      Iconsax.truck,
+                      size: 25,
+                    ),
+                    "To Recieve",
+                    () {
+                      navigateWithSlideTransition(
+                        context: context,
+                        page: const OrdersPage(
+                          initialIndex: 1,
+                        ),
+                        onFetch: fetchProfile,
+                      );
+                    },
+                  ),
+
+                  // to rate icon
                   _icons(
-                      const Icon(
-                        Iconsax.star,
-                        size: 25,
-                      ),
-                      "To Rate"),
+                    const Icon(
+                      Iconsax.star,
+                      size: 25,
+                    ),
+                    "To Rate",
+                    () {
+                      navigateWithSlideTransition(
+                        context: context,
+                        page: const OrdersPage(
+                          initialIndex: 2,
+                        ),
+                        onFetch: fetchProfile,
+                      );
+                    },
+                  ),
                 ],
               ),
 
@@ -302,24 +338,27 @@ class ProfilePageBody extends StatelessWidget {
     );
   }
 
-  Widget _icons(Icon icon, String label) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        CircleAvatar(
-          backgroundColor: Colors.transparent,
-          radius: 20,
-          child: icon,
-        ),
-        Text(
-          label,
-          style: const TextStyle(
-            fontFamily: "Poppins",
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
+  Widget _icons(Icon icon, String label, VoidCallback onPressed) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          CircleAvatar(
+            backgroundColor: Colors.transparent,
+            radius: 20,
+            child: icon,
           ),
-        )
-      ],
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: "Poppins",
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
+          )
+        ],
+      ),
     );
   }
 

@@ -68,4 +68,40 @@ final class FetchLiveProductsFailedState extends ShopState {
   FetchLiveProductsFailedState({required this.errorMessage});
 }
 
+final class FetchSalesProductsState extends ShopState {
+  final List<SalesProductModel> products;
+
+  FetchSalesProductsState({required this.products});
+}
+
+final class FetchProductFailedState extends ShopState {
+  final String errorMessage;
+
+  FetchProductFailedState({required this.errorMessage});
+}
+
+final class MarkSalesProductFailedState extends ShopState {
+  final String errorMessage;
+
+  MarkSalesProductFailedState({required this.errorMessage});
+}
+
+final class MarkSalesProductSuccessState extends ShopState {
+  final String successMessage;
+
+  MarkSalesProductSuccessState({required this.successMessage});
+}
+
+final class ChangeStatusSuccessState extends ShopState {
+  final String successMessage;
+
+  ChangeStatusSuccessState({required this.successMessage});
+}
+
+final class ChangeStatusFailedState extends ShopState {
+  final String errorMessage;
+
+  ChangeStatusFailedState({required this.errorMessage});
+}
+
 final class ShopLoadingState extends ShopState {}

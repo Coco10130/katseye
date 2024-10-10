@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class MyTextField extends StatelessWidget {
   final String label, hint;
+  final List<TextInputFormatter>? inputFormatters;
   final double widthFactor, height;
   final TextEditingController controller;
   final bool password, email, enabled;
@@ -17,6 +19,7 @@ class MyTextField extends StatelessWidget {
     required this.label,
     required this.hint,
     required this.controller,
+    this.inputFormatters,
     this.backgroundColor = Colors.transparent,
     this.hintColor = Colors.black54,
     this.textColor = Colors.black,
@@ -66,6 +69,7 @@ class MyTextField extends StatelessWidget {
               fontFamily: "Poppins",
             ),
             cursorColor: cursorColor,
+            inputFormatters: inputFormatters,
             decoration: InputDecoration(
               hintText: hint,
               filled: true,

@@ -1,5 +1,16 @@
 const mongoose = require("mongoose");
 
+const SizeQuantitySchema = mongoose.Schema({
+  size: {
+    type: String,
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
+});
+
 const ProductSchema = mongoose.Schema(
   {
     productImage: {
@@ -9,11 +20,6 @@ const ProductSchema = mongoose.Schema(
 
     productName: {
       type: String,
-      required: true,
-    },
-
-    quantity: {
-      type: Number,
       required: true,
     },
 
@@ -32,14 +38,16 @@ const ProductSchema = mongoose.Schema(
       required: true,
     },
 
-    sizes: {
-      type: [String],
+    // Replace quantity with sizeQuantities
+    sizeQuantities: {
+      type: [SizeQuantitySchema], // Use the new SizeQuantitySchema
       required: true,
     },
 
     status: {
       type: String,
       default: "live",
+      enum: ["live", "sold out", "delisted"],
     },
 
     rating: {

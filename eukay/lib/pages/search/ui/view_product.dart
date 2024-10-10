@@ -4,6 +4,7 @@ import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/auth/ui/auth_page.dart';
+import 'package:eukay/pages/dashboard/mappers/product_model.dart';
 import 'package:eukay/pages/search/bloc/search_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -183,7 +184,7 @@ class _BodyPageState extends State<BodyPage> {
     return BlocConsumer<SearchBloc, SearchState>(
       listener: (context, state) {
         if (state is ViewProductFailedState) {
-          if (!mounted) return;
+          // if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
               message: state.errorMessage,
@@ -192,7 +193,7 @@ class _BodyPageState extends State<BodyPage> {
             ),
           );
         } else if (state is WishlistSuccessState) {
-          if (!mounted) return;
+          // if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
               message: state.successMessage,
@@ -202,7 +203,7 @@ class _BodyPageState extends State<BodyPage> {
           );
           fetchProduct();
         } else if (state is WishlistFailedState) {
-          if (!mounted) return;
+          // if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
               message: state.errorMessage,
@@ -214,7 +215,7 @@ class _BodyPageState extends State<BodyPage> {
         }
 
         if (state is AddToCartFailedState) {
-          if (!mounted) return;
+          // if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
             message: state.errorMessage,
             backgroundColor: Theme.of(context).colorScheme.primary,
@@ -226,7 +227,7 @@ class _BodyPageState extends State<BodyPage> {
           ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
             message: state.successMessage,
             backgroundColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.onPrimary,
+            textColor: Theme.of(context).colorScheme.onSecondary,
           ));
           updateToken(state.token);
           fetchProduct();
@@ -235,7 +236,9 @@ class _BodyPageState extends State<BodyPage> {
       builder: (context, state) {
         if (state is ViewProductSuccessState) {
           final product = state.product;
-          final List<String> sizes = product.sizes;
+          final List<SizeQuantity> sizeQuantities = product.sizeQuantities;
+          final List<String> sizes =
+              sizeQuantities.map((sq) => sq.size).toList();
           widget.onProductFetched(product.wishedByUser);
           final List<String> images = product.productImage.take(5).toList();
           final formatCurrency = NumberFormat.currency(

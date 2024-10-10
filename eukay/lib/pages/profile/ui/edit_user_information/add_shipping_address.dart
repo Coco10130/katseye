@@ -135,7 +135,6 @@ class _AddAddressBodyState extends State<AddAddressBody> {
                   backgroundColor: Theme.of(context).colorScheme.onPrimary,
                   underlineColor: Theme.of(context).colorScheme.onSecondary,
                   widthFactor: 1,
-                  height: 80,
                   controller: _nameController,
                 ),
 
@@ -150,7 +149,6 @@ class _AddAddressBodyState extends State<AddAddressBody> {
                   underlineColor: Theme.of(context).colorScheme.onSecondary,
                   backgroundColor: Theme.of(context).colorScheme.onPrimary,
                   widthFactor: 1,
-                  height: 80,
                   controller: _contactController,
                 ),
 
@@ -194,20 +192,24 @@ class _AddAddressBodyState extends State<AddAddressBody> {
                         fontFamily: "Poppins",
                         color: Theme.of(context).colorScheme.onSecondary,
                       ),
-                      border: UnderlineInputBorder(
+                      border: OutlineInputBorder(
                         borderSide: BorderSide(
                             color: Theme.of(context).colorScheme.onSecondary),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      focusedBorder: UnderlineInputBorder(
+                      focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                             color: Theme.of(context).colorScheme.onSecondary),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      enabledBorder: UnderlineInputBorder(
+                      enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                             color: Theme.of(context).colorScheme.onSecondary),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      errorBorder: const UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 12.0),
@@ -251,20 +253,24 @@ class _AddAddressBodyState extends State<AddAddressBody> {
                         fontFamily: "Poppins",
                         color: Theme.of(context).colorScheme.onSecondary,
                       ),
-                      border: UnderlineInputBorder(
+                      border: OutlineInputBorder(
                         borderSide: BorderSide(
                             color: Theme.of(context).colorScheme.onSecondary),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      focusedBorder: UnderlineInputBorder(
+                      focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                             color: Theme.of(context).colorScheme.onSecondary),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      enabledBorder: UnderlineInputBorder(
+                      enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
                             color: Theme.of(context).colorScheme.onSecondary),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      errorBorder: const UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.red),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.red),
+                        borderRadius: BorderRadius.circular(20),
                       ),
                       contentPadding:
                           const EdgeInsets.symmetric(horizontal: 12.0),
@@ -284,7 +290,6 @@ class _AddAddressBodyState extends State<AddAddressBody> {
                   backgroundColor: Theme.of(context).colorScheme.onPrimary,
                   underlineColor: Theme.of(context).colorScheme.onSecondary,
                   widthFactor: 1,
-                  height: 80,
                   controller: _streetController,
                 ),
 

@@ -66,7 +66,6 @@ class _EditProfileBodyState extends State<EditProfileBody> {
       setState(() {
         _imageFile = XFile(pickedFile.path);
       });
-      print(pickedFile.path);
     }
   }
 
@@ -80,10 +79,10 @@ class _EditProfileBodyState extends State<EditProfileBody> {
 
   @override
   void dispose() {
-    super.dispose();
-    _nameController.dispose();
+    _phoneNumberController.dispose();
     _nameController.dispose();
     _emailController.dispose();
+    super.dispose();
   }
 
   @override

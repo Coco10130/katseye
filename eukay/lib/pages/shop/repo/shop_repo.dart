@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:eukay/pages/dashboard/mappers/product_model.dart';
+import 'package:eukay/pages/shop/mappers/sales_product_model.dart';
 import 'package:eukay/pages/shop/mappers/seller_model.dart';
 import 'package:eukay/pages/shop/repo/shop_repository.dart';
 import 'package:eukay/uitls/server.dart';
@@ -40,11 +41,12 @@ class ShopRepo extends ShopRepository {
       if (response.data["success"] && response.statusCode == 200) {
         return response.data["token"];
       } else {
-        throw Exception(response.data["errorMessage"]);
+        throw Exception(response.data["message"]);
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
         throw errorMessage;
       } else {
         throw Exception(e.toString());
@@ -71,7 +73,7 @@ class ShopRepo extends ShopRepository {
     } catch (e) {
       if (e is DioException && e.response != null) {
         final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
         throw errorMessage;
       } else {
         throw Exception(e.toString());
@@ -99,7 +101,7 @@ class ShopRepo extends ShopRepository {
     } catch (e) {
       if (e is DioException && e.response != null) {
         final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
         throw errorMessage;
       } else {
         throw Exception(e.toString());
@@ -109,24 +111,26 @@ class ShopRepo extends ShopRepository {
 
   @override
   Future<bool> addProduct(
-      String token,
-      String productName,
-      String productDescription,
-      double price,
-      double stocks,
-      List<String> categories,
-      List<String> sizes,
-      List<XFile> images) async {
+    String token,
+    String productName,
+    String productDescription,
+    double price,
+    List<double> stocks,
+    List<String> categories,
+    List<String> sizes,
+    List<XFile> images,
+  ) async {
     try {
       final formData = FormData.fromMap({
         "productName": productName,
         "productDescription": productDescription,
         "price": price,
-        "quantity": stocks,
+        "quantities": stocks,
         "categories": categories,
         "sizes": sizes,
       });
 
+      // Add images to formData
       for (var image in images) {
         formData.files.add(
           MapEntry(
@@ -136,6 +140,7 @@ class ShopRepo extends ShopRepository {
         );
       }
 
+      // Make the POST request
       final response = await _dio.post(
         "${Server.serverUrl}/api/product/add",
         options: Options(
@@ -146,6 +151,7 @@ class ShopRepo extends ShopRepository {
         data: formData,
       );
 
+      // Check response status
       if (response.statusCode == 201 && response.data["success"] == true) {
         return true;
       } else {
@@ -153,7 +159,8 @@ class ShopRepo extends ShopRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
         throw errorMessage;
       } else {
         throw Exception(e.toString());
@@ -162,11 +169,11 @@ class ShopRepo extends ShopRepository {
   }
 
   @override
-  Future<List<ProductModel>> fetchLiveProducts(
-      String sellerId, String token) async {
+  Future<List<ProductModel>> fetchProductByStatus(
+      String sellerId, String token, String status) async {
     try {
       final response = await _dio.get(
-        "${Server.serverUrl}/api/product/get/live/$sellerId",
+        "${Server.serverUrl}/api/product/get/products/$sellerId/$status",
         options: Options(
           headers: {
             "Authorization": "Bearer $token",
@@ -185,7 +192,105 @@ class ShopRepo extends ShopRepository {
     } catch (e) {
       if (e is DioException && e.response != null) {
         final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<List<SalesProductModel>> fetchSalesProduct(
+      String token, String sellerId, String status) async {
+    try {
+      final response = await _dio.get(
+        "${Server.serverUrl}/api/product/get/sales/$status/$sellerId",
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        final List<dynamic> productList = response.data["data"];
+        return productList.map((product) {
+          return SalesProductModel.fromJson(product);
+        }).toList();
+      } else {
+        throw Exception("Failed to fetch products");
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<bool> markProductAsNextStep({
+    required String token,
+    required String status,
+    required String orderId,
+    required String sellerId,
+  }) async {
+    try {
+      final response = await _dio.post(
+        "${Server.serverUrl}/api/orders/mark-order/$orderId/$status/$sellerId",
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        return response.data["success"];
+      } else {
+        return false;
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<bool> changeSalesStatus({
+    required String token,
+    required String status,
+    required String sellerId,
+    required String nextStatus,
+  }) async {
+    try {
+      final response = await _dio.post(
+        "${Server.serverUrl}/api/orders/change-status/$status/$sellerId/$nextStatus",
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
         throw errorMessage;
       } else {
         throw Exception(e.toString());

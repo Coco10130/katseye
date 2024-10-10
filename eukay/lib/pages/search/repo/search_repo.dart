@@ -8,10 +8,28 @@ import 'package:eukay/uitls/server.dart';
 class SearchRepo extends SearchRepository {
   final _dio = Dio();
   @override
-  Future<List<ProductModel>> fetchSearchedProduct(String searched) async {
+  Future<List<ProductModel>> fetchSearchedProduct({
+    String? searched,
+    String? gender,
+    String? category,
+    String? rating,
+    String? priceRange,
+  }) async {
     try {
-      final response =
-          await _dio.get("${Server.serverUrl}/api/product/search/$searched");
+      final queryParams = <String, dynamic>{
+        "gender": gender,
+        "category": category,
+        "ratings": rating,
+        "priceRange": priceRange,
+        "searchedProduct": searched
+      };
+
+      queryParams.removeWhere((key, value) => value == null);
+
+      final response = await _dio.get(
+        "${Server.serverUrl}/api/product/search",
+        queryParameters: queryParams,
+      );
 
       if (response.data["success"]) {
         final List<dynamic> resultList = response.data["data"];
@@ -24,7 +42,7 @@ class SearchRepo extends SearchRepository {
     } catch (e) {
       if (e is DioException && e.response != null) {
         final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
+            e.response?.data["errorMessage"] ?? e.response?.data["message"];
         throw errorMessage;
       } else {
         throw Exception(e.toString());
@@ -46,8 +64,7 @@ class SearchRepo extends SearchRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
         throw Exception(e.toString());
@@ -75,8 +92,7 @@ class SearchRepo extends SearchRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
         throw Exception(e.toString());
@@ -103,8 +119,7 @@ class SearchRepo extends SearchRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
         throw Exception(e.toString());
@@ -131,8 +146,7 @@ class SearchRepo extends SearchRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
         throw Exception(e.toString());

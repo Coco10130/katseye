@@ -6,6 +6,7 @@ import 'package:eukay/pages/profile/mappers/barangay_model.dart';
 import 'package:eukay/pages/profile/mappers/municipality_model.dart';
 import 'package:eukay/pages/profile/mappers/profile_model.dart';
 import 'package:eukay/pages/profile/repo/profile_repository.dart';
+import 'package:eukay/pages/shop/mappers/sales_product_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,6 +25,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<FetchUserAddressEvent>(fetchUserAddressEvent);
     on<FetchUserWishlistsEvent>(fetchUserWishlistsEvent);
     on<DeleteAddressEvent>(deleteAddressEvent);
+    on<UseAddressEvent>(useAddressEvent);
+    on<FetchOrdersEvent>(fetchOrdersEvent);
+    on<FetchDeliveryAddressEvent>(fetchDeliveryAddressEvent);
     on<ProfileLogoutEvent>((event, emit) {
       emit(ProfileInitial());
     });
@@ -153,6 +157,67 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(WishListSuccessState(products: response));
     } catch (e) {
       emit(WishListFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> useAddressEvent(
+      UseAddressEvent event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoadingState());
+
+    try {
+      final response =
+          await _profileRepository.useAddress(event.token, event.addressId);
+
+      if (response) {
+        emit(UseAddressSuccessState(
+            successMessage: "Address used successfully"));
+      } else {
+        throw Exception("Something went wrong");
+      }
+    } catch (e) {
+      emit(UseAddressFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> fetchDeliveryAddressEvent(
+      FetchDeliveryAddressEvent event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoadingState());
+
+    try {
+      final response = await _profileRepository.fetchUserAddresses(
+          event.userId, event.token);
+
+      AddressModel? address;
+
+      for (var i = 0; i < response.length; i++) {
+        final currentAddress = response[i];
+
+        if (currentAddress.inUse) {
+          address = currentAddress;
+          break;
+        }
+      }
+      if (address == null) {
+        emit(DeliveryAddressEmpty(errorMessage: "No shipping address in use"));
+      } else {
+        emit(FetchDeliveryAddressSuccessState(address: address));
+      }
+    } catch (e) {
+      emit(FetchUserAddressFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> fetchOrdersEvent(
+      FetchOrdersEvent event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoadingState());
+
+    try {
+      final response = await _profileRepository.fetchOrdersProduct(
+          event.token, event.status);
+
+      emit(FetchOrdersProductsSuccessState(products: response));
+    } catch (e) {
+      emit(FetchOrdersProductsFailedState(errorMessage: e.toString()));
     }
   }
 }

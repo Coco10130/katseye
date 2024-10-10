@@ -2,7 +2,7 @@ import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/navigate_to_auth.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/cart/ui/cart_page.dart';
-import 'package:eukay/pages/shop/ui/my_products/add_product.dart';
+import 'package:eukay/pages/shop/ui/shop_pages/add_product.dart';
 import 'package:eukay/pages/shop/ui/shop_pages/non_seller_page.dart';
 import 'package:eukay/pages/shop/ui/shop_pages/seller_page.dart';
 import 'package:flutter/material.dart';

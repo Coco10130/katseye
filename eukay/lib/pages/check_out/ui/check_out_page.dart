@@ -1,14 +1,18 @@
 import 'package:eukay/components/appbar/my_app_bar.dart';
 import 'package:eukay/components/buttons/my_button.dart';
+import 'package:eukay/components/containers/order_shipping_address_container.dart';
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/product_cards/order_summary_cards.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/check_out/bloc/check_out_bloc.dart';
 import 'package:eukay/pages/check_out/mappers/order_model.dart';
+import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
+import 'package:eukay/pages/profile/ui/profile_pages/shipping_address.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderSummary extends StatelessWidget {
@@ -43,17 +47,29 @@ class _BodyPageState extends State<BodyPage> {
   String? token;
   late SharedPreferences pref;
   int totalSellers = 0;
+  String? userId;
 
   @override
   void initState() {
     super.initState();
+    fetch();
+  }
+
+  void fetch() {
     initPref().then((_) {
       fetchOrders();
+      fetchUserAddress();
     });
   }
 
   void fetchOrders() {
     context.read<CheckOutBloc>().add(FetchOrderSummaryEvent(token: token!));
+  }
+
+  void fetchUserAddress() {
+    context
+        .read<ProfileBloc>()
+        .add(FetchDeliveryAddressEvent(token: token!, userId: userId!));
   }
 
   Future<void> changeToken(String token) async {
@@ -70,6 +86,8 @@ class _BodyPageState extends State<BodyPage> {
       pref = await SharedPreferences.getInstance();
       setState(() {
         token = pref.getString("token");
+        final Map<String, dynamic> jwtDecocded = JwtDecoder.decode(token!);
+        userId = jwtDecocded["id"].toString();
         initializedPref = true;
       });
     } catch (e) {
@@ -115,6 +133,8 @@ class _BodyPageState extends State<BodyPage> {
               textColor: Theme.of(context).colorScheme.error,
             ),
           );
+
+          fetchOrders();
         } else if (state is CheckOutFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
@@ -123,12 +143,14 @@ class _BodyPageState extends State<BodyPage> {
               textColor: Theme.of(context).colorScheme.error,
             ),
           );
+
+          fetchOrders();
         } else if (state is CheckOutSuccessState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
               message: state.successMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
-              textColor: Theme.of(context).colorScheme.onPrimary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
             ),
           );
 
@@ -185,7 +207,7 @@ class _BodyPageState extends State<BodyPage> {
                                 itemCount: product.length,
                                 itemBuilder: (context, productIndex) {
                                   final item = product[productIndex];
-                                  return OrderSummaryContainer(
+                                  return OrderSummaryProductContainer(
                                     image: item.productImage,
                                     productName: item.productName,
                                     quantity: item.quantity,
@@ -213,96 +235,13 @@ class _BodyPageState extends State<BodyPage> {
                 // display shipping information
                 GestureDetector(
                   onTap: () {
-                    // TODO: changing shipping address
+                    navigateWithSlideTransition(
+                      context: context,
+                      page: const ShippingAddress(),
+                      onFetch: fetch,
+                    );
                   },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    color: Theme.of(context).colorScheme.onPrimary,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // shipping information
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              // shipping information label
-                              Row(
-                                children: [
-                                  // icon
-                                  Icon(
-                                    Iconsax.location,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSecondary,
-                                    size: 18,
-                                  ),
-
-                                  // spacing
-                                  const SizedBox(width: spacing),
-
-                                  // shipping inforation text
-                                  Text(
-                                    "Eren Yeager",
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSecondary,
-                                      fontSize: 15,
-                                      fontFamily: "Poppins",
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-
-                                  // spacing
-                                  const SizedBox(width: spacing),
-
-                                  // contact
-                                  Text(
-                                    "09308823882",
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSecondary,
-                                      fontSize: 15,
-                                      fontFamily: "Poppins",
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              // spacing
-                              const SizedBox(height: spacing),
-
-                              // shipping address
-                              Text(
-                                "Pangasinan, Aguilar, Tampac, Sitio Umangan.",
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onSecondary,
-                                  fontFamily: "Poppins",
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // change address indicator
-                        Icon(
-                          Iconsax.arrow_right_3,
-                          size: 20,
-                          color: Theme.of(context).colorScheme.onSecondary,
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: const OrderShippingAddressContainer(),
                 ),
 
                 // spacing
@@ -355,7 +294,7 @@ class _BodyPageState extends State<BodyPage> {
                 // spacing
                 const SizedBox(height: spacing),
 
-                //! total price report
+                // total price report
                 _navigation(products, totalSellers),
               ],
             ),

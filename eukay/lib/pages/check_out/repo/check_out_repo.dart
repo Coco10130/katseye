@@ -28,9 +28,8 @@ class CheckOutRepo extends CheckOutRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
-        throw Exception("DioException: $errorMessage");
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        throw errorMessage;
       } else {
         throw Exception("Error: ${e.toString()}");
       }
@@ -49,7 +48,7 @@ class CheckOutRepo extends CheckOutRepository {
         ),
       );
 
-      if (response.statusCode == 201 && response.data["success"]) {
+      if (response.statusCode == 200 && response.data["success"]) {
         return response.data["newToken"];
       } else {
         throw Exception(response.data["message"]);
@@ -57,8 +56,8 @@ class CheckOutRepo extends CheckOutRepository {
     } catch (e) {
       if (e is DioException && e.response != null) {
         final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
-        throw Exception("DioException: $errorMessage");
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        throw errorMessage;
       } else {
         throw Exception("Error: ${e.toString()}");
       }

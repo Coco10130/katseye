@@ -91,4 +91,40 @@ final class WishListFailedState extends ProfileState {
   WishListFailedState({required this.errorMessage});
 }
 
+final class UseAddressSuccessState extends ProfileState {
+  final String successMessage;
+
+  UseAddressSuccessState({required this.successMessage});
+}
+
+final class UseAddressFailedState extends ProfileState {
+  final String errorMessage;
+
+  UseAddressFailedState({required this.errorMessage});
+}
+
+final class FetchDeliveryAddressSuccessState extends ProfileState {
+  final AddressModel address;
+
+  FetchDeliveryAddressSuccessState({required this.address});
+}
+
+final class DeliveryAddressEmpty extends ProfileState {
+  final String errorMessage;
+
+  DeliveryAddressEmpty({required this.errorMessage});
+}
+
+final class FetchOrdersProductsSuccessState extends ProfileState {
+  final List<SalesProductModel> products;
+
+  FetchOrdersProductsSuccessState({required this.products});
+}
+
+final class FetchOrdersProductsFailedState extends ProfileState {
+  final String errorMessage;
+
+  FetchOrdersProductsFailedState({required this.errorMessage});
+}
+
 final class ProfileLoadingState extends ProfileState {}

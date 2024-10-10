@@ -8,7 +8,6 @@ const {
   minusQuantity,
   checkItem,
   getCheckOutItems,
-  orderItem,
 } = require("../controllers/cart.controller");
 
 router.use(authMiddleware);
@@ -24,7 +23,5 @@ router.post("/minus-quantity/:cartItemId", minusQuantity);
 router.post("/to-check-out/:cartItemId", checkItem);
 
 router.get("/get/orders", getCheckOutItems);
-
-router.get("/order-items", orderItem);
 
 module.exports = router;

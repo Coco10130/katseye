@@ -52,6 +52,24 @@ const SellerSchema = mongoose.Schema(
       default: 0,
     },
 
+    live: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
+    soldOut: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
+    delisted: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

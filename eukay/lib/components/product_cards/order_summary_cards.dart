@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class OrderSummaryContainer extends StatelessWidget {
+class OrderSummaryProductContainer extends StatelessWidget {
   final Color backgroundColor, textColor;
   final String productName, size;
   final int quantity;
   final double price;
   final String image;
-  const OrderSummaryContainer({
+  const OrderSummaryProductContainer({
     super.key,
     required this.image,
     required this.productName,
@@ -116,7 +116,7 @@ class OrderSummaryContainer extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 5),
                     child: Text(
-                      "Quantity: 69",
+                      "Quantity: $quantity",
                       style: TextStyle(
                         fontFamily: "Poppins",
                         fontSize: 13,

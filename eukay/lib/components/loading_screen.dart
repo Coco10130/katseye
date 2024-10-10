@@ -12,3 +12,20 @@ class LoadingScreen extends StatelessWidget {
     );
   }
 }
+
+void showLoadingDialog(BuildContext context, Color color) {
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        child: LoadingScreen(color: color),
+      );
+    },
+  );
+}
+
+void hideLoadingDialog(BuildContext context) {
+  Navigator.pop(context);
+}

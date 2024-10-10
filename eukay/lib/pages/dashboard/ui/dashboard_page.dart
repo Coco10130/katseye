@@ -8,6 +8,7 @@ import 'package:eukay/pages/auth/ui/auth_page.dart';
 import 'package:eukay/pages/cart/ui/cart_page.dart';
 import 'package:eukay/pages/dashboard/bloc/dashboard_bloc.dart';
 import 'package:eukay/pages/search/ui/search_page.dart';
+import 'package:eukay/pages/search/ui/searched_page.dart';
 import 'package:eukay/pages/search/ui/view_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,6 +54,10 @@ class _DashboardPageState extends State<DashboardPage> {
       cartCount = jwtDecocded["cartItems"].toString();
       userId = jwtDecocded["id"].toString();
     }
+  }
+
+  void fetchProducts() {
+    context.read<DashboardBloc>().add(FetchProductsInitialEvent());
   }
 
   @override
@@ -119,6 +124,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               ),
                               onFetch: () {
                                 onResetToken();
+                                fetchProducts();
                               });
                         },
                       ),
@@ -149,6 +155,7 @@ class _DashboardPageState extends State<DashboardPage> {
       body: DashboardBody(
         fetchProfile: () => onResetToken(),
         userId: userId,
+        onFetchProduct: fetchProducts,
       ),
     );
   }
@@ -157,7 +164,12 @@ class _DashboardPageState extends State<DashboardPage> {
 class DashboardBody extends StatefulWidget {
   final String? userId;
   final VoidCallback fetchProfile;
-  const DashboardBody({super.key, this.userId, required this.fetchProfile});
+  final VoidCallback onFetchProduct;
+  const DashboardBody(
+      {super.key,
+      this.userId,
+      required this.fetchProfile,
+      required this.onFetchProduct});
 
   @override
   State<DashboardBody> createState() => _DashboardBodyState();
@@ -167,15 +179,11 @@ class _DashboardBodyState extends State<DashboardBody> {
   @override
   void initState() {
     super.initState();
-    fetchProducts();
-  }
-
-  void fetchProducts() {
-    context.read<DashboardBloc>().add(FetchProductsInitialEvent());
+    widget.onFetchProduct();
   }
 
   Future<void> refresh() async {
-    fetchProducts();
+    widget.onFetchProduct();
   }
 
   @override
@@ -263,7 +271,14 @@ class _DashboardBodyState extends State<DashboardBody> {
                                 Theme.of(context).colorScheme.onPrimary,
                             textColor:
                                 Theme.of(context).colorScheme.onSecondary,
-                            onPressed: () {},
+                            onPressed: () {
+                              navigateWithSlideTransition(
+                                context: context,
+                                page: const SearchedPage(
+                                  itemCategory: "Shirts",
+                                ),
+                              );
+                            },
                           ),
 
                           // spacing
@@ -278,7 +293,14 @@ class _DashboardBodyState extends State<DashboardBody> {
                                 Theme.of(context).colorScheme.onPrimary,
                             textColor:
                                 Theme.of(context).colorScheme.onSecondary,
-                            onPressed: () {},
+                            onPressed: () {
+                              navigateWithSlideTransition(
+                                context: context,
+                                page: const SearchedPage(
+                                  itemCategory: "Shorts",
+                                ),
+                              );
+                            },
                           ),
 
                           // spacing
@@ -293,7 +315,14 @@ class _DashboardBodyState extends State<DashboardBody> {
                                 Theme.of(context).colorScheme.onPrimary,
                             textColor:
                                 Theme.of(context).colorScheme.onSecondary,
-                            onPressed: () {},
+                            onPressed: () {
+                              navigateWithSlideTransition(
+                                context: context,
+                                page: const SearchedPage(
+                                  genderCategory: "Men",
+                                ),
+                              );
+                            },
                           ),
 
                           // spacing
@@ -308,7 +337,14 @@ class _DashboardBodyState extends State<DashboardBody> {
                                 Theme.of(context).colorScheme.onPrimary,
                             textColor:
                                 Theme.of(context).colorScheme.onSecondary,
-                            onPressed: () {},
+                            onPressed: () {
+                              navigateWithSlideTransition(
+                                context: context,
+                                page: const SearchedPage(
+                                  genderCategory: "Women",
+                                ),
+                              );
+                            },
                           ),
 
                           // spacing

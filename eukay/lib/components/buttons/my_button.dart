@@ -6,6 +6,7 @@ class MyButton extends StatelessWidget {
   final VoidCallback onPressed;
   final double verticalPadding, elevation, fontSize, widthFactor, borderRadius;
   final double? height;
+  final bool enabled;
 
   const MyButton({
     super.key,
@@ -19,6 +20,7 @@ class MyButton extends StatelessWidget {
     this.fontSize = 15,
     this.borderRadius = 20,
     this.height,
+    this.enabled = true,
   });
 
   @override
@@ -27,7 +29,7 @@ class MyButton extends StatelessWidget {
     final double buttonWidth = parentWidth * widthFactor;
 
     return GestureDetector(
-      onTap: onPressed,
+      onTap: enabled ? onPressed : () {},
       child: Container(
         width: buttonWidth,
         height: height,

@@ -66,4 +66,25 @@ final class FetchUserWishlistsEvent extends ProfileEvent {
   FetchUserWishlistsEvent({required this.token});
 }
 
+final class UseAddressEvent extends ProfileEvent {
+  final String token, addressId;
+
+  UseAddressEvent({required this.token, required this.addressId});
+}
+
+final class FetchDeliveryAddressEvent extends ProfileEvent {
+  final String token, userId;
+
+  FetchDeliveryAddressEvent({required this.token, required this.userId});
+}
+
+final class FetchOrdersEvent extends ProfileEvent {
+  final String token, status;
+
+  FetchOrdersEvent({
+    required this.token,
+    required this.status,
+  });
+}
+
 final class ProfileLogoutEvent extends ProfileEvent {}

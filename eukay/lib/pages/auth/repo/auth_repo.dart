@@ -22,11 +22,10 @@ class AuthRepo extends AuthRepository {
       return response.data["token"];
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -52,11 +51,10 @@ class AuthRepo extends AuthRepository {
       return response.data["successMessage"];
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -75,11 +73,10 @@ class AuthRepo extends AuthRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -99,11 +96,10 @@ class AuthRepo extends AuthRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -131,12 +127,10 @@ class AuthRepo extends AuthRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["errorMessage"] ?? "Unknown error";
-        print(errorMessage);
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }

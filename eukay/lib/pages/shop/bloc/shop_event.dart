@@ -34,21 +34,56 @@ final class FetchSellerProfileEvent extends ShopEvent {
 final class AddProductEvent extends ShopEvent {
   final List<XFile> images;
   final List<String> sizes, categories;
-  final String productName, description, quantity, price, token;
+  final String productName, description, price, token;
+  final Map<String, String> sizeQuantities;
 
-  AddProductEvent(
-      {required this.images,
-      required this.sizes,
-      required this.categories,
-      required this.price,
-      required this.token,
-      required this.quantity,
-      required this.productName,
-      required this.description});
+  AddProductEvent({
+    required this.images,
+    required this.sizes,
+    required this.categories,
+    required this.price,
+    required this.token,
+    required this.productName,
+    required this.description,
+    required this.sizeQuantities,
+  });
 }
 
 final class FetchLiveProductEvent extends ShopEvent {
-  final String token, sellerId;
+  final String token, sellerId, status;
 
-  FetchLiveProductEvent({required this.token, required this.sellerId});
+  FetchLiveProductEvent(
+      {required this.token, required this.sellerId, required this.status});
+}
+
+final class FetchSalesProductEvent extends ShopEvent {
+  final String token, sellerId, status;
+
+  FetchSalesProductEvent({
+    required this.token,
+    required this.sellerId,
+    required this.status,
+  });
+}
+
+final class MarkAsNextStepProductEvent extends ShopEvent {
+  final String token, orderId, sellerId, status;
+
+  MarkAsNextStepProductEvent({
+    required this.token,
+    required this.orderId,
+    required this.sellerId,
+    required this.status,
+  });
+}
+
+final class ChangeOrderStatusEvent extends ShopEvent {
+  final String token, sellerId, status, nextStatus;
+
+  ChangeOrderStatusEvent({
+    required this.token,
+    required this.sellerId,
+    required this.status,
+    required this.nextStatus,
+  });
 }

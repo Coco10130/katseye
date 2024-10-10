@@ -56,10 +56,6 @@ const addAddress = async (req, res) => {
 
 const deleteAddress = async (req, res) => {
   try {
-    const authorizationHeader = req.headers.authorization;
-    const token = authorizationHeader.split(" ")[1];
-    const decode = jwt.verify(token, secretKey);
-
     const { addressId } = req.params;
 
     const address = await Address.findByIdAndDelete(addressId);
@@ -76,8 +72,35 @@ const deleteAddress = async (req, res) => {
   }
 };
 
+const useAddress = async (req, res) => {
+  try {
+    const authorizationHeader = req.headers.authorization;
+    const token = authorizationHeader.split(" ")[1];
+    const decode = jwt.verify(token, secretKey);
+    const { addressId } = req.params;
+
+    const address = await Address.findById(addressId);
+
+    if (address.inUse) {
+      return res.status(400).json({ message: "Address already in use" });
+    }
+
+    await Address.updateMany({ userId: decode.id }, { $set: { inUse: false } });
+
+    address.inUse = true;
+    await address.save();
+
+    res
+      .status(200)
+      .json({ message: "Address updated successfully", success: true });
+  } catch (error) {
+    res.status(500).json({ errorMessage: error.message });
+  }
+};
+
 module.exports = {
   addAddress,
   getAddress,
   deleteAddress,
+  useAddress,
 };

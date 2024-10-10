@@ -4,9 +4,15 @@ part of 'search_bloc.dart';
 sealed class SearchEvent {}
 
 final class FetchSearchedProductEvent extends SearchEvent {
-  final String searchPrompt;
+  final String? gender, ratings, category, priceRange, searchPrompt;
 
-  FetchSearchedProductEvent({required this.searchPrompt});
+  FetchSearchedProductEvent({
+    this.searchPrompt,
+    this.gender,
+    this.ratings,
+    this.category,
+    this.priceRange,
+  });
 }
 
 final class FetchViewProductEvent extends SearchEvent {

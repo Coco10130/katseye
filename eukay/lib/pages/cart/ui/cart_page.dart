@@ -48,6 +48,7 @@ class CartBody extends StatefulWidget {
 }
 
 class _CartBodyState extends State<CartBody> {
+  int toCheckOutLength = 0;
   @override
   void initState() {
     super.initState();
@@ -174,6 +175,7 @@ class _CartBodyState extends State<CartBody> {
                                 itemCount: product.length,
                                 itemBuilder: (context, productIndex) {
                                   final cart = product[productIndex];
+
                                   return CartProduct(
                                     name: cart.productName,
                                     price: cart.subTotal,
@@ -218,9 +220,11 @@ class _CartBodyState extends State<CartBody> {
       double width, List<CartModel> cartItems, VoidCallback onFetch) {
     // calculate total price of checked items
     double totalPrice = 0;
+    bool hasToCheckOut = false;
     for (var cart in cartItems) {
       if (cart.toCheckOut) {
         totalPrice += cart.subTotal;
+        hasToCheckOut = true;
       }
     }
     // for formatting price
@@ -278,6 +282,7 @@ class _CartBodyState extends State<CartBody> {
                 title: "Proceed to Checkout",
                 backgroundColor: Theme.of(context).colorScheme.onPrimary,
                 textColor: Theme.of(context).colorScheme.onSecondary,
+                enabled: hasToCheckOut,
                 onPressed: () {
                   navigateWithSlideTransition(
                     context: context,

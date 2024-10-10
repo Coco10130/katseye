@@ -21,8 +21,13 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       FetchSearchedProductEvent event, Emitter<SearchState> emit) async {
     emit(SearchLoadingState());
     try {
-      final response =
-          await _searchRepository.fetchSearchedProduct(event.searchPrompt);
+      final response = await _searchRepository.fetchSearchedProduct(
+        searched: event.searchPrompt,
+        category: event.category,
+        gender: event.gender,
+        priceRange: event.priceRange,
+        rating: event.ratings,
+      );
 
       if (response.isEmpty) {
         return emit(

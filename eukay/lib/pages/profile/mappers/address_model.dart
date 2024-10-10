@@ -1,5 +1,6 @@
 class AddressModel {
   final String id, fullName, province, municipality, barangay, street, contact;
+  final bool inUse;
 
   AddressModel({
     required this.id,
@@ -9,6 +10,7 @@ class AddressModel {
     required this.barangay,
     required this.street,
     required this.contact,
+    required this.inUse,
   });
 
   factory AddressModel.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class AddressModel {
       barangay: json['barangay'],
       street: json['street'],
       contact: json['contact'],
+      inUse: json['inUse'],
     );
   }
 }

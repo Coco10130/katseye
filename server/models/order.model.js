@@ -1,28 +1,37 @@
 const mongoose = require("mongoose");
 
+const ProductDetailsSchema = mongoose.Schema({
+  productName: {
+    type: String,
+    required: true,
+  },
+
+  productImage: {
+    type: [String],
+    required: true,
+  },
+
+  size: {
+    type: String,
+    required: true,
+  },
+
+  quantity: {
+    type: Number,
+    required: true,
+  },
+
+  price: {
+    type: Number,
+    required: true,
+  },
+});
+
 const OrderSchema = mongoose.Schema(
   {
-    productName: {
-      type: String,
-      required: true,
-    },
-
-    productImage: {
-      type: String,
-      required: true,
-    },
+    products: [ProductDetailsSchema],
 
     totalPrice: {
-      type: Number,
-      required: true,
-    },
-
-    size: {
-      type: String,
-      required: true,
-    },
-
-    quantity: {
       type: Number,
       required: true,
     },
@@ -42,10 +51,21 @@ const OrderSchema = mongoose.Schema(
       required: true,
     },
 
+    shopName: {
+      type: String,
+      required: true,
+    },
+
     orderedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+
+    markAsNextStep: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
 
     sellerId: {
@@ -54,10 +74,16 @@ const OrderSchema = mongoose.Schema(
       required: true,
     },
 
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
     status: {
       type: String,
       required: false,
-      enum: ["pending", "preparing", "to deliver", "delivered", "cancelled"],
+      enum: ["pending", "to prepare", "to deliver", "delivered", "reviews"],
       default: "pending",
     },
   },

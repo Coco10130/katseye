@@ -2,8 +2,9 @@ import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
-import 'package:eukay/pages/shop/ui/shop_pages/my_products_page.dart';
-import 'package:eukay/pages/shop/ui/widgets/products_by_seller.dart';
+import 'package:eukay/pages/shop/ui/sales/sales_page.dart';
+import 'package:eukay/pages/shop/ui/seller_products/seller_products_page.dart';
+import 'package:eukay/components/product_cards/products_by_seller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
@@ -50,6 +51,7 @@ class _SellerPageState extends State<SellerPage> {
       },
       builder: (context, state) {
         if (state is FetchSellerSuccessState) {
+          final seller = state.seller;
           return SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
@@ -67,7 +69,7 @@ class _SellerPageState extends State<SellerPage> {
                         // image
                         CircleAvatar(
                           radius: 30,
-                          backgroundImage: NetworkImage(state.seller.image),
+                          backgroundImage: NetworkImage(seller.image),
                         ),
 
                         // spacing
@@ -77,7 +79,7 @@ class _SellerPageState extends State<SellerPage> {
 
                         // shop name
                         Text(
-                          state.seller.shopName,
+                          seller.shopName,
                           style: TextStyle(
                             fontFamily: "Poppins",
                             fontSize: 25,
@@ -116,11 +118,23 @@ class _SellerPageState extends State<SellerPage> {
                               ),
                             ),
                             GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                navigateWithSlideTransition(
+                                  context: context,
+                                  page: SalesPage(
+                                    sellerId: seller.id,
+                                    pending: seller.pendingOrders,
+                                    toPrepare: seller.prepareOrders,
+                                    toDeliver: seller.deliverOrders,
+                                    reviews: seller.reviewOrders,
+                                  ),
+                                  onFetch: fetchSellerProfile,
+                                );
+                              },
                               child: Row(
                                 children: [
                                   Text(
-                                    "View Sales History",
+                                    "View Sales",
                                     style: TextStyle(
                                       fontFamily: "Poppins",
                                       fontSize: 15,
@@ -133,7 +147,9 @@ class _SellerPageState extends State<SellerPage> {
                                     width: 10,
                                   ),
 
-                                  const Icon(Iconsax.arrow_right_3)
+                                  const Icon(
+                                    Iconsax.arrow_right_3,
+                                  ),
                                 ],
                               ),
                             )
@@ -150,22 +166,22 @@ class _SellerPageState extends State<SellerPage> {
                           children: [
                             _myBox(
                               "Pending",
-                              "${state.seller.pendingOrders}",
+                              "${seller.pendingOrders}",
                               Theme.of(context).colorScheme.onSecondary,
                             ),
                             _myBox(
                               "To Prepare",
-                              "${state.seller.prepareOrders}",
+                              "${seller.prepareOrders}",
                               Theme.of(context).colorScheme.onSecondary,
                             ),
                             _myBox(
                               "To Deliver",
-                              "${state.seller.deliverOrders}",
+                              "${seller.deliverOrders}",
                               Theme.of(context).colorScheme.onSecondary,
                             ),
                             _myBox(
                               "Reviews",
-                              "${state.seller.reviewOrders}",
+                              "${seller.reviewOrders}",
                               Theme.of(context).colorScheme.onSecondary,
                             ),
                           ],
@@ -184,7 +200,10 @@ class _SellerPageState extends State<SellerPage> {
                       navigateWithSlideTransition(
                         context: context,
                         page: MyProducts(
-                          sellerId: state.seller.id,
+                          live: seller.live,
+                          soldOut: seller.soldOut,
+                          delisted: seller.delisted,
+                          sellerId: seller.id,
                           token: pref.getString("token")!,
                         ),
                         onFetch: fetchSellerProfile,

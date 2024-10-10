@@ -37,6 +37,8 @@ class CheckOutBloc extends Bloc<CheckOutEvent, CheckOutState> {
         emit(CheckOutSuccessState(
             newToken: response,
             successMessage: "Order Checked out successfully"));
+      } else {
+        print(response);
       }
     } catch (e) {
       emit(CheckOutFailedState(errorMessage: e.toString()));
