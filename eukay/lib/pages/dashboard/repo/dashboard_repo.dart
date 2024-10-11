@@ -13,9 +13,9 @@ class DashboardRepo extends DashboardRepository {
 
       if (response.statusCode == 200 && response.data["success"]) {
         final List<dynamic> productLists = response.data["data"];
-        return productLists.map((product) {
-          return ProductModel.fromJson(product);
-        }).toList();
+        return productLists
+            .map((product) => ProductModel.fromJson(product))
+            .toList();
       } else {
         throw Exception("Failed to fetch product");
       }

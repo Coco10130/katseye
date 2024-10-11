@@ -31,9 +31,13 @@ class _ToPreparePageState extends State<ToPreparePage> {
     }
   }
 
-  void _fetchProducts() {
+  Future<void> _fetchProducts() async {
     context.read<ShopBloc>().add(FetchSalesProductEvent(
         token: token!, sellerId: widget.sellerId, status: "to prepare"));
+  }
+
+  Future<void> fetchSellerProfile() async {
+    context.read<ShopBloc>().add(FetchSellerProfileEvent(token: token!));
   }
 
   @override
@@ -109,7 +113,10 @@ class _ToPreparePageState extends State<ToPreparePage> {
               textColor: Theme.of(context).colorScheme.onSecondary,
             ),
           );
-          _fetchProducts();
+
+          fetchSellerProfile().then((_) {
+            _fetchProducts();
+          });
         } else if (state is ChangeStatusFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(

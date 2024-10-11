@@ -1,6 +1,7 @@
 const Product = require("../models/product.model.js");
 const Seller = require("../models/seller.model.js");
 const Order = require("../models/order.model.js");
+const Review = require("../models/review.model.js");
 const jwt = require("jsonwebtoken");
 
 const secretKey = process.env.JWT_SECRET;
@@ -184,11 +185,43 @@ const getViewProduct = async (req, res) => {
       (image) => `${req.protocol}://${req.get("host")}/images/products/${image}`
     );
 
+    // Fetch reviews for the product
+    const reviews = await Review.find({ productId })
+      .populate({
+        path: "userId",
+        select: "userName image",
+      })
+      .populate({
+        path: "productId",
+        select: "productName",
+      });
+
+    const responseReviews = reviews.map((review) => {
+      const imageUrl = review.userId.image
+        ? `${req.protocol}://${req.get("host")}/images/profiles/${
+            review.userId.image
+          }`
+        : `${req.protocol}://${req.get(
+            "host"
+          )}/images/profiles/default-image.jpg`;
+
+      return {
+        _id: review._id,
+        starRating: review.starRating,
+        review: review.review,
+        userName: review.userId.userName,
+        userImage: imageUrl,
+        productName: review.productId.productName,
+        createdAt: review.createdAt,
+      };
+    });
+
     res.status(200).json({
       success: true,
       data: {
         ...product.toObject(),
         productImage: imageUrls,
+        reviews: responseReviews, // Add reviews to the product response
       },
     });
   } catch (error) {
@@ -274,6 +307,59 @@ const getOrdersProductByStatus = async (req, res) => {
   }
 };
 
+const updateProduct = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const { productName, price, productDescription, sizes, quantities } =
+      req.body;
+
+    if (!productName || !price || !sizes || !quantities) {
+      return res.status(400).json({ errorMessage: "All fields are required" });
+    }
+
+    const sizeQuantities = sizes.map((size, index) => ({
+      size,
+      quantity: quantities[index],
+    }));
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({ errorMessage: "Product not found" });
+    }
+
+    const wasSoldOut = product.status === "sold out";
+
+    product.productName = productName;
+    product.price = price;
+    product.productDescription = productDescription;
+    product.sizeQuantities = sizeQuantities;
+    product.status = "live";
+
+    const updatedProduct = await product.save();
+
+    const seller = await Seller.findById(product.sellerId);
+    if (!seller) {
+      return res.status(404).json({ errorMessage: "Seller not found" });
+    }
+
+    if (wasSoldOut) {
+      seller.soldOut -= 1;
+      seller.live += 1;
+    }
+
+    await seller.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Product updated successfully",
+      product: updatedProduct,
+    });
+  } catch (error) {
+    console.error("Error updating product:", error);
+    res.status(500).json({ errorMessage: error.message });
+  }
+};
+
 module.exports = {
   addProduct,
   searchProduct,
@@ -282,4 +368,5 @@ module.exports = {
   getProductsByStatus,
   getSalesProductByStatus,
   getOrdersProductByStatus,
+  updateProduct,
 };

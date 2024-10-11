@@ -1,22 +1,24 @@
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/product_cards/sales_product_card.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
 import 'package:eukay/pages/profile/mappers/seller_group_model.dart';
+import 'package:eukay/pages/profile/ui/profile_pages/rate_product_page.dart';
 import 'package:eukay/pages/shop/mappers/sales_product_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ToRecieve extends StatefulWidget {
-  const ToRecieve({super.key});
+class CompletedPage extends StatefulWidget {
+  const CompletedPage({super.key});
 
   @override
-  State<ToRecieve> createState() => _ToRecieveState();
+  State<CompletedPage> createState() => _CompletedPageState();
 }
 
-class _ToRecieveState extends State<ToRecieve> {
+class _CompletedPageState extends State<CompletedPage> {
   String? token;
   late SharedPreferences pref;
 
@@ -34,7 +36,7 @@ class _ToRecieveState extends State<ToRecieve> {
   Future<void> _fetchProducts() async {
     context
         .read<ProfileBloc>()
-        .add(FetchOrdersEvent(status: "to deliver", token: token!));
+        .add(FetchOrdersEvent(status: "delivered", token: token!));
   }
 
   @override
@@ -105,7 +107,7 @@ class _ToRecieveState extends State<ToRecieve> {
                 final buyerName = groupedProducts.keys.elementAt(index);
                 final productGroup = groupedProducts[buyerName]!;
 
-                return _buildSellerGroup(productGroup);
+                return _buildSellerGroup(productGroup, _fetchProducts, token!);
               },
             ),
           );
@@ -116,7 +118,8 @@ class _ToRecieveState extends State<ToRecieve> {
     );
   }
 
-  Widget _buildSellerGroup(SellerGroup productGroup) {
+  Widget _buildSellerGroup(
+      SellerGroup productGroup, VoidCallback onFetch, String token) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
@@ -143,7 +146,8 @@ class _ToRecieveState extends State<ToRecieve> {
               ),
             ),
             const SizedBox(height: 10),
-            _buildProductList(productGroup.products),
+            _buildProductList(
+                productGroup.products, onFetch, token),
           ],
         ),
       ),
@@ -200,14 +204,37 @@ class _ToRecieveState extends State<ToRecieve> {
     );
   }
 
-  Widget _buildProductList(List<SalesProductModel> productList) {
+  Widget _buildProductList(List<SalesProductModel> productList,
+      VoidCallback onFetch, String token) {
     return Column(
       children: productList.map((salesProduct) {
+        final orderId = salesProduct.id;
         return Column(
-          children: salesProduct.products.map<Widget>((Product product) {
+          children: salesProduct.products
+              .where((product) => !product.rated)
+              .map<Widget>((Product product) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: SalesProductCard(
+                rate: true,
+                buttonBackgroundColor: Theme.of(context).colorScheme.onPrimary,
+                buttonTextColor: Theme.of(context).colorScheme.onSecondary,
+                onPressedRate: () {
+                  navigateWithSlideTransition(
+                    context: context,
+                    page: RateProductPage(
+                      id: product.id,
+                      orderId: orderId,
+                      price: product.price,
+                      token: token,
+                      productImage: product.productImage[0],
+                      productName: product.productName,
+                      size: product.size,
+                      productId: product.productId,
+                    ),
+                    onFetch: onFetch,
+                  );
+                },
                 price: product.price * product.quantity,
                 image: product.productImage[0],
                 productName: product.productName,

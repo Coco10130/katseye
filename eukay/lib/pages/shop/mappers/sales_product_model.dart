@@ -43,10 +43,11 @@ class SalesProductModel {
 }
 
 class Product {
-  final String productName, size, id;
+  final String productName, size, id, productId;
   final List<String> productImage;
   final int quantity;
   final double price;
+  final bool rated;
 
   Product({
     required this.productName,
@@ -54,17 +55,21 @@ class Product {
     required this.id,
     required this.productImage,
     required this.quantity,
+    required this.rated,
     required this.price,
+    required this.productId,
   });
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       productName: json["productName"],
+      productId: json["productId"],
       size: json["size"],
       id: json["_id"],
       productImage: List<String>.from(
           json["productImage"].map((item) => item.toString())),
       quantity: json["quantity"],
+      rated: json["rated"],
       price: json["price"].toDouble(),
     );
   }

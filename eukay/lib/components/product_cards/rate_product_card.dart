@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class SalesProductCard extends StatelessWidget {
-  final Color backgroundColor, buttonBackgroundColor, buttonTextColor;
-  final String image, productName, size;
-  final int quantity;
+class RateProductCard extends StatelessWidget {
+  final Color backgroundColor, textColor;
+  final String productImage, productName, size;
   final double price;
-  final bool rate;
-  final VoidCallback? onPressedRate;
-  const SalesProductCard(
-      {super.key,
-      required this.image,
-      required this.productName,
-      required this.size,
-      required this.quantity,
-      required this.price,
-      this.backgroundColor = Colors.black,
-      this.buttonBackgroundColor = Colors.white,
-      this.buttonTextColor = Colors.black,
-      this.rate = false,
-      this.onPressedRate});
+  const RateProductCard({
+    super.key,
+    required this.productImage,
+    required this.productName,
+    required this.price,
+    required this.size,
+    this.backgroundColor = Colors.black,
+    this.textColor = Colors.white,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +61,7 @@ class SalesProductCard extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
-                image: NetworkImage(image),
+                image: NetworkImage(productImage),
                 fit: BoxFit.cover,
               ),
             ),
@@ -118,46 +112,10 @@ class SalesProductCard extends StatelessWidget {
                       fontSize: 14,
                     ),
                   ),
-
-                  // spacing
-                  const SizedBox(height: spacing),
-
-                  // quantity
-                  Text(
-                    "Quantity: $quantity",
-                    style: TextStyle(
-                      color: textColor,
-                      fontFamily: "Poppins",
-                      fontSize: 14,
-                    ),
-                  ),
                 ],
               ),
             ),
           ),
-
-          if (rate) ...{
-            GestureDetector(
-              onTap: onPressedRate,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                decoration: BoxDecoration(
-                  color: buttonBackgroundColor,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  "Rate",
-                  style: TextStyle(
-                    color: buttonTextColor,
-                    fontFamily: "Poppins",
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          }
         ],
       ),
     );

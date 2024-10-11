@@ -8,6 +8,7 @@ const {
   getAllProducts,
   getViewProduct,
   getProductsByStatus,
+  updateProduct,
   getSalesProductByStatus,
   getOrdersProductByStatus,
 } = require("../controllers/product.controller.js");
@@ -38,5 +39,7 @@ router.get(
 );
 
 router.get("/get/orders/:status", authMiddleware, getOrdersProductByStatus);
+
+router.put("/update/:productId", authMiddleware, updateProduct);
 
 module.exports = router;

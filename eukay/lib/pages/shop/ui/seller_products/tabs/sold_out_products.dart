@@ -1,5 +1,8 @@
+import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/product_cards/live_product_card.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
+import 'package:eukay/pages/shop/ui/shop_pages/update_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -19,9 +22,13 @@ class _SoldOutProductsState extends State<SoldOutProducts> {
     fetchLiveProduct();
   }
 
-  void fetchLiveProduct() {
+  Future<void> fetchLiveProduct() async {
     context.read<ShopBloc>().add(FetchLiveProductEvent(
         token: widget.token, sellerId: widget.sellerId, status: "sold out"));
+  }
+
+  Future<void> fetchSellerProfile() async {
+    context.read<ShopBloc>().add(FetchSellerProfileEvent(token: widget.token));
   }
 
   @override
@@ -31,7 +38,22 @@ class _SoldOutProductsState extends State<SoldOutProducts> {
 
     final int crossAxisCount = (screenWidth / gridItemWidth).floor();
     final double productSpacing = screenWidth > 1200 ? 50 : 10;
-    return BlocBuilder<ShopBloc, ShopState>(
+    return BlocConsumer<ShopBloc, ShopState>(
+      listener: (context, state) {
+        if (state is UpdateProductSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
+            ),
+          );
+
+          fetchSellerProfile().then((_) {
+            fetchLiveProduct();
+          });
+        }
+      },
       builder: (context, state) {
         if (state is FetchLiveProductsFailedState) {
           return Center(
@@ -75,7 +97,15 @@ class _SoldOutProductsState extends State<SoldOutProducts> {
                   (sum, size) => sum + size.quantity,
                 );
                 return LiveProductCard(
-                  onPressed: () {},
+                  onPressed: () {
+                    navigateWithSlideTransition(
+                      context: context,
+                      page: UpdateProductPage(
+                        productId: product.id,
+                      ),
+                      onFetch: () => fetchLiveProduct(),
+                    );
+                  },
                   name: product.productName,
                   image: product.productImage[0],
                   price: product.price,

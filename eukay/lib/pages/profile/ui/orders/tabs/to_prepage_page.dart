@@ -18,17 +18,20 @@ class ToPrepareUser extends StatefulWidget {
 
 class _ToPrepareUserState extends State<ToPrepareUser> {
   String? token;
+  late SharedPreferences pref;
 
-  Future<String?> _initPreferences() async {
+  Future<void> _initPreferences() async {
     try {
-      SharedPreferences pref = await SharedPreferences.getInstance();
-      return pref.getString('token');
+      pref = await SharedPreferences.getInstance();
+      setState(() {
+        token = pref.getString('token');
+      });
     } catch (e) {
       throw Exception("Failed to load preferences: $e");
     }
   }
 
-  void _fetchProducts() {
+  Future<void> _fetchProducts() async {
     context
         .read<ProfileBloc>()
         .add(FetchOrdersEvent(status: "to prepare", token: token!));
@@ -37,11 +40,8 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
   @override
   void initState() {
     super.initState();
-    _initPreferences().then((fetchedToken) {
-      if (fetchedToken != null) {
-        token = fetchedToken;
-        _fetchProducts();
-      }
+    _initPreferences().then((_) {
+      _fetchProducts();
     });
   }
 

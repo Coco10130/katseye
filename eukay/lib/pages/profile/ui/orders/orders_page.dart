@@ -1,6 +1,7 @@
 import 'package:eukay/components/appbar/my_tab_bar.dart';
+import 'package:eukay/pages/profile/ui/orders/tabs/completed_page.dart';
 import 'package:eukay/pages/profile/ui/orders/tabs/to_prepage_page.dart';
-import 'package:eukay/pages/profile/ui/orders/tabs/to_rate_page.dart';
+import 'package:eukay/pages/profile/ui/orders/tabs/order_history.dart';
 import 'package:eukay/pages/profile/ui/orders/tabs/to_recieve_page.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,7 @@ class OrdersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       initialIndex: initialIndex,
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.onSurface,
@@ -34,7 +35,8 @@ class OrdersPage extends StatelessWidget {
             tabs: [
               _tab("To Prepare"),
               _tab("To Recieve"),
-              _tab("To Rate"),
+              _tab("Delivered"),
+              _tab("Order History"),
             ],
             height: 70,
           ),
@@ -49,7 +51,8 @@ class OrdersPage extends StatelessWidget {
           children: [
             ToPrepareUser(),
             ToRecieve(),
-            ToRate(),
+            CompletedPage(),
+            OrderHistory(),
           ],
         ),
       ),
@@ -66,10 +69,12 @@ class OrdersPage extends StatelessWidget {
           children: [
             Text(
               label,
+              softWrap: false,
               style: const TextStyle(
                 fontFamily: "Poppins",
-                fontSize: 17,
+                fontSize: 13,
                 fontWeight: FontWeight.w500,
+                letterSpacing: 0,
               ),
             ),
           ],

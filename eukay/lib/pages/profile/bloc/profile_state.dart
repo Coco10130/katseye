@@ -127,4 +127,16 @@ final class FetchOrdersProductsFailedState extends ProfileState {
   FetchOrdersProductsFailedState({required this.errorMessage});
 }
 
+final class AddReviewProductSuccessState extends ProfileState {
+  final String successMessage;
+
+  AddReviewProductSuccessState({required this.successMessage});
+}
+
+final class AddReviewProductFailedState extends ProfileState {
+  final String errorMessage;
+
+  AddReviewProductFailedState({required this.errorMessage});
+}
+
 final class ProfileLoadingState extends ProfileState {}

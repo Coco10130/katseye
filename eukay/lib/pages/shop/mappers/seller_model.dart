@@ -6,6 +6,8 @@ class SellerModel {
       prepareOrders,
       deliverOrders,
       reviewOrders,
+      deliveredOrders,
+      completeOrders,
       live,
       soldOut,
       delisted;
@@ -19,9 +21,11 @@ class SellerModel {
     required this.id,
     required this.pendingOrders,
     required this.prepareOrders,
+    required this.deliveredOrders,
     required this.deliverOrders,
     required this.reviewOrders,
     required this.products,
+    required this.completeOrders,
     required this.live,
     required this.soldOut,
     required this.delisted,
@@ -44,6 +48,8 @@ class SellerModel {
       live: json["live"],
       soldOut: json["soldOut"],
       delisted: json["delisted"],
+      deliveredOrders: json["deliveredOrders"],
+      completeOrders: json["completeOrders"],
     );
   }
 }

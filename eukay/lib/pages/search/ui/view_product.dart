@@ -1,14 +1,16 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:eukay/components/buttons/my_button.dart';
+import 'package:eukay/components/containers/product_review_container.dart';
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/auth/ui/auth_page.dart';
+import 'package:eukay/pages/cart/ui/cart_page.dart';
 import 'package:eukay/pages/dashboard/mappers/product_model.dart';
+import 'package:eukay/pages/dashboard/mappers/review_model.dart';
 import 'package:eukay/pages/search/bloc/search_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
@@ -26,6 +28,7 @@ class _ViewProductState extends State<ViewProduct> {
   bool isLikedByUser = false;
   bool initializedToken = false;
   late SharedPreferences pref;
+  late String cartCount;
   String? token;
   String? userId;
 
@@ -60,12 +63,23 @@ class _ViewProductState extends State<ViewProduct> {
     });
   }
 
+  void initCartCount() {
+    if (token!.isNotEmpty) {
+      final Map<String, dynamic> jwtDecocded = JwtDecoder.decode(token!);
+      setState(() {
+        cartCount = jwtDecocded["cartItems"].toString();
+        userId = jwtDecocded["id"].toString();
+      });
+    }
+  }
+
   Future<void> initPref() async {
     try {
       pref = await SharedPreferences.getInstance();
       setState(() {
-        initializedToken = true;
         token = pref.getString("token") ?? "";
+        initCartCount();
+        initializedToken = true;
       });
     } catch (e) {
       throw Exception(e.toString());
@@ -95,14 +109,14 @@ class _ViewProductState extends State<ViewProduct> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Get.back(result: true);
+            Navigator.pop(context, true);
           },
         ),
         backgroundColor: Theme.of(context).colorScheme.secondary,
         actions: [
           // cart action button
           Padding(
-            padding: const EdgeInsets.only(right: 20),
+            padding: const EdgeInsets.only(right: 10),
             child: IconButton(
               icon: Icon(
                 isLikedByUser ? Iconsax.heart5 : Iconsax.heart,
@@ -124,9 +138,48 @@ class _ViewProductState extends State<ViewProduct> {
                     },
             ),
           ),
+
+          if (token!.isNotEmpty) ...[
+            Stack(
+              children: [
+                Positioned(
+                  right: 15,
+                  child: Text(
+                    cartCount,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontFamily: "Poppins",
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: IconButton(
+                    icon: const ImageIcon(
+                      AssetImage("assets/icons/shopping-cart.png"),
+                      size: 24,
+                      color: Color(0xFFFFFFFF),
+                    ),
+                    onPressed: () {
+                      navigateWithSlideTransition(
+                          context: context,
+                          page: CartPage(
+                            token: pref.getString("token")!,
+                          ),
+                          onFetch: () {
+                            () => onSignIn();
+                          });
+                    },
+                  ),
+                ),
+              ],
+            )
+          ]
         ],
       ),
       body: BodyPage(
+        onSignIn: () => onSignIn(),
         productId: widget.productId,
         userId: userId ?? "",
         onProductFetched: checkIfLiked,
@@ -139,10 +192,12 @@ class BodyPage extends StatefulWidget {
   final String productId;
   final String? userId;
   final Function(List<String>) onProductFetched;
+  final VoidCallback onSignIn;
   const BodyPage(
       {super.key,
       required this.productId,
       required this.onProductFetched,
+      required this.onSignIn,
       this.userId});
 
   @override
@@ -166,7 +221,7 @@ class _BodyPageState extends State<BodyPage> {
   }
 
   Future<void> updateToken(String newToken) async {
-    await pref.remove("token");
+    await pref.clear();
     await pref.setString("token", newToken);
   }
 
@@ -229,14 +284,27 @@ class _BodyPageState extends State<BodyPage> {
             backgroundColor: Theme.of(context).colorScheme.primary,
             textColor: Theme.of(context).colorScheme.onSecondary,
           ));
-          updateToken(state.token);
+          updateToken(state.token).then((_) {
+            widget.onSignIn();
+          });
           fetchProduct();
         }
       },
       builder: (context, state) {
         if (state is ViewProductSuccessState) {
           final product = state.product;
+          final List<ReviewModel> reviews = product.reviews;
           final List<SizeQuantity> sizeQuantities = product.sizeQuantities;
+
+          final List<Map<String, dynamic>> extractedReviews =
+              reviews.map((review) {
+            return {
+              'userName': review.userName,
+              'starRating': review.starRating,
+              'userImage': review.userImage,
+              'review': review.review,
+            };
+          }).toList();
           final List<String> sizes =
               sizeQuantities.map((sq) => sq.size).toList();
           widget.onProductFetched(product.wishedByUser);
@@ -325,7 +393,7 @@ class _BodyPageState extends State<BodyPage> {
 
                       // rating score
                       Text(
-                        "${product.rating} ( ${product.reviews} REVIEWS )",
+                        "${product.rating} ( ${product.reviews.length} REVIEWS )",
                         style: TextStyle(
                           fontFamily: "Poppins",
                           fontSize: 13,
@@ -490,6 +558,24 @@ class _BodyPageState extends State<BodyPage> {
                     ),
                   ),
                 ),
+
+                // spacing
+                const SizedBox(height: 20),
+
+                // reviews
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: extractedReviews.length,
+                  itemBuilder: (context, index) {
+                    final review = extractedReviews[index];
+                    return ProductReviewContainer(
+                        image: review["userImage"],
+                        reviewMessage: review["review"],
+                        name: review["userName"],
+                        starRating: review["starRating"]);
+                  },
+                )
               ],
             ),
           );

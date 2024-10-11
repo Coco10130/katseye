@@ -26,4 +26,12 @@ abstract class ProfileRepository {
   Future<bool> useAddress(String token, String addressId);
   Future<List<SalesProductModel>> fetchOrdersProduct(
       String token, String status);
+  Future<bool> addReview({
+    required String token,
+    required int starRating,
+    required String review,
+    required String productId,
+    required String orderId,
+    required String id,
+  });
 }

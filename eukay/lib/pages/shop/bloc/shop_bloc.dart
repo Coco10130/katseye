@@ -22,6 +22,8 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
     on<FetchLiveProductEvent>(fetchLiveProductEvent);
     on<FetchSalesProductEvent>(fetchSalesProductEvent);
     on<ChangeOrderStatusEvent>(changeOrderStatusEvent);
+    on<FetchUpdateProductEvent>(fetchUpdateProductEvent);
+    on<UpdateProductEvent>(updateProductEvent);
   }
 
   FutureOr<void> registerShopEvent(
@@ -93,10 +95,10 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
 
       final double productPrice = double.parse(event.price);
 
-      List<double> quantities = [];
+      List<int> quantities = [];
       for (String size in event.sizes) {
         final quantityStr = event.sizeQuantities[size] ?? "0";
-        quantities.add(double.parse(quantityStr));
+        quantities.add(int.parse(quantityStr));
       }
 
       // Validate quantities
@@ -192,6 +194,64 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
       }
     } catch (e) {
       emit(ChangeStatusFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> fetchUpdateProductEvent(
+      FetchUpdateProductEvent event, Emitter<ShopState> emit) async {
+    emit(ShopLoadingState());
+    try {
+      final response = await _shopRepository.fetchUpdateProduct(
+          event.token, event.productId);
+
+      emit(FetchUpdateProductState(product: response));
+    } catch (e) {
+      emit(UpdateProductFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> updateProductEvent(
+      UpdateProductEvent event, Emitter<ShopState> emit) async {
+    emit(ShopLoadingState());
+    try {
+      if (event.price.isEmpty ||
+          event.productName.isEmpty ||
+          event.description.isEmpty ||
+          event.sizes.isEmpty) {
+        return emit(AddProductFailedState(
+            errorMessage: "Please enter values in all fields"));
+      }
+
+      final double productPrice = double.parse(event.price);
+
+      List<int> quantities = [];
+      for (String size in event.sizes) {
+        final quantityStr = event.sizeQuantities[size] ?? 0;
+        quantities.add(quantityStr);
+      }
+
+      // Validate quantities
+      if (quantities.any((quantity) => quantity < 0)) {
+        return emit(AddProductFailedState(
+            errorMessage: "Quantities must be non-negative"));
+      }
+
+      final response = await _shopRepository.updateProduct(
+        token: event.token,
+        productId: event.productId,
+        productName: event.productName,
+        productDescription: event.description,
+        price: productPrice,
+        stocks: quantities,
+        sizes: event.sizes,
+      );
+
+      if (response) {
+        emit(UpdateProductSuccessState(
+            successMessage: "Product updated Successfully"));
+      }
+    } catch (e) {
+      emit(UpdateProductFailedState(errorMessage: e.toString()));
     }
   }
 }

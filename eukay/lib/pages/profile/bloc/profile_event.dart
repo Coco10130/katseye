@@ -87,4 +87,17 @@ final class FetchOrdersEvent extends ProfileEvent {
   });
 }
 
+final class AddReviewProductEvent extends ProfileEvent {
+  final String token, productId, review, id, orderId;
+  final int starRating;
+
+  AddReviewProductEvent(
+      {required this.token,
+      required this.productId,
+      required this.review,
+      required this.id,
+      required this.orderId,
+      required this.starRating});
+}
+
 final class ProfileLogoutEvent extends ProfileEvent {}

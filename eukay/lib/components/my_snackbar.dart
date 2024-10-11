@@ -6,6 +6,7 @@ SnackBar mySnackBar({
   Color textColor = const Color(0xFF000000),
 }) {
   return SnackBar(
+    duration: const Duration(seconds: 2),
     content: Center(
       child: Text(
         message,

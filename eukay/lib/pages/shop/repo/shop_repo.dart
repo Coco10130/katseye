@@ -115,7 +115,7 @@ class ShopRepo extends ShopRepository {
     String productName,
     String productDescription,
     double price,
-    List<double> stocks,
+    List<int> stocks,
     List<String> categories,
     List<String> sizes,
     List<XFile> images,
@@ -240,7 +240,7 @@ class ShopRepo extends ShopRepository {
     required String sellerId,
   }) async {
     try {
-      final response = await _dio.post(
+      final response = await _dio.put(
         "${Server.serverUrl}/api/orders/mark-order/$orderId/$status/$sellerId",
         options: Options(
           headers: {
@@ -273,13 +273,83 @@ class ShopRepo extends ShopRepository {
     required String nextStatus,
   }) async {
     try {
-      final response = await _dio.post(
+      final response = await _dio.put(
         "${Server.serverUrl}/api/orders/change-status/$status/$sellerId/$nextStatus",
         options: Options(
           headers: {
             "Authorization": "Bearer $token",
           },
         ),
+      );
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<ProductModel> fetchUpdateProduct(
+      String token, String productId) async {
+    try {
+      final response = await _dio.get(
+        "${Server.serverUrl}/api/product/get/$productId",
+      );
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        final product = response.data["data"];
+        return ProductModel.fromJson(product);
+      } else {
+        throw response.data["message"];
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<bool> updateProduct({
+    required String token,
+    required String productId,
+    required String productName,
+    required String productDescription,
+    required double price,
+    required List<int> stocks,
+    required List<String> sizes,
+  }) async {
+    try {
+      final formData = {
+        "productName": productName,
+        "productDescription": productDescription,
+        "price": price,
+        "quantities": stocks,
+        "sizes": sizes,
+      };
+
+      final response = await _dio.put(
+        "${Server.serverUrl}/api/product/update/$productId",
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+        data: jsonEncode(formData),
       );
 
       if (response.statusCode == 200 && response.data["success"]) {

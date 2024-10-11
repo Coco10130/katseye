@@ -20,30 +20,34 @@ class PendingPage extends StatefulWidget {
 }
 
 class _PendingPageState extends State<PendingPage> {
+  late SharedPreferences pref;
   String? token;
 
-  Future<String?> _initPreferences() async {
+  Future<void> _initPreferences() async {
     try {
-      SharedPreferences pref = await SharedPreferences.getInstance();
-      return pref.getString('token');
+      pref = await SharedPreferences.getInstance();
+      setState(() {
+        token = pref.getString('token');
+      });
     } catch (e) {
       throw Exception("Failed to load preferences: $e");
     }
   }
 
-  void _fetchProducts() {
+  Future<void> _fetchProducts() async {
     context.read<ShopBloc>().add(FetchSalesProductEvent(
         token: token!, sellerId: widget.sellerId, status: "pending"));
+  }
+
+  Future<void> fetchSellerProfile() async {
+    context.read<ShopBloc>().add(FetchSellerProfileEvent(token: token!));
   }
 
   @override
   void initState() {
     super.initState();
-    _initPreferences().then((fetchedToken) {
-      if (fetchedToken != null) {
-        token = fetchedToken;
-        _fetchProducts();
-      }
+    _initPreferences().then((_) {
+      _fetchProducts();
     });
   }
 
@@ -109,7 +113,10 @@ class _PendingPageState extends State<PendingPage> {
               textColor: Theme.of(context).colorScheme.onSecondary,
             ),
           );
-          _fetchProducts();
+
+          fetchSellerProfile().then((_) {
+            _fetchProducts();
+          });
         } else if (state is ChangeStatusFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
@@ -183,6 +190,7 @@ class _PendingPageState extends State<PendingPage> {
         }
 
         return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
+        // return showLoadingDialog(context, Colors.blue);
       },
     );
   }

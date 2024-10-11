@@ -28,6 +28,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<UseAddressEvent>(useAddressEvent);
     on<FetchOrdersEvent>(fetchOrdersEvent);
     on<FetchDeliveryAddressEvent>(fetchDeliveryAddressEvent);
+    on<AddReviewProductEvent>(addReviewProductEvent);
     on<ProfileLogoutEvent>((event, emit) {
       emit(ProfileInitial());
     });
@@ -218,6 +219,28 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(FetchOrdersProductsSuccessState(products: response));
     } catch (e) {
       emit(FetchOrdersProductsFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> addReviewProductEvent(
+      AddReviewProductEvent event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoadingState());
+    try {
+      final response = await _profileRepository.addReview(
+        token: event.token,
+        starRating: event.starRating,
+        review: event.review,
+        productId: event.productId,
+        orderId: event.orderId,
+        id: event.id,
+      );
+
+      if (response) {
+        emit(AddReviewProductSuccessState(
+            successMessage: "Review posted successfully"));
+      }
+    } catch (e) {
+      emit(AddReviewProductFailedState(errorMessage: e.toString()));
     }
   }
 }

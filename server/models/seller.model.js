@@ -40,6 +40,18 @@ const SellerSchema = mongoose.Schema(
       default: 0,
     },
 
+    deliveredOrders: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
+    completeOrders: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
     reviewOrders: {
       type: Number,
       required: false,

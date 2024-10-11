@@ -11,9 +11,9 @@ router.use(authMiddleware);
 
 router.post("/process", processOrder);
 
-router.post("/mark-order/:orderId/:status/:sellerId", markAsNextStep);
+router.put("/mark-order/:orderId/:status/:sellerId", markAsNextStep);
 
-router.post(
+router.put(
   "/change-status/:status/:sellerId/:nextStatus",
   changeProductSalesStatus
 );

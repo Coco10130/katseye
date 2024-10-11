@@ -70,6 +70,7 @@ const processOrder = async (req, res) => {
           size: item.size,
           price: item.price,
           quantity: item.quantity,
+          productId: item.productId._id,
         });
 
         groupedOrders[sellerId].totalPrice += item.price * item.quantity;
@@ -185,7 +186,10 @@ const changeProductSalesStatus = async (req, res) => {
             break;
           case "to deliver":
             await Seller.findByIdAndUpdate(sellerId, {
-              $inc: { deliverOrders: -orderLength, reviewOrders: orderLength },
+              $inc: {
+                deliverOrders: -orderLength,
+                deliveredOrders: orderLength,
+              },
             });
             break;
           default:

@@ -1,5 +1,7 @@
 import 'package:eukay/components/product_cards/live_product_card.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
+import 'package:eukay/pages/shop/ui/shop_pages/update_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,9 +20,13 @@ class _LivePageState extends State<LivePage> {
     fetchLiveProduct();
   }
 
-  void fetchLiveProduct() {
+  Future<void> fetchLiveProduct() async {
     context.read<ShopBloc>().add(FetchLiveProductEvent(
         token: widget.token, sellerId: widget.sellerId, status: "live"));
+  }
+
+  Future<void> fetchSellerProfile() async {
+    context.read<ShopBloc>().add(FetchSellerProfileEvent(token: widget.token));
   }
 
   @override
@@ -75,7 +81,15 @@ class _LivePageState extends State<LivePage> {
                   (sum, size) => sum + size.quantity,
                 );
                 return LiveProductCard(
-                  onPressed: () {},
+                  onPressed: () {
+                    navigateWithSlideTransition(
+                      context: context,
+                      page: UpdateProductPage(
+                        productId: product.id,
+                      ),
+                      onFetch: () => fetchLiveProduct(),
+                    );
+                  },
                   name: product.productName,
                   image: product.productImage[0],
                   price: product.price,

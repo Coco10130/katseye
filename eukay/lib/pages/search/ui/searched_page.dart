@@ -101,7 +101,7 @@ class _SearchedBodyState extends State<SearchedBody> {
     "100-199",
     "200-299",
     "400-499",
-    "above 500",
+    "Above 500",
   ];
 
   Future<void> fetchSearchProducts() async {

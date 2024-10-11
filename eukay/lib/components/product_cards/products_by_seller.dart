@@ -1,10 +1,14 @@
 import 'package:eukay/components/product_cards/live_product_card.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/dashboard/mappers/product_model.dart';
+import 'package:eukay/pages/shop/ui/shop_pages/update_product.dart';
 import 'package:flutter/material.dart';
 
 class ProductsBySeller extends StatelessWidget {
   final List<ProductModel> products;
-  const ProductsBySeller({super.key, required this.products});
+  final VoidCallback onFetch;
+  const ProductsBySeller(
+      {super.key, required this.products, required this.onFetch});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +58,15 @@ class ProductsBySeller extends StatelessWidget {
             rating: product.rating,
             backgroundColor: Theme.of(context).colorScheme.onSurface,
             textColor: Theme.of(context).colorScheme.onSecondary,
-            onPressed: () {},
+            onPressed: () {
+              navigateWithSlideTransition(
+                context: context,
+                page: UpdateProductPage(
+                  productId: product.id,
+                ),
+                onFetch: () => onFetch(),
+              );
+            },
           );
         },
       ),

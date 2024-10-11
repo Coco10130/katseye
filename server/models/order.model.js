@@ -25,6 +25,18 @@ const ProductDetailsSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+
+  rated: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+    required: true,
+  },
 });
 
 const OrderSchema = mongoose.Schema(
@@ -83,7 +95,7 @@ const OrderSchema = mongoose.Schema(
     status: {
       type: String,
       required: false,
-      enum: ["pending", "to prepare", "to deliver", "delivered", "reviews"],
+      enum: ["pending", "to prepare", "to deliver", "delivered", "completed"],
       default: "pending",
     },
   },

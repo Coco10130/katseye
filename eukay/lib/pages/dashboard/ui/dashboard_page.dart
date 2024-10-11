@@ -12,7 +12,6 @@ import 'package:eukay/pages/search/ui/searched_page.dart';
 import 'package:eukay/pages/search/ui/view_product.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -310,7 +309,7 @@ class _DashboardBodyState extends State<DashboardBody> {
 
                           // mens label
                           CategoryTextButton(
-                            label: "Mens",
+                            label: "Men",
                             backgroundColor:
                                 Theme.of(context).colorScheme.onPrimary,
                             textColor:
@@ -332,7 +331,7 @@ class _DashboardBodyState extends State<DashboardBody> {
 
                           // Womens label
                           CategoryTextButton(
-                            label: "Womens",
+                            label: "Women",
                             backgroundColor:
                                 Theme.of(context).colorScheme.onPrimary,
                             textColor:
@@ -395,16 +394,13 @@ class _DashboardBodyState extends State<DashboardBody> {
                           shop: "Shop: ${product.sellerName}",
                           rating: product.rating,
                           textColor: Theme.of(context).colorScheme.onSecondary,
-                          onPressed: () async {
-                            final response = await Get.to(
-                              ViewProduct(
-                                productId: product.id,
-                              ),
-                            );
-
-                            if (response == true) {
-                              widget.fetchProfile();
-                            }
+                          onPressed: () {
+                            navigateWithSlideTransition(
+                                context: context,
+                                page: ViewProduct(
+                                  productId: product.id,
+                                ),
+                                onFetch: () => widget.fetchProfile());
                           },
                         );
                       },

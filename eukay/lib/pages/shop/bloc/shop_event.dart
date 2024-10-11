@@ -87,3 +87,25 @@ final class ChangeOrderStatusEvent extends ShopEvent {
     required this.nextStatus,
   });
 }
+
+final class FetchUpdateProductEvent extends ShopEvent {
+  final String token, productId;
+
+  FetchUpdateProductEvent({required this.token, required this.productId});
+}
+
+final class UpdateProductEvent extends ShopEvent {
+  final List<String> sizes;
+  final String productName, description, price, token, productId;
+  final Map<String, int> sizeQuantities;
+
+  UpdateProductEvent({
+    required this.sizes,
+    required this.price,
+    required this.token,
+    required this.productId,
+    required this.productName,
+    required this.description,
+    required this.sizeQuantities,
+  });
+}

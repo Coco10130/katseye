@@ -1,4 +1,3 @@
-import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/product_cards/sales_product_card.dart';
@@ -10,16 +9,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ToDeliverPage extends StatefulWidget {
+class DeliveredPage extends StatefulWidget {
   final String sellerId;
-
-  const ToDeliverPage({super.key, required this.sellerId});
+  const DeliveredPage({super.key, required this.sellerId});
 
   @override
-  State<ToDeliverPage> createState() => _ToDeliverPageState();
+  State<DeliveredPage> createState() => _DeliveredPageState();
 }
 
-class _ToDeliverPageState extends State<ToDeliverPage> {
+class _DeliveredPageState extends State<DeliveredPage> {
   late SharedPreferences pref;
   String? token;
 
@@ -36,7 +34,7 @@ class _ToDeliverPageState extends State<ToDeliverPage> {
 
   Future<void> _fetchProducts() async {
     context.read<ShopBloc>().add(FetchSalesProductEvent(
-        token: token!, sellerId: widget.sellerId, status: "to deliver"));
+        token: token!, sellerId: widget.sellerId, status: "delivered"));
   }
 
   Future<void> fetchSellerProfile() async {
@@ -77,17 +75,6 @@ class _ToDeliverPageState extends State<ToDeliverPage> {
     }
 
     return groupedProducts;
-  }
-
-  Future<void> _markOrder(String orderId, String sellerId) async {
-    context.read<ShopBloc>().add(
-          MarkAsNextStepProductEvent(
-            orderId: orderId,
-            status: "to deliver",
-            sellerId: sellerId,
-            token: token!,
-          ),
-        );
   }
 
   @override
@@ -142,50 +129,22 @@ class _ToDeliverPageState extends State<ToDeliverPage> {
           final orderProducts = state.products;
           final groupedProducts = _groupProductsByBuyer(orderProducts);
 
-          return Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10,
-                  right: 10,
-                  top: 20,
-                  bottom: 50,
-                ),
-                child: ListView.builder(
-                  itemCount: groupedProducts.length,
-                  itemBuilder: (context, index) {
-                    final buyerName = groupedProducts.keys.elementAt(index);
-                    final productGroup = groupedProducts[buyerName]!;
+          return Padding(
+            padding: const EdgeInsets.only(
+              left: 10,
+              right: 10,
+              top: 20,
+              bottom: 50,
+            ),
+            child: ListView.builder(
+              itemCount: groupedProducts.length,
+              itemBuilder: (context, index) {
+                final buyerName = groupedProducts.keys.elementAt(index);
+                final productGroup = groupedProducts[buyerName]!;
 
-                    return _buildBuyerGroup(productGroup);
-                  },
-                ),
-              ),
-              Align(
-                alignment: AlignmentDirectional.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: MyButton(
-                    title: "Mark as delivered",
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    textColor: Theme.of(context).colorScheme.onPrimary,
-                    verticalPadding: 10,
-                    height: 60,
-                    widthFactor: 0.9,
-                    onPressed: () {
-                      context.read<ShopBloc>().add(
-                            ChangeOrderStatusEvent(
-                              nextStatus: "delivered",
-                              status: "to deliver",
-                              sellerId: widget.sellerId,
-                              token: token!,
-                            ),
-                          );
-                    },
-                  ),
-                ),
-              )
-            ],
+                return _buildBuyerGroup(productGroup);
+              },
+            ),
           );
         }
 
@@ -214,13 +173,7 @@ class _ToDeliverPageState extends State<ToDeliverPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildBuyerInfo(
-              productGroup,
-              () => _markOrder(
-                productGroup.id,
-                productGroup.sellerId,
-              ),
-            ),
+            _buildBuyerInfo(productGroup),
             const SizedBox(height: 10),
             _buildProductList(productGroup.products),
           ],
@@ -229,7 +182,7 @@ class _ToDeliverPageState extends State<ToDeliverPage> {
     );
   }
 
-  Widget _buildBuyerInfo(BuyerGroup productGroup, VoidCallback onCheck) {
+  Widget _buildBuyerInfo(BuyerGroup productGroup) {
     final formatCurrency = NumberFormat.currency(
       locale: "en_PH",
       symbol: "₱ ",
@@ -294,17 +247,6 @@ class _ToDeliverPageState extends State<ToDeliverPage> {
                 maxLines: 5,
               ),
             ],
-          ),
-        ),
-        Checkbox(
-          hoverColor: Colors.black,
-          activeColor: Theme.of(context).colorScheme.secondary,
-          value: productGroup.marked,
-          onChanged: (bool? value) {
-            onCheck();
-          },
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.onSecondary,
           ),
         ),
       ],

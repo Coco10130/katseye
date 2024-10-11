@@ -259,10 +259,10 @@ class ProfilePageBody extends StatelessWidget {
                   // to rate icon
                   _icons(
                     const Icon(
-                      Iconsax.star,
+                      Iconsax.tick_circle,
                       size: 25,
                     ),
-                    "To Rate",
+                    "Delivered",
                     () {
                       navigateWithSlideTransition(
                         context: context,
@@ -323,12 +323,6 @@ class ProfilePageBody extends StatelessWidget {
                     onFetch: fetchProfile,
                   );
                 },
-              ),
-              _myContainer(
-                "Order History",
-                "assets/icons/clip.png",
-                Theme.of(context).colorScheme.onPrimary,
-                () {},
               ),
             ],
           );

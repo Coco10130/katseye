@@ -302,4 +302,45 @@ class ProfileRepo extends ProfileRepository {
       }
     }
   }
+
+  @override
+  Future<bool> addReview({
+    required String token,
+    required int starRating,
+    required String review,
+    required String productId,
+    required String orderId,
+    required String id,
+  }) async {
+    try {
+      final payload = {
+        "starRating": starRating,
+        "productId": productId,
+        "review": review,
+        "orderId": orderId,
+        "id": id
+      };
+      final response = await _dio.post(
+        "${Server.serverUrl}/api/reviews/post-review",
+        options: Options(headers: {
+          'Authorization': 'Bearer $token',
+        }),
+        data: jsonEncode(payload),
+      );
+
+      if (response.statusCode == 201 && response.data["success"]) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
 }

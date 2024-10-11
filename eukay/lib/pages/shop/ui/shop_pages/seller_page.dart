@@ -31,7 +31,7 @@ class _SellerPageState extends State<SellerPage> {
     pref = await SharedPreferences.getInstance();
   }
 
-  void fetchSellerProfile() {
+  Future<void> fetchSellerProfile() async {
     context.read<ShopBloc>().add(FetchSellerProfileEvent(token: widget.token));
   }
 
@@ -122,11 +122,8 @@ class _SellerPageState extends State<SellerPage> {
                                 navigateWithSlideTransition(
                                   context: context,
                                   page: SalesPage(
+                                    token: pref.getString("token")!,
                                     sellerId: seller.id,
-                                    pending: seller.pendingOrders,
-                                    toPrepare: seller.prepareOrders,
-                                    toDeliver: seller.deliverOrders,
-                                    reviews: seller.reviewOrders,
                                   ),
                                   onFetch: fetchSellerProfile,
                                 );
@@ -161,30 +158,59 @@ class _SellerPageState extends State<SellerPage> {
                           height: 10,
                         ),
 
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            _myBox(
-                              "Pending",
-                              "${seller.pendingOrders}",
-                              Theme.of(context).colorScheme.onSecondary,
-                            ),
-                            _myBox(
-                              "To Prepare",
-                              "${seller.prepareOrders}",
-                              Theme.of(context).colorScheme.onSecondary,
-                            ),
-                            _myBox(
-                              "To Deliver",
-                              "${seller.deliverOrders}",
-                              Theme.of(context).colorScheme.onSecondary,
-                            ),
-                            _myBox(
-                              "Reviews",
-                              "${seller.reviewOrders}",
-                              Theme.of(context).colorScheme.onSecondary,
-                            ),
-                          ],
+                        SizedBox(
+                          height: 80,
+                          child: ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            scrollDirection: Axis.horizontal,
+                            children: [
+                              // pending
+                              _myBox(
+                                "Pending",
+                                "${seller.pendingOrders}",
+                                Theme.of(context).colorScheme.onSecondary,
+                              ),
+
+                              // spacing
+                              const SizedBox(width: 20),
+
+                              // to prepare
+                              _myBox(
+                                "To Prepare",
+                                "${seller.prepareOrders}",
+                                Theme.of(context).colorScheme.onSecondary,
+                              ),
+                              // spacing
+                              const SizedBox(width: 20),
+
+                              // to deliver
+                              _myBox(
+                                "To Deliver",
+                                "${seller.deliverOrders}",
+                                Theme.of(context).colorScheme.onSecondary,
+                              ),
+
+                              // spacing
+                              const SizedBox(width: 20),
+
+                              // delivered
+                              _myBox(
+                                "Delivered",
+                                "${seller.deliveredOrders}",
+                                Theme.of(context).colorScheme.onSecondary,
+                              ),
+
+                              // spacing
+                              const SizedBox(width: 20),
+
+                              // delivered
+                              _myBox(
+                                "Completed",
+                                "${seller.completeOrders}",
+                                Theme.of(context).colorScheme.onSecondary,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -200,9 +226,6 @@ class _SellerPageState extends State<SellerPage> {
                       navigateWithSlideTransition(
                         context: context,
                         page: MyProducts(
-                          live: seller.live,
-                          soldOut: seller.soldOut,
-                          delisted: seller.delisted,
                           sellerId: seller.id,
                           token: pref.getString("token")!,
                         ),
@@ -240,7 +263,10 @@ class _SellerPageState extends State<SellerPage> {
                   ),
 
                   // display products of seller
-                  ProductsBySeller(products: state.seller.products)
+                  ProductsBySeller(
+                    products: state.seller.products,
+                    onFetch: () => fetchSellerProfile(),
+                  )
                 ],
               ),
             ),

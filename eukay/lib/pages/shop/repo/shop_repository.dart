@@ -14,7 +14,7 @@ abstract class ShopRepository {
       String productName,
       String productDescription,
       double price,
-      List<double> stocks,
+      List<int> stocks,
       List<String> categories,
       List<String> sizes,
       List<XFile> images);
@@ -33,5 +33,15 @@ abstract class ShopRepository {
     required String status,
     required String sellerId,
     required String nextStatus,
+  });
+  Future<ProductModel> fetchUpdateProduct(String token, String productId);
+  Future<bool> updateProduct({
+    required String token,
+    required String productId,
+    required String productName,
+    required String productDescription,
+    required double price,
+    required List<int> stocks,
+    required List<String> sizes,
   });
 }

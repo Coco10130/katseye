@@ -104,4 +104,23 @@ final class ChangeStatusFailedState extends ShopState {
   ChangeStatusFailedState({required this.errorMessage});
 }
 
+final class UpdateProductFailedState extends ShopState {
+  final String errorMessage;
+
+  UpdateProductFailedState({required this.errorMessage});
+}
+
+final class UpdateProductSuccessState extends ShopState {
+  final String successMessage;
+
+  UpdateProductSuccessState({required this.successMessage});
+}
+
+final class FetchUpdateProductState extends ShopState {
+  final ProductModel product;
+
+  FetchUpdateProductState({required this.product});
+}
+
+
 final class ShopLoadingState extends ShopState {}

@@ -26,6 +26,15 @@ const addAddress = async (req, res) => {
     const { fullName, municipality, contact, barangay, street } = req.body;
     let formattedContact = contact;
 
+    // Validate fullName to only allow letters (both uppercase and lowercase)
+    const nameRegex = /^[a-zA-Z\s]+$/; // Regex to match letters and spaces only
+
+    if (!nameRegex.test(fullName)) {
+      return res
+        .status(400)
+        .json({ message: "Invalid full name. Only letters are allowed." });
+    }
+
     if (formattedContact) {
       formattedContact = formattedContact.replace(/[^0-9]/g, "");
       if (

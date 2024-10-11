@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class ReviewsPage extends StatelessWidget {
-  const ReviewsPage({super.key});
+class OrderHistory extends StatelessWidget {
+  const OrderHistory({super.key});
 
   @override
   Widget build(BuildContext context) {
