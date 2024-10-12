@@ -91,13 +91,21 @@ final class AddReviewProductEvent extends ProfileEvent {
   final String token, productId, review, id, orderId;
   final int starRating;
 
-  AddReviewProductEvent(
-      {required this.token,
-      required this.productId,
-      required this.review,
-      required this.id,
-      required this.orderId,
-      required this.starRating});
+  AddReviewProductEvent({
+    required this.token,
+    required this.productId,
+    required this.review,
+    required this.id,
+    required this.orderId,
+    required this.starRating,
+  });
+}
+
+final class CancelOrderEvent extends ProfileEvent {
+  final String token, orderId, status;
+
+  CancelOrderEvent(
+      {required this.token, required this.orderId, required this.status});
 }
 
 final class ProfileLogoutEvent extends ProfileEvent {}

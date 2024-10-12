@@ -1,5 +1,6 @@
 import 'package:eukay/components/appbar/my_tab_bar.dart';
 import 'package:eukay/pages/profile/ui/orders/tabs/completed_page.dart';
+import 'package:eukay/pages/profile/ui/orders/tabs/pending_page.dart';
 import 'package:eukay/pages/profile/ui/orders/tabs/to_prepage_page.dart';
 import 'package:eukay/pages/profile/ui/orders/tabs/order_history.dart';
 import 'package:eukay/pages/profile/ui/orders/tabs/to_recieve_page.dart';
@@ -15,7 +16,7 @@ class OrdersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 5,
       initialIndex: initialIndex,
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.onSurface,
@@ -33,6 +34,7 @@ class OrdersPage extends StatelessWidget {
           centerTitle: true,
           bottom: MyTabBar(
             tabs: [
+              _tab("Pending"),
               _tab("To Prepare"),
               _tab("To Recieve"),
               _tab("Delivered"),
@@ -49,6 +51,7 @@ class OrdersPage extends StatelessWidget {
         ),
         body: const TabBarView(
           children: [
+            PendingPage(),
             ToPrepareUser(),
             ToRecieve(),
             CompletedPage(),

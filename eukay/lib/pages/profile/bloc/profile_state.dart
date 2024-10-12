@@ -139,4 +139,16 @@ final class AddReviewProductFailedState extends ProfileState {
   AddReviewProductFailedState({required this.errorMessage});
 }
 
+final class CancelOrderSuccessState extends ProfileState {
+  final String successMessage;
+
+  CancelOrderSuccessState({required this.successMessage});
+}
+
+final class CancelOrderFailedState extends ProfileState {
+  final String errorMessage;
+
+  CancelOrderFailedState({required this.errorMessage});
+}
+
 final class ProfileLoadingState extends ProfileState {}

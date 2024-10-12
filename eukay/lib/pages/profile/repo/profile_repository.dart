@@ -34,4 +34,9 @@ abstract class ProfileRepository {
     required String orderId,
     required String id,
   });
+  Future<bool> cancelOrder({
+    required String token,
+    required String orderId,
+    required String status,
+  });
 }

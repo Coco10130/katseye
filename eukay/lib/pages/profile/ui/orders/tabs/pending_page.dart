@@ -10,22 +10,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ToPrepareUser extends StatefulWidget {
-  const ToPrepareUser({super.key});
+class PendingPage extends StatefulWidget {
+  const PendingPage({super.key});
 
   @override
-  State<ToPrepareUser> createState() => _ToPrepareUserState();
+  State<PendingPage> createState() => _PendingPageState();
 }
 
-class _ToPrepareUserState extends State<ToPrepareUser> {
+class _PendingPageState extends State<PendingPage> {
   String? token;
   late SharedPreferences pref;
+  bool initializedPref = false;
 
   Future<void> _initPreferences() async {
     try {
       pref = await SharedPreferences.getInstance();
       setState(() {
         token = pref.getString('token');
+        initializedPref = true;
       });
     } catch (e) {
       throw Exception("Failed to load preferences: $e");
@@ -35,7 +37,7 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
   Future<void> _fetchProducts() async {
     context
         .read<ProfileBloc>()
-        .add(FetchOrdersEvent(status: "to prepare", token: token!));
+        .add(FetchOrdersEvent(status: "pending", token: token!));
   }
 
   @override
@@ -57,9 +59,9 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
         } else {
           groupedProducts[item.id] = SellerGroup(
             id: item.id,
-            markedAsPrepared: item.markAsNextStep,
             sellerId: item.sellerId,
             totalPrice: item.totalPrice,
+            markedAsPrepared: item.markAsNextStep,
             sellerName: item.shopName,
             products: [item],
           );
@@ -76,6 +78,12 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
 
   @override
   Widget build(BuildContext context) {
+    if (!initializedPref) {
+      return LoadingScreen(
+        color: Theme.of(context).colorScheme.onSecondary,
+      );
+    }
+
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is FetchOrdersProductsFailedState) {
@@ -84,6 +92,24 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
               message: state.errorMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+          _fetchProducts();
+        } else if (state is CancelOrderFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+          _fetchProducts();
+        } else if (state is CancelOrderSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
             ),
           );
           _fetchProducts();
@@ -121,7 +147,7 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
                 final buyerName = groupedProducts.keys.elementAt(index);
                 final productGroup = groupedProducts[buyerName]!;
 
-                return _buildSellerGroup(productGroup);
+                return _buildSellerGroup(productGroup, token!);
               },
             ),
           );
@@ -132,7 +158,7 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
     );
   }
 
-  Widget _buildSellerGroup(SellerGroup productGroup) {
+  Widget _buildSellerGroup(SellerGroup productGroup, String token) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
@@ -152,12 +178,12 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSellerInfo(
-              productGroup,
-              () => _markOrder(
-                productGroup.id,
-                productGroup.sellerId,
-              ),
-            ),
+                productGroup,
+                () => _markOrder(
+                      productGroup.id,
+                      productGroup.sellerId,
+                    ),
+                token),
             const SizedBox(height: 10),
             _buildProductList(productGroup.products),
           ],
@@ -166,7 +192,8 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
     );
   }
 
-  Widget _buildSellerInfo(SellerGroup productGroup, VoidCallback onCheck) {
+  Widget _buildSellerInfo(
+      SellerGroup productGroup, VoidCallback onCheck, String token) {
     final formatCurrency = NumberFormat.currency(
       locale: "en_PH",
       symbol: "₱ ",
@@ -205,18 +232,20 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
                     ),
                   ),
 
-                  if (!productGroup.markedAsPrepared) ...{
-                    // button
-                    MyButton(
-                      title: "Cancel",
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                      textColor: Theme.of(context).colorScheme.onPrimary,
-                      widthFactor: 0.25,
-                      height: 40,
-                      verticalPadding: 5,
-                      onPressed: () {},
-                    ),
-                  }
+                  // button
+                  MyButton(
+                    title: "Cancel",
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    textColor: Theme.of(context).colorScheme.onPrimary,
+                    widthFactor: 0.25,
+                    verticalPadding: 6,
+                    onPressed: () {
+                      context.read<ProfileBloc>().add(CancelOrderEvent(
+                          orderId: productGroup.id,
+                          status: "pending",
+                          token: token));
+                    },
+                  ),
                 ],
               ),
 

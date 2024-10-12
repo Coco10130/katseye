@@ -343,4 +343,35 @@ class ProfileRepo extends ProfileRepository {
       }
     }
   }
+
+  @override
+  Future<bool> cancelOrder(
+      {required String token,
+      required String orderId,
+      required String status}) async {
+    try {
+      final response = await _dio.put(
+        "${Server.serverUrl}/api/orders/cancel-order/$orderId/$status",
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
 }

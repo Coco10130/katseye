@@ -21,12 +21,14 @@ class CompletedPage extends StatefulWidget {
 class _CompletedPageState extends State<CompletedPage> {
   String? token;
   late SharedPreferences pref;
+  bool initializedPref = false;
 
   Future<void> _initPreferences() async {
     try {
       pref = await SharedPreferences.getInstance();
       setState(() {
         token = pref.getString('token');
+        initializedPref = true;
       });
     } catch (e) {
       throw Exception("Failed to load preferences: $e");
@@ -60,6 +62,7 @@ class _CompletedPageState extends State<CompletedPage> {
             id: item.id,
             sellerId: item.sellerId,
             totalPrice: item.totalPrice,
+            markedAsPrepared: item.markAsNextStep,
             sellerName: item.shopName,
             products: [item],
           );
@@ -76,6 +79,11 @@ class _CompletedPageState extends State<CompletedPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!initializedPref) {
+      return LoadingScreen(
+        color: Theme.of(context).colorScheme.onSecondary,
+      );
+    }
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is FetchOrdersProductsFailedState) {

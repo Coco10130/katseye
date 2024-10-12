@@ -208,4 +208,51 @@ const changeProductSalesStatus = async (req, res) => {
   }
 };
 
-module.exports = { processOrder, markAsNextStep, changeProductSalesStatus };
+const cancelOrder = async (req, res) => {
+  try {
+    const { orderId, status } = req.params;
+
+    const orders = await Order.findByIdAndUpdate(orderId, {
+      status: "cancelled",
+    });
+
+    const sellerId = orders.sellerId;
+
+    if (!orders) {
+      return res.status(404).json({ message: "Order not found." });
+    }
+
+    const orderLength = orders.products.length;
+
+    console.log(orderLength);
+
+    switch (status) {
+      case "pending":
+        await Seller.findByIdAndUpdate(sellerId, {
+          $inc: { pendingOrders: -orderLength },
+        });
+        break;
+      case "to prepare":
+        await Seller.findByIdAndUpdate(sellerId, {
+          $inc: { prepareOrders: -orderLength },
+        });
+        break;
+
+      default:
+        console.log("Unknown");
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: "Product cancelled successfully" });
+  } catch (error) {
+    res.status(500).json({ errorMessage: error.message });
+  }
+};
+
+module.exports = {
+  processOrder,
+  markAsNextStep,
+  changeProductSalesStatus,
+  cancelOrder,
+};

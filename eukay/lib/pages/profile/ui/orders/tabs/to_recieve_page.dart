@@ -58,6 +58,7 @@ class _ToRecieveState extends State<ToRecieve> {
             id: item.id,
             sellerId: item.sellerId,
             totalPrice: item.totalPrice,
+            markedAsPrepared: item.markAsNextStep,
             sellerName: item.shopName,
             products: [item],
           );

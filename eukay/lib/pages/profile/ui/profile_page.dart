@@ -231,7 +231,7 @@ class ProfilePageBody extends StatelessWidget {
                       navigateWithSlideTransition(
                         context: context,
                         page: const OrdersPage(
-                          initialIndex: 0,
+                          initialIndex: 1,
                         ),
                         onFetch: fetchProfile,
                       );
@@ -249,7 +249,7 @@ class ProfilePageBody extends StatelessWidget {
                       navigateWithSlideTransition(
                         context: context,
                         page: const OrdersPage(
-                          initialIndex: 1,
+                          initialIndex: 2,
                         ),
                         onFetch: fetchProfile,
                       );
@@ -267,7 +267,7 @@ class ProfilePageBody extends StatelessWidget {
                       navigateWithSlideTransition(
                         context: context,
                         page: const OrdersPage(
-                          initialIndex: 2,
+                          initialIndex: 3,
                         ),
                         onFetch: fetchProfile,
                       );

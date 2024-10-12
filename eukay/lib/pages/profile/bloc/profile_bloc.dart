@@ -25,6 +25,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<FetchUserAddressEvent>(fetchUserAddressEvent);
     on<FetchUserWishlistsEvent>(fetchUserWishlistsEvent);
     on<DeleteAddressEvent>(deleteAddressEvent);
+    on<CancelOrderEvent>(cancelOrderEvent);
     on<UseAddressEvent>(useAddressEvent);
     on<FetchOrdersEvent>(fetchOrdersEvent);
     on<FetchDeliveryAddressEvent>(fetchDeliveryAddressEvent);
@@ -241,6 +242,25 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     } catch (e) {
       emit(AddReviewProductFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> cancelOrderEvent(
+      CancelOrderEvent event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoadingState());
+
+    try {
+      final response = await _profileRepository.cancelOrder(
+          token: event.token, orderId: event.orderId, status: event.status);
+
+      if (response) {
+        emit(CancelOrderSuccessState(
+            successMessage: "Order cancelled successfully"));
+      } else {
+        emit(CancelOrderFailedState(errorMessage: "Failed to cancel order"));
+      }
+    } catch (e) {
+      emit(CancelOrderFailedState(errorMessage: e.toString()));
     }
   }
 }
