@@ -92,6 +92,20 @@ class _ToRecieveState extends State<ToRecieve> {
           final orderProducts = state.products;
           final groupedProducts = _groupProductsBySeller(orderProducts);
 
+          if (orderProducts.isEmpty) {
+            return Center(
+              child: Text(
+                "No products to prepare",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSecondary,
+                  fontFamily: "Poppins",
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          }
+
           return Padding(
             padding: const EdgeInsets.only(
               left: 10,

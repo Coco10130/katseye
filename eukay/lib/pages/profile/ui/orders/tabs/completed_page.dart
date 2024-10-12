@@ -94,6 +94,20 @@ class _CompletedPageState extends State<CompletedPage> {
           final orderProducts = state.products;
           final groupedProducts = _groupProductsBySeller(orderProducts);
 
+          if (orderProducts.isEmpty) {
+            return Center(
+              child: Text(
+                "No products to prepare",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSecondary,
+                  fontFamily: "Poppins",
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          }
+
           return Padding(
             padding: const EdgeInsets.only(
               left: 10,
@@ -146,8 +160,7 @@ class _CompletedPageState extends State<CompletedPage> {
               ),
             ),
             const SizedBox(height: 10),
-            _buildProductList(
-                productGroup.products, onFetch, token),
+            _buildProductList(productGroup.products, onFetch, token),
           ],
         ),
       ),
@@ -204,8 +217,8 @@ class _CompletedPageState extends State<CompletedPage> {
     );
   }
 
-  Widget _buildProductList(List<SalesProductModel> productList,
-      VoidCallback onFetch, String token) {
+  Widget _buildProductList(
+      List<SalesProductModel> productList, VoidCallback onFetch, String token) {
     return Column(
       children: productList.map((salesProduct) {
         final orderId = salesProduct.id;
