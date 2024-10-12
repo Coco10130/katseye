@@ -51,7 +51,7 @@ class _LivePageState extends State<LivePage> {
           if (products.isEmpty) {
             return Center(
               child: Text(
-                'No live products were found',
+                'No sold out products were found',
                 style: TextStyle(
                   fontFamily: "Poppins",
                   fontWeight: FontWeight.bold,
@@ -62,43 +62,45 @@ class _LivePageState extends State<LivePage> {
             );
           }
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: crossAxisCount,
-                crossAxisSpacing: productSpacing,
-                mainAxisSpacing: productSpacing,
-                childAspectRatio: screenWidth > 1200 ? 0.81 : 0.74,
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: productSpacing,
+                  mainAxisSpacing: productSpacing,
+                  childAspectRatio: screenWidth > 1200 ? 0.81 : 0.74,
+                ),
+                itemCount: products.length,
+                itemBuilder: (context, index) {
+                  final product = products[index];
+                  final totalQuantity = product.sizeQuantities.fold<int>(
+                    0,
+                    (sum, size) => sum + size.quantity,
+                  );
+                  return LiveProductCard(
+                    onPressed: () {
+                      navigateWithSlideTransition(
+                        context: context,
+                        page: UpdateProductPage(
+                          productId: product.id,
+                        ),
+                        onFetch: () => fetchLiveProduct(),
+                      );
+                    },
+                    name: product.productName,
+                    image: product.productImage[0],
+                    price: product.price,
+                    rating: product.rating,
+                    stocks: totalQuantity,
+                    backgroundColor: Theme.of(context).colorScheme.onSurface,
+                    textColor: Theme.of(context).colorScheme.onSecondary,
+                  );
+                },
               ),
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                final product = products[index];
-                final totalQuantity = product.sizeQuantities.fold<int>(
-                  0,
-                  (sum, size) => sum + size.quantity,
-                );
-                return LiveProductCard(
-                  onPressed: () {
-                    navigateWithSlideTransition(
-                      context: context,
-                      page: UpdateProductPage(
-                        productId: product.id,
-                      ),
-                      onFetch: () => fetchLiveProduct(),
-                    );
-                  },
-                  name: product.productName,
-                  image: product.productImage[0],
-                  price: product.price,
-                  rating: product.rating,
-                  stocks: totalQuantity,
-                  backgroundColor: Theme.of(context).colorScheme.onSurface,
-                  textColor: Theme.of(context).colorScheme.onSecondary,
-                );
-              },
             ),
           );
         }

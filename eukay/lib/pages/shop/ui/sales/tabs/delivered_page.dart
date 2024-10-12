@@ -142,6 +142,20 @@ class _DeliveredPageState extends State<DeliveredPage> {
                 final buyerName = groupedProducts.keys.elementAt(index);
                 final productGroup = groupedProducts[buyerName]!;
 
+                if (buyerName.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'No delivered products were found',
+                      style: TextStyle(
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Theme.of(context).colorScheme.onSecondary,
+                      ),
+                    ),
+                  );
+                }
+
                 return _buildBuyerGroup(productGroup);
               },
             ),

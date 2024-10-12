@@ -142,6 +142,20 @@ class _PendingPageState extends State<PendingPage> {
           final orderProducts = state.products;
           final groupedProducts = _groupProductsByBuyer(orderProducts);
 
+          if (orderProducts.isEmpty) {
+            return Center(
+              child: Text(
+                'No pending products were found',
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Theme.of(context).colorScheme.onSecondary,
+                ),
+              ),
+            );
+          }
+
           return Stack(
             children: [
               Padding(

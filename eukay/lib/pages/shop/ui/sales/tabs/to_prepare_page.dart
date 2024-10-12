@@ -142,6 +142,20 @@ class _ToPreparePageState extends State<ToPreparePage> {
           final orderProducts = state.products;
           final groupedProducts = _groupProductsByBuyer(orderProducts);
 
+          if (orderProducts.isEmpty) {
+            return Center(
+              child: Text(
+                'No to deliver products were found',
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  color: Theme.of(context).colorScheme.onSecondary,
+                ),
+              ),
+            );
+          }
+
           return Stack(
             children: [
               Padding(
