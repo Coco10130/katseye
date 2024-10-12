@@ -1,0 +1,3 @@
+JWT_SECRET to add in .env
+
+JWT_SECRET= "KLSJADL:KASNLKNDSK"
