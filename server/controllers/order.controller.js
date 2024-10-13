@@ -197,7 +197,7 @@ const changeProductSalesStatus = async (req, res) => {
             });
 
             await User.findByIdAndUpdate(userId, {
-              $inc: { prepareOrders: -orderLength },
+              $inc: { prepareOrders: -orderLength, deliverOrders: orderLength },
             });
             break;
 

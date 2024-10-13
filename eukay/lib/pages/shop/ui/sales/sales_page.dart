@@ -77,6 +77,7 @@ class _SalesPageState extends State<SalesPage> {
                   _tab("Delivered", delivered),
                 ],
                 height: 70,
+                isScrollable: true,
               ),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
