@@ -208,6 +208,13 @@ const changeProductSalesStatus = async (req, res) => {
                 deliveredOrders: orderLength,
               },
             });
+
+            await User.findByIdAndUpdate(userId, {
+              $inc: {
+                deliverOrders: -orderLength,
+                deliveredOrders: orderLength,
+              },
+            });
             break;
           default:
             console.log("Unknown");
