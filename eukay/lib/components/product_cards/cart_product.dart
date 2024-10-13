@@ -106,7 +106,7 @@ class _CartProductState extends State<CartProduct> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    // product name
+                    // product namee
                     Text(
                       widget.name,
                       style: TextStyle(
