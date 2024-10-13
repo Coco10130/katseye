@@ -59,7 +59,7 @@ class ProductReviewContainer extends StatelessWidget {
                       children: List.generate(5, (index) {
                         return Icon(
                           index < starRating ? Icons.star : Icons.star_border,
-                          color: Colors.yellow,
+                          color: const Color(0xFFFFA534),
                           size: 17,
                         );
                       }),

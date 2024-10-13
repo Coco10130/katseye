@@ -19,12 +19,14 @@ class ToRecieve extends StatefulWidget {
 class _ToRecieveState extends State<ToRecieve> {
   String? token;
   late SharedPreferences pref;
+  bool initializedPref = false;
 
   Future<void> _initPreferences() async {
     try {
       pref = await SharedPreferences.getInstance();
       setState(() {
         token = pref.getString('token');
+        initializedPref = true;
       });
     } catch (e) {
       throw Exception("Failed to load preferences: $e");
@@ -75,6 +77,12 @@ class _ToRecieveState extends State<ToRecieve> {
 
   @override
   Widget build(BuildContext context) {
+    if (!initializedPref) {
+      return LoadingScreen(
+        color: Theme.of(context).colorScheme.onSecondary,
+      );
+    }
+
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is FetchOrdersProductsFailedState) {

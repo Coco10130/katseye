@@ -122,5 +122,16 @@ final class FetchUpdateProductState extends ShopState {
   FetchUpdateProductState({required this.product});
 }
 
+final class DeleteProductSuccessState extends ShopState {
+  final String successMessage;
+
+  DeleteProductSuccessState({required this.successMessage});
+}
+
+final class DeleteProductFailedState extends ShopState {
+  final String errorMessage;
+
+  DeleteProductFailedState({required this.errorMessage});
+}
 
 final class ShopLoadingState extends ShopState {}

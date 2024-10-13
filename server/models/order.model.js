@@ -101,7 +101,7 @@ const OrderSchema = mongoose.Schema(
         "to deliver",
         "delivered",
         "completed",
-        "cancelled",
+        "canceled",
       ],
       default: "pending",
     },

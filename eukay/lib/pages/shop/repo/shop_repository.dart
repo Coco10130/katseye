@@ -41,7 +41,12 @@ abstract class ShopRepository {
     required String productName,
     required String productDescription,
     required double price,
+    double? discount,
     required List<int> stocks,
     required List<String> sizes,
   });
+  Future<bool> deleteProduct(
+      {required String productId,
+      required String sellerId,
+      required String token});
 }

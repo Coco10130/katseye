@@ -124,6 +124,10 @@ const processOrder = async (req, res) => {
       await Seller.findByIdAndUpdate(sellerId, {
         $inc: { pendingOrders: products.length },
       });
+
+      await User.findByIdAndUpdate(userId, {
+        $inc: { pendingOrders: products.length },
+      });
     }
 
     const newToken = signToken(user);
@@ -159,6 +163,10 @@ const markAsNextStep = async (req, res) => {
 
 const changeProductSalesStatus = async (req, res) => {
   try {
+    const authorizationHeader = req.headers.authorization;
+    const token = authorizationHeader.split(" ")[1];
+    const decode = jwt.verify(token, secretKey);
+    const userId = decode.id;
     const { status, sellerId, nextStatus } = req.params;
 
     const orders = await Order.find({ status, sellerId, markAsNextStep: true });
@@ -178,12 +186,21 @@ const changeProductSalesStatus = async (req, res) => {
             await Seller.findByIdAndUpdate(sellerId, {
               $inc: { pendingOrders: -orderLength, prepareOrders: orderLength },
             });
+
+            await User.findByIdAndUpdate(userId, {
+              $inc: { pendingOrders: -orderLength, prepareOrders: orderLength },
+            });
             break;
           case "to prepare":
             await Seller.findByIdAndUpdate(sellerId, {
               $inc: { prepareOrders: -orderLength, deliverOrders: orderLength },
             });
+
+            await User.findByIdAndUpdate(userId, {
+              $inc: { prepareOrders: -orderLength },
+            });
             break;
+
           case "to deliver":
             await Seller.findByIdAndUpdate(sellerId, {
               $inc: {
@@ -210,10 +227,14 @@ const changeProductSalesStatus = async (req, res) => {
 
 const cancelOrder = async (req, res) => {
   try {
+    const authorizationHeader = req.headers.authorization;
+    const token = authorizationHeader.split(" ")[1];
+    const decode = jwt.verify(token, secretKey);
+    const userId = decode.id;
     const { orderId, status } = req.params;
 
     const orders = await Order.findByIdAndUpdate(orderId, {
-      status: "cancelled",
+      status: "canceled",
     });
 
     const sellerId = orders.sellerId;
@@ -224,16 +245,20 @@ const cancelOrder = async (req, res) => {
 
     const orderLength = orders.products.length;
 
-    console.log(orderLength);
-
     switch (status) {
       case "pending":
         await Seller.findByIdAndUpdate(sellerId, {
+          $inc: { pendingOrders: -orderLength, canceledOrders: orderLength },
+        });
+        await User.findByIdAndUpdate(userId, {
           $inc: { pendingOrders: -orderLength },
         });
         break;
       case "to prepare":
         await Seller.findByIdAndUpdate(sellerId, {
+          $inc: { prepareOrders: -orderLength, canceledOrders: orderLength },
+        });
+        await User.findByIdAndUpdate(userId, {
           $inc: { prepareOrders: -orderLength },
         });
         break;
@@ -244,7 +269,7 @@ const cancelOrder = async (req, res) => {
 
     res
       .status(200)
-      .json({ success: true, message: "Product cancelled successfully" });
+      .json({ success: true, message: "Product canceled successfully" });
   } catch (error) {
     res.status(500).json({ errorMessage: error.message });
   }

@@ -144,7 +144,7 @@ class _BodyPageState extends State<BodyPage> {
                       return IconButton(
                         icon: Icon(
                           index < _rating ? Icons.star : Icons.star_border,
-                          color: Colors.yellow,
+                          color: const Color(0xFFFFA534),
                           size: 40,
                         ),
                         onPressed: () => _setRating(index + 1),

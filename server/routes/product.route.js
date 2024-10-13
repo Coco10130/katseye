@@ -11,6 +11,7 @@ const {
   updateProduct,
   getSalesProductByStatus,
   getOrdersProductByStatus,
+  deleteProduct,
 } = require("../controllers/product.controller.js");
 
 router.post(
@@ -41,5 +42,7 @@ router.get(
 router.get("/get/orders/:status", authMiddleware, getOrdersProductByStatus);
 
 router.put("/update/:productId", authMiddleware, updateProduct);
+
+router.delete("/delete/:productId/:sellerId", authMiddleware, deleteProduct);
 
 module.exports = router;

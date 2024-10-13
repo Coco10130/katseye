@@ -108,4 +108,10 @@ final class CancelOrderEvent extends ProfileEvent {
       {required this.token, required this.orderId, required this.status});
 }
 
+final class FetchReviewsEvent extends ProfileEvent {
+  final String token;
+
+  FetchReviewsEvent({required this.token});
+}
+
 final class ProfileLogoutEvent extends ProfileEvent {}

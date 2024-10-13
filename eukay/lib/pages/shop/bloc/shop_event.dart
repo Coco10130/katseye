@@ -97,6 +97,7 @@ final class FetchUpdateProductEvent extends ShopEvent {
 final class UpdateProductEvent extends ShopEvent {
   final List<String> sizes;
   final String productName, description, price, token, productId;
+  final double? discount;
   final Map<String, int> sizeQuantities;
 
   UpdateProductEvent({
@@ -107,5 +108,16 @@ final class UpdateProductEvent extends ShopEvent {
     required this.productName,
     required this.description,
     required this.sizeQuantities,
+    this.discount,
+  });
+}
+
+final class DeleteProductEvent extends ShopEvent {
+  final String token, productId, sellerId;
+
+  DeleteProductEvent({
+    required this.token,
+    required this.productId,
+    required this.sellerId,
   });
 }

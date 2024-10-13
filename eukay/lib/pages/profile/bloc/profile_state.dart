@@ -151,4 +151,16 @@ final class CancelOrderFailedState extends ProfileState {
   CancelOrderFailedState({required this.errorMessage});
 }
 
+final class FetchReviewsFailedState extends ProfileState {
+  final String errorMessage;
+
+  FetchReviewsFailedState({required this.errorMessage});
+}
+
+final class FetchReviewSuccessState extends ProfileState {
+  final List<ReviewModel> review;
+
+  FetchReviewSuccessState({required this.review});
+}
+
 final class ProfileLoadingState extends ProfileState {}

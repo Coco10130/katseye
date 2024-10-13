@@ -1,4 +1,5 @@
 import 'package:eukay/pages/dashboard/mappers/product_model.dart';
+import 'package:eukay/pages/dashboard/mappers/review_model.dart';
 import 'package:eukay/pages/profile/mappers/address_model.dart';
 import 'package:eukay/pages/profile/mappers/barangay_model.dart';
 import 'package:eukay/pages/profile/mappers/municipality_model.dart';
@@ -39,4 +40,5 @@ abstract class ProfileRepository {
     required String orderId,
     required String status,
   });
+  Future<List<ReviewModel>> fetchReviewsOfUser(String token);
 }

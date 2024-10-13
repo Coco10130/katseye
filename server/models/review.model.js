@@ -24,6 +24,16 @@ const ReviewSchema = mongoose.Schema(
       required: true,
     },
 
+    productImage: {
+      type: String,
+      required: true,
+    },
+
+    productName: {
+      type: String,
+      required: true,
+    },
+
     sellerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Seller",

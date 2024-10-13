@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:eukay/pages/dashboard/mappers/product_model.dart';
+import 'package:eukay/pages/dashboard/mappers/review_model.dart';
 import 'package:eukay/pages/profile/mappers/address_model.dart';
 import 'package:eukay/pages/profile/mappers/barangay_model.dart';
 import 'package:eukay/pages/profile/mappers/municipality_model.dart';
@@ -363,6 +364,35 @@ class ProfileRepo extends ProfileRepository {
         return true;
       } else {
         return false;
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<List<ReviewModel>> fetchReviewsOfUser(String token) async {
+    try {
+      final response = await _dio.get(
+        "${Server.serverUrl}/api/reviews/review-user",
+        options: Options(
+          headers: {"Authorization": "Bearer $token"},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        final List<dynamic> reviewList = response.data["data"];
+        return reviewList.map((review) {
+          return ReviewModel.fromJson(review);
+        }).toList();
+      } else {
+        throw response.data["message"];
       }
     } catch (e) {
       if (e is DioException && e.response != null) {

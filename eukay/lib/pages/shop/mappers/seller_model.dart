@@ -9,6 +9,7 @@ class SellerModel {
       deliveredOrders,
       completeOrders,
       live,
+      canceledOrders,
       soldOut,
       delisted;
   final List<ProductModel> products;
@@ -18,6 +19,7 @@ class SellerModel {
     required this.shopContact,
     required this.shopEmail,
     required this.image,
+    required this.canceledOrders,
     required this.id,
     required this.pendingOrders,
     required this.prepareOrders,
@@ -41,6 +43,7 @@ class SellerModel {
       pendingOrders: json["pendingOrders"],
       prepareOrders: json["prepareOrders"],
       deliverOrders: json["deliverOrders"],
+      canceledOrders: json["canceledOrders"],
       reviewOrders: json["reviewOrders"],
       products: (json["products"] as List<dynamic>)
           .map((productJson) => ProductModel.fromJson(productJson))

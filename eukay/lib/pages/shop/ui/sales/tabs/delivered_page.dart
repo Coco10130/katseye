@@ -33,6 +33,7 @@ class _DeliveredPageState extends State<DeliveredPage> {
   }
 
   Future<void> _fetchProducts() async {
+    print("REFRESH");
     context.read<ShopBloc>().add(FetchSalesProductEvent(
         token: token!, sellerId: widget.sellerId, status: "delivered"));
   }
@@ -117,10 +118,15 @@ class _DeliveredPageState extends State<DeliveredPage> {
       },
       builder: (context, state) {
         if (state is FetchProductFailedState) {
-          return Center(
-            child: Text(
-              state.errorMessage,
-              style: const TextStyle(color: Colors.black),
+          return RefreshIndicator(
+            onRefresh: () => _fetchProducts(),
+            child: SingleChildScrollView(
+              child: Center(
+                child: Text(
+                  state.errorMessage,
+                  style: const TextStyle(color: Colors.black),
+                ),
+              ),
             ),
           );
         }
@@ -129,21 +135,18 @@ class _DeliveredPageState extends State<DeliveredPage> {
           final orderProducts = state.products;
           final groupedProducts = _groupProductsByBuyer(orderProducts);
 
-          return Padding(
-            padding: const EdgeInsets.only(
-              left: 10,
-              right: 10,
-              top: 20,
-              bottom: 50,
-            ),
-            child: ListView.builder(
-              itemCount: groupedProducts.length,
-              itemBuilder: (context, index) {
-                final buyerName = groupedProducts.keys.elementAt(index);
-                final productGroup = groupedProducts[buyerName]!;
-
-                if (buyerName.isEmpty) {
-                  return Center(
+          if (orderProducts.isEmpty) {
+            return RefreshIndicator(
+              onRefresh: () => fetchSellerProfile().then((_) {
+                _fetchProducts();
+              }),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  height:
+                      MediaQuery.of(context).size.height - kToolbarHeight - 100,
+                  alignment: Alignment.center,
+                  child: Center(
                     child: Text(
                       'No delivered products were found',
                       style: TextStyle(
@@ -153,11 +156,44 @@ class _DeliveredPageState extends State<DeliveredPage> {
                         color: Theme.of(context).colorScheme.onSecondary,
                       ),
                     ),
-                  );
-                }
+                  ),
+                ),
+              ),
+            );
+          }
 
-                return _buildBuyerGroup(productGroup);
-              },
+          return RefreshIndicator(
+            onRefresh: () => _fetchProducts(),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+                top: 20,
+                bottom: 50,
+              ),
+              child: ListView.builder(
+                itemCount: groupedProducts.length,
+                itemBuilder: (context, index) {
+                  final buyerName = groupedProducts.keys.elementAt(index);
+                  final productGroup = groupedProducts[buyerName]!;
+
+                  if (buyerName.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No delivered products were found',
+                        style: TextStyle(
+                          fontFamily: "Poppins",
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Theme.of(context).colorScheme.onSecondary,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return _buildBuyerGroup(productGroup);
+                },
+              ),
             ),
           );
         }

@@ -7,6 +7,7 @@ class ProductCard extends StatelessWidget {
   final String image;
   final String shop;
   final double rating;
+  final double discount;
   final Color textColor;
   final VoidCallback onPressed;
 
@@ -18,6 +19,7 @@ class ProductCard extends StatelessWidget {
     required this.onPressed,
     required this.shop,
     required this.rating,
+    required this.discount,
     this.textColor = Colors.black,
   });
 
@@ -57,19 +59,40 @@ class ProductCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             // Product image
-            Container(
-              width: parentWidth,
-              height: parentWidth > 1200 ? 200 : parentWidth * 0.35,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(borderRadius - 2),
-                  topRight: Radius.circular(borderRadius - 2),
+            Stack(
+              children: [
+                Container(
+                  width: parentWidth,
+                  height: parentWidth > 1200 ? 200 : parentWidth * 0.35,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(borderRadius - 2),
+                      topRight: Radius.circular(borderRadius - 2),
+                    ),
+                    image: DecorationImage(
+                      image: NetworkImage(image),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
                 ),
-                image: DecorationImage(
-                  image: NetworkImage(image),
-                  fit: BoxFit.fill,
-                ),
-              ),
+
+                // discount
+                if (discount >= 1) ...{
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    color: Colors.red,
+                    child: Text(
+                      "$discount %",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontFamily: "Poppins",
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                },
+              ],
             ),
 
             // product descriptions
@@ -109,6 +132,10 @@ class ProductCard extends StatelessWidget {
                   // spacing
                   const SizedBox(height: spacing),
 
+                  // spacing
+                  const SizedBox(height: spacing),
+
+                  // price
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [

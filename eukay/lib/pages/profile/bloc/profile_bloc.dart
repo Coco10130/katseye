@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:eukay/pages/dashboard/mappers/product_model.dart';
+import 'package:eukay/pages/dashboard/mappers/review_model.dart';
 import 'package:eukay/pages/profile/mappers/address_model.dart';
 import 'package:eukay/pages/profile/mappers/barangay_model.dart';
 import 'package:eukay/pages/profile/mappers/municipality_model.dart';
@@ -29,6 +30,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<UseAddressEvent>(useAddressEvent);
     on<FetchOrdersEvent>(fetchOrdersEvent);
     on<FetchDeliveryAddressEvent>(fetchDeliveryAddressEvent);
+    on<FetchReviewsEvent>(fetchReviewsEvent);
     on<AddReviewProductEvent>(addReviewProductEvent);
     on<ProfileLogoutEvent>((event, emit) {
       emit(ProfileInitial());
@@ -261,6 +263,23 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
     } catch (e) {
       emit(CancelOrderFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> fetchReviewsEvent(
+      FetchReviewsEvent event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoadingState());
+
+    try {
+      final response = await _profileRepository.fetchReviewsOfUser(event.token);
+
+      if (response.isNotEmpty) {
+        emit(FetchReviewSuccessState(review: response));
+      } else {
+        emit(FetchReviewsFailedState(errorMessage: "Failed to fetch reviews"));
+      }
+    } catch (e) {
+      emit(FetchReviewsFailedState(errorMessage: e.toString()));
     }
   }
 }

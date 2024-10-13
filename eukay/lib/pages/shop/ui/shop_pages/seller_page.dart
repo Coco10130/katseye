@@ -209,6 +209,16 @@ class _SellerPageState extends State<SellerPage> {
                                 "${seller.completeOrders}",
                                 Theme.of(context).colorScheme.onSecondary,
                               ),
+
+                              // spacing
+                              const SizedBox(width: 20),
+
+                              // canceled
+                              _myBox(
+                                "Canceled",
+                                "${seller.canceledOrders}",
+                                Theme.of(context).colorScheme.onSecondary,
+                              ),
                             ],
                           ),
                         ),

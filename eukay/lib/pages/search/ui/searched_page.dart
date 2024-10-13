@@ -148,142 +148,142 @@ class _SearchedBodyState extends State<SearchedBody> {
     final int crossAxisCount = (screenWidth / gridItemWidth).floor();
     final double productSpacing = screenWidth > 1200 ? 50 : 10;
 
-    return Column(
-      children: [
-        // search filter
-
-        SizedBox(
-          height: 50,
-          child: ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            children: [
-              // side spacing
-              const SizedBox(width: 5),
-              SizedBox(
-                width: 120,
-                child: _dropDownMenu(
-                  hint: "Gender Category",
-                  items: genderCategory,
-                  selectedItem: selectedGenderCategory,
-                  onChanged: (value) {
-                    setState(() {
-                      if (value == "Gender Category") {
-                        selectedGenderCategory = null;
-                      } else {
-                        selectedGenderCategory = value;
-                      }
-                      fetchSearchProducts();
-                    });
-                  },
-                ),
-              ),
-
-              // spacing
-              const SizedBox(width: 5),
-
-              SizedBox(
-                width: 120,
-                child: _dropDownMenu(
-                  hint: "Item Category",
-                  items: itemCategory,
-                  selectedItem: selectedItemCategory,
-                  onChanged: (value) {
-                    setState(() {
-                      if (value == "Item Category") {
-                        selectedItemCategory = null;
-                      } else {
-                        selectedItemCategory = value;
-                      }
-                      fetchSearchProducts();
-                    });
-                  },
-                ),
-              ),
-
-              // spacing
-              const SizedBox(width: 5),
-
-              SizedBox(
-                width: 110,
-                child: _dropDownMenu(
-                  hint: "Ratings",
-                  items: ratings,
-                  selectedItem: selectedRatings,
-                  onChanged: (value) {
-                    setState(() {
-                      if (value == "Ratings") {
-                        selectedRatings = null;
-                      } else {
-                        selectedRatings = value;
-                      }
-                      fetchSearchProducts();
-                    });
-                  },
-                ),
-              ),
-
-              // spacing
-              const SizedBox(width: 5),
-
-              SizedBox(
-                width: 110,
-                child: _dropDownMenu(
-                  hint: "Price Range",
-                  items: priceRange,
-                  selectedItem: selectedPriceRanges,
-                  onChanged: (value) {
-                    setState(() {
-                      if (value == "Price Range") {
-                        selectedPriceRanges = null;
-                      } else {
-                        selectedPriceRanges = value;
-                      }
-                      fetchSearchProducts();
-                    });
-                  },
-                ),
-              ),
-
-              // side spacing
-              const SizedBox(width: 5),
-            ],
-          ),
-        ),
-        BlocConsumer<SearchBloc, SearchState>(
-          listener: (context, state) {
-            if (state is SearchProductFailedState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                mySnackBar(
-                  message: state.errorMessage,
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  textColor: Theme.of(context).colorScheme.error,
-                ),
-              );
-            }
-          },
-          builder: (context, state) {
-            if (state is SearchProductSuccessEmptyState) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Center(
-                  child: Text(
-                    state.message,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontFamily: "Poppins",
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.onSecondary,
-                    ),
+    return SingleChildScrollView(
+      // Make the body scrollable
+      child: Column(
+        children: [
+          // search filter
+          SizedBox(
+            height: 50,
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              children: [
+                // side spacing
+                const SizedBox(width: 5),
+                SizedBox(
+                  width: 120,
+                  child: _dropDownMenu(
+                    hint: "Gender Category",
+                    items: genderCategory,
+                    selectedItem: selectedGenderCategory,
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == "Gender Category") {
+                          selectedGenderCategory = null;
+                        } else {
+                          selectedGenderCategory = value;
+                        }
+                        fetchSearchProducts();
+                      });
+                    },
                   ),
                 ),
-              );
-            }
-            if (state is SearchProductSuccessState) {
-              final products = state.products;
-              return RefreshIndicator(
-                onRefresh: () => fetchSearchProducts(),
-                child: SingleChildScrollView(
+
+                // spacing
+                const SizedBox(width: 5),
+
+                SizedBox(
+                  width: 120,
+                  child: _dropDownMenu(
+                    hint: "Item Category",
+                    items: itemCategory,
+                    selectedItem: selectedItemCategory,
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == "Item Category") {
+                          selectedItemCategory = null;
+                        } else {
+                          selectedItemCategory = value;
+                        }
+                        fetchSearchProducts();
+                      });
+                    },
+                  ),
+                ),
+
+                // spacing
+                const SizedBox(width: 5),
+
+                SizedBox(
+                  width: 110,
+                  child: _dropDownMenu(
+                    hint: "Ratings",
+                    items: ratings,
+                    selectedItem: selectedRatings,
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == "Ratings") {
+                          selectedRatings = null;
+                        } else {
+                          selectedRatings = value;
+                        }
+                        fetchSearchProducts();
+                      });
+                    },
+                  ),
+                ),
+
+                // spacing
+                const SizedBox(width: 5),
+
+                SizedBox(
+                  width: 110,
+                  child: _dropDownMenu(
+                    hint: "Price Range",
+                    items: priceRange,
+                    selectedItem: selectedPriceRanges,
+                    onChanged: (value) {
+                      setState(() {
+                        if (value == "Price Range") {
+                          selectedPriceRanges = null;
+                        } else {
+                          selectedPriceRanges = value;
+                        }
+                        fetchSearchProducts();
+                      });
+                    },
+                  ),
+                ),
+
+                // side spacing
+                const SizedBox(width: 5),
+              ],
+            ),
+          ),
+          BlocConsumer<SearchBloc, SearchState>(
+            listener: (context, state) {
+              if (state is SearchProductFailedState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  mySnackBar(
+                    message: state.errorMessage,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    textColor: Theme.of(context).colorScheme.error,
+                  ),
+                );
+              }
+            },
+            builder: (context, state) {
+              if (state is SearchProductSuccessEmptyState) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: Center(
+                    child: Text(
+                      state.message,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.onSecondary,
+                      ),
+                    ),
+                  ),
+                );
+              }
+              if (state is SearchProductSuccessState) {
+                final products = state.products;
+                return RefreshIndicator(
+                  onRefresh: () => fetchSearchProducts(),
                   child: Column(
                     children: [
                       // items
@@ -300,12 +300,13 @@ class _SearchedBodyState extends State<SearchedBody> {
                             crossAxisCount: crossAxisCount,
                             crossAxisSpacing: productSpacing,
                             mainAxisSpacing: productSpacing,
-                            childAspectRatio: screenWidth > 1200 ? 0.81 : 0.74,
+                            childAspectRatio: screenWidth > 1200 ? 0.81 : 0.77,
                           ),
                           itemCount: products.length,
                           itemBuilder: (context, index) {
                             final product = products[index];
                             return ProductCard(
+                              discount: product.discount,
                               name: product.productName,
                               image: product.productImage[0],
                               price: product.price,
@@ -327,14 +328,14 @@ class _SearchedBodyState extends State<SearchedBody> {
                       ),
                     ],
                   ),
-                ),
-              );
-            }
-            return LoadingScreen(
-                color: Theme.of(context).colorScheme.onSecondary);
-          },
-        ),
-      ],
+                );
+              }
+              return LoadingScreen(
+                  color: Theme.of(context).colorScheme.onSecondary);
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -377,14 +378,7 @@ class _SearchedBodyState extends State<SearchedBody> {
         items: items.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
-            child: Text(
-              value,
-              style: TextStyle(
-                fontFamily: "Poppins",
-                color: Theme.of(context).colorScheme.onSecondary,
-                fontSize: 12,
-              ),
-            ),
+            child: Text(value),
           );
         }).toList(),
       ),

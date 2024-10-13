@@ -35,7 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  void fetchProfile(String token) {
+  Future<void> fetchProfile(String token) async {
     if (token.isNotEmpty) {
       context.read<ProfileBloc>().add(ProfileInitialFetchEvent(token: token));
     }
@@ -230,7 +230,8 @@ class ProfilePageBody extends StatelessWidget {
                     () {
                       navigateWithSlideTransition(
                         context: context,
-                        page: const OrdersPage(
+                        page: OrdersPage(
+                          token: token,
                           initialIndex: 1,
                         ),
                         onFetch: fetchProfile,
@@ -248,7 +249,8 @@ class ProfilePageBody extends StatelessWidget {
                     () {
                       navigateWithSlideTransition(
                         context: context,
-                        page: const OrdersPage(
+                        page: OrdersPage(
+                          token: token,
                           initialIndex: 2,
                         ),
                         onFetch: fetchProfile,
@@ -266,7 +268,8 @@ class ProfilePageBody extends StatelessWidget {
                     () {
                       navigateWithSlideTransition(
                         context: context,
-                        page: const OrdersPage(
+                        page: OrdersPage(
+                          token: token,
                           initialIndex: 3,
                         ),
                         onFetch: fetchProfile,

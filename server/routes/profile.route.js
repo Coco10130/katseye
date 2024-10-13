@@ -5,6 +5,7 @@ const { uploadProfile } = require("../middlewares/multer.middleware.js");
 const {
   getProfile,
   updateProfile,
+  
 } = require("../controllers/profile.controller.js");
 
 router.use(authMiddleware);

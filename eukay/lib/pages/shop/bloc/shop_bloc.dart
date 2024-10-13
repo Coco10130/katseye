@@ -23,6 +23,7 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
     on<FetchSalesProductEvent>(fetchSalesProductEvent);
     on<ChangeOrderStatusEvent>(changeOrderStatusEvent);
     on<FetchUpdateProductEvent>(fetchUpdateProductEvent);
+    on<DeleteProductEvent>(deleteProductEvent);
     on<UpdateProductEvent>(updateProductEvent);
   }
 
@@ -243,6 +244,7 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
         productDescription: event.description,
         price: productPrice,
         stocks: quantities,
+        discount: event.discount,
         sizes: event.sizes,
       );
 
@@ -252,6 +254,28 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
       }
     } catch (e) {
       emit(UpdateProductFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> deleteProductEvent(
+      DeleteProductEvent event, Emitter<ShopState> emit) async {
+    emit(ShopLoadingState());
+
+    try {
+      final response = await _shopRepository.deleteProduct(
+          productId: event.productId,
+          sellerId: event.sellerId,
+          token: event.token);
+
+      if (response) {
+        emit(DeleteProductSuccessState(
+            successMessage: "Product deleted successfully"));
+      } else {
+        emit(
+            DeleteProductFailedState(errorMessage: "Failed to delete product"));
+      }
+    } catch (e) {
+      emit(DeleteProductFailedState(errorMessage: e.toString()));
     }
   }
 }

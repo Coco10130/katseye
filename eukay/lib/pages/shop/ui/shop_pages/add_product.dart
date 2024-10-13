@@ -22,7 +22,7 @@ class AddProduct extends StatelessWidget {
         label: "Add Product",
         backgroundColor: Theme.of(context).colorScheme.secondary,
         onPressed: () {
-          Navigator.pop(context);
+          Navigator.pop(context, true);
         },
       ),
       body: const AddProductBody(),

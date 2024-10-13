@@ -5,6 +5,7 @@ const {
   addReview,
   getAllReview,
   getReviewOfProduct,
+  getReviewOfUser,
 } = require("../controllers/review.controller.js");
 
 router.post("/post-review", authMiddleware, addReview);
@@ -12,5 +13,7 @@ router.post("/post-review", authMiddleware, addReview);
 router.get("/get", getAllReview);
 
 router.get("/get/:productId", getReviewOfProduct);
+
+router.get("/review-user", authMiddleware, getReviewOfUser);
 
 module.exports = router;

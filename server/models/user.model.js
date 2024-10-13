@@ -39,6 +39,42 @@ const UserSchema = mongoose.Schema(
       default: 0,
     },
 
+    pendingOrders: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
+    prepareOrders: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
+    deliverOrders: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
+    deliveredOrders: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
+    completeOrders: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
+    reviews: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
     image: {
       type: String,
       required: false,

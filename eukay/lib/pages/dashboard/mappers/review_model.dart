@@ -1,10 +1,6 @@
 class ReviewModel {
-  final String id;
   final int starRating;
-  final String review;
-  final String userName;
-  final String userImage;
-  final String productName;
+  final String review, productName, userName, userImage, productImage, id;
 
   const ReviewModel({
     required this.id,
@@ -13,6 +9,7 @@ class ReviewModel {
     required this.userName,
     required this.userImage,
     required this.productName,
+    required this.productImage,
   });
 
   factory ReviewModel.fromJson(Map<String, dynamic> json) {
@@ -23,6 +20,7 @@ class ReviewModel {
       userName: json["userName"],
       userImage: json["userImage"],
       productName: json["productName"],
+      productImage: json["productImage"],
     );
   }
 }

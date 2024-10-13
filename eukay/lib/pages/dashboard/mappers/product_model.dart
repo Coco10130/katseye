@@ -10,16 +10,20 @@ class ProductModel {
   final List<SizeQuantity> sizeQuantities;
   final String status;
   final double rating;
+  final double discount;
   final String sellerName;
+  final String sellerId;
   final List<String> wishedByUser;
   final List<ReviewModel> reviews;
 
   const ProductModel({
     required this.id,
     required this.productImage,
+    required this.sellerId,
     required this.productName,
     required this.price,
     required this.productDescription,
+    required this.discount,
     required this.categories,
     required this.sizeQuantities,
     required this.status,
@@ -32,6 +36,7 @@ class ProductModel {
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
       id: json["_id"],
+      sellerId: json["sellerId"],
       productImage: List<String>.from(json["productImage"] ?? []),
       productName: json["productName"],
       price: (json["price"] is int)
@@ -44,6 +49,9 @@ class ProductModel {
               .map((sizeJson) => SizeQuantity.fromJson(sizeJson)))
           : [],
       status: json["status"],
+      discount: (json["discount"] is int)
+          ? (json["discount"] as int).toDouble()
+          : (json["discount"] as double? ?? 0.0),
       rating: (json["rating"] is int)
           ? (json["rating"] as int).toDouble()
           : (json["rating"] as double? ?? 0.0),

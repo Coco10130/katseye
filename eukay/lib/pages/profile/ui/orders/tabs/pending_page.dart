@@ -40,6 +40,10 @@ class _PendingPageState extends State<PendingPage> {
         .add(FetchOrdersEvent(status: "pending", token: token!));
   }
 
+  Future<void> fetchProfile() async {
+    context.read<ProfileBloc>().add(ProfileInitialFetchEvent(token: token!));
+  }
+
   @override
   void initState() {
     super.initState();
@@ -112,7 +116,9 @@ class _PendingPageState extends State<PendingPage> {
               textColor: Theme.of(context).colorScheme.onSecondary,
             ),
           );
-          _fetchProducts();
+          fetchProfile().then((_) {
+            _fetchProducts();
+          });
         }
       },
       builder: (context, state) {

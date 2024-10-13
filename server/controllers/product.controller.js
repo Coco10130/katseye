@@ -3,6 +3,8 @@ const Seller = require("../models/seller.model.js");
 const Order = require("../models/order.model.js");
 const Review = require("../models/review.model.js");
 const jwt = require("jsonwebtoken");
+const { deleteFile } = require("../helpers/deleteFile.helper.js");
+const path = require("path");
 
 const secretKey = process.env.JWT_SECRET;
 
@@ -310,11 +312,23 @@ const getOrdersProductByStatus = async (req, res) => {
 const updateProduct = async (req, res) => {
   try {
     const { productId } = req.params;
-    const { productName, price, productDescription, sizes, quantities } =
-      req.body;
+    const {
+      productName,
+      price,
+      productDescription,
+      sizes,
+      quantities,
+      discount,
+    } = req.body;
 
     if (!productName || !price || !sizes || !quantities) {
       return res.status(400).json({ errorMessage: "All fields are required" });
+    }
+
+    if (discount >= 100) {
+      return res
+        .status(400)
+        .json({ errorMessage: "Discount must be less than 100%" });
     }
 
     const sizeQuantities = sizes.map((size, index) => ({
@@ -330,10 +344,18 @@ const updateProduct = async (req, res) => {
     const wasSoldOut = product.status === "sold out";
 
     product.productName = productName;
-    product.price = price;
     product.productDescription = productDescription;
     product.sizeQuantities = sizeQuantities;
     product.status = "live";
+
+    product.discount = discount || 0;
+
+    if (discount) {
+      const discountedPrice = price - (price * discount) / 100;
+      product.price = discountedPrice;
+    } else {
+      product.price = price;
+    }
 
     const updatedProduct = await product.save();
 
@@ -355,7 +377,97 @@ const updateProduct = async (req, res) => {
       product: updatedProduct,
     });
   } catch (error) {
-    console.error("Error updating product:", error);
+    res.status(500).json({ errorMessage: error.message });
+  }
+};
+
+const deleteProduct = async (req, res) => {
+  try {
+    const { sellerId, productId } = req.params;
+
+    const existingOrders = await Order.find({
+      "products.productId": productId,
+      status: { $in: ["pending", "to prepare", "to deliver"] },
+    });
+
+    const tempProduct = await Product.findById(productId);
+
+    const status = tempProduct.status;
+
+    if (existingOrders.length > 0) {
+      return res.status(400).json({
+        errorMessage:
+          "Cannot delete product with existing orders in specific statuses.",
+      });
+    }
+
+    const deletedOrders = await Order.find({
+      "products.productId": productId,
+      status: { $in: ["delivered", "completed", "canceled"] },
+    });
+
+    for (const order of deletedOrders) {
+      switch (order.status) {
+        case "delivered":
+          await Seller.findByIdAndUpdate(sellerId, {
+            $inc: { deliveredOrders: -1 },
+          });
+          break;
+        case "completed":
+          await Seller.findByIdAndUpdate(sellerId, {
+            $inc: { completeOrders: -1 },
+          });
+          break;
+        case "canceled":
+          await Seller.findByIdAndUpdate(sellerId, {
+            $inc: { canceledOrders: -1 },
+          });
+          break;
+      }
+      await Order.findByIdAndDelete(order._id);
+    }
+
+    const product = await Product.findById(productId);
+    if (product && product.productImage) {
+      product.productImage.forEach((image) => {
+        const oldImagePath = path.join(
+          __dirname,
+          `../images/products/${image}`
+        );
+        deleteFile(oldImagePath);
+      });
+    }
+
+    await Product.findByIdAndDelete(productId);
+
+    switch (status) {
+      case "live":
+        await Seller.findByIdAndUpdate(sellerId, {
+          $inc: { live: -1, products: -1 },
+        });
+        break;
+
+      case "sold out":
+        await Seller.findByIdAndUpdate(sellerId, {
+          $inc: { delisted: -1, products: -1 },
+        });
+        break;
+
+      case "delisted":
+        await Seller.findByIdAndUpdate(sellerId, {
+          $inc: { delisted: -1, products: -1 },
+        });
+        break;
+
+      default:
+        console.log("Unknown");
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Product deleted successfully, along with related orders.",
+    });
+  } catch (error) {
     res.status(500).json({ errorMessage: error.message });
   }
 };
@@ -365,6 +477,7 @@ module.exports = {
   searchProduct,
   getAllProducts,
   getViewProduct,
+  deleteProduct,
   getProductsByStatus,
   getSalesProductByStatus,
   getOrdersProductByStatus,

@@ -35,6 +35,7 @@ class _PendingPageState extends State<PendingPage> {
   }
 
   Future<void> _fetchProducts() async {
+    print("REFRESH");
     context.read<ShopBloc>().add(FetchSalesProductEvent(
         token: token!, sellerId: widget.sellerId, status: "pending"));
   }
@@ -143,63 +144,79 @@ class _PendingPageState extends State<PendingPage> {
           final groupedProducts = _groupProductsByBuyer(orderProducts);
 
           if (orderProducts.isEmpty) {
-            return Center(
-              child: Text(
-                'No pending products were found',
-                style: TextStyle(
-                  fontFamily: "Poppins",
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: Theme.of(context).colorScheme.onSecondary,
+            return RefreshIndicator(
+              onRefresh: () => fetchSellerProfile().then((_) {
+                _fetchProducts();
+              }),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  height:
+                      MediaQuery.of(context).size.height - kToolbarHeight - 100,
+                  alignment: Alignment.center,
+                  child: Center(
+                    child: Text(
+                      'No pending products were found',
+                      style: TextStyle(
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Theme.of(context).colorScheme.onSecondary,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             );
           }
 
-          return Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 10,
-                  right: 10,
-                  top: 20,
-                  bottom: 50,
-                ),
-                child: ListView.builder(
-                  itemCount: groupedProducts.length,
-                  itemBuilder: (context, index) {
-                    final buyerName = groupedProducts.keys.elementAt(index);
-                    final productGroup = groupedProducts[buyerName]!;
+          return RefreshIndicator(
+            onRefresh: () => _fetchProducts(),
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 10,
+                    right: 10,
+                    top: 20,
+                    bottom: 50,
+                  ),
+                  child: ListView.builder(
+                    itemCount: groupedProducts.length,
+                    itemBuilder: (context, index) {
+                      final buyerName = groupedProducts.keys.elementAt(index);
+                      final productGroup = groupedProducts[buyerName]!;
 
-                    return _buildBuyerGroup(productGroup);
-                  },
-                ),
-              ),
-              Align(
-                alignment: AlignmentDirectional.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: MyButton(
-                    title: "Accept order",
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    textColor: Theme.of(context).colorScheme.onPrimary,
-                    verticalPadding: 10,
-                    height: 60,
-                    widthFactor: 0.9,
-                    onPressed: () {
-                      context.read<ShopBloc>().add(
-                            ChangeOrderStatusEvent(
-                              nextStatus: "to prepare",
-                              status: "pending",
-                              sellerId: widget.sellerId,
-                              token: token!,
-                            ),
-                          );
+                      return _buildBuyerGroup(productGroup);
                     },
                   ),
                 ),
-              )
-            ],
+                Align(
+                  alignment: AlignmentDirectional.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: MyButton(
+                      title: "Accept order",
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
+                      verticalPadding: 10,
+                      height: 60,
+                      widthFactor: 0.9,
+                      onPressed: () {
+                        context.read<ShopBloc>().add(
+                              ChangeOrderStatusEvent(
+                                nextStatus: "to prepare",
+                                status: "pending",
+                                sellerId: widget.sellerId,
+                                token: token!,
+                              ),
+                            );
+                      },
+                    ),
+                  ),
+                )
+              ],
+            ),
           );
         }
 

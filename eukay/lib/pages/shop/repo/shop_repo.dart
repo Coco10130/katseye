@@ -330,6 +330,7 @@ class ShopRepo extends ShopRepository {
     required String productName,
     required String productDescription,
     required double price,
+    double? discount,
     required List<int> stocks,
     required List<String> sizes,
   }) async {
@@ -340,6 +341,7 @@ class ShopRepo extends ShopRepository {
         "price": price,
         "quantities": stocks,
         "sizes": sizes,
+        "discount": discount,
       };
 
       final response = await _dio.put(
@@ -350,6 +352,37 @@ class ShopRepo extends ShopRepository {
           },
         ),
         data: jsonEncode(formData),
+      );
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<bool> deleteProduct(
+      {required String productId,
+      required String sellerId,
+      required String token}) async {
+    try {
+      final response = await _dio.delete(
+        "${Server.serverUrl}/api/product/delete/$productId/$sellerId",
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
       );
 
       if (response.statusCode == 200 && response.data["success"]) {

@@ -39,7 +39,7 @@ const ProductSchema = mongoose.Schema(
     },
 
     sizeQuantities: {
-      type: [SizeQuantitySchema], // Use the new SizeQuantitySchema
+      type: [SizeQuantitySchema],
       required: true,
     },
 
@@ -52,6 +52,12 @@ const ProductSchema = mongoose.Schema(
     rating: {
       type: Number,
       default: 0.0,
+    },
+
+    discount: {
+      type: Number,
+      required: false,
+      default: 0,
     },
 
     sellerName: {

@@ -58,6 +58,12 @@ const SellerSchema = mongoose.Schema(
       default: 0,
     },
 
+    canceledOrders: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+
     products: {
       type: Number,
       required: false,

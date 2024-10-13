@@ -20,12 +20,14 @@ class ToPrepareUser extends StatefulWidget {
 class _ToPrepareUserState extends State<ToPrepareUser> {
   String? token;
   late SharedPreferences pref;
+  bool initializedPref = false;
 
   Future<void> _initPreferences() async {
     try {
       pref = await SharedPreferences.getInstance();
       setState(() {
         token = pref.getString('token');
+        initializedPref = true;
       });
     } catch (e) {
       throw Exception("Failed to load preferences: $e");
@@ -36,6 +38,10 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
     context
         .read<ProfileBloc>()
         .add(FetchOrdersEvent(status: "to prepare", token: token!));
+  }
+
+  Future<void> fetchProfile() async {
+    context.read<ProfileBloc>().add(ProfileInitialFetchEvent(token: token!));
   }
 
   @override
@@ -76,6 +82,10 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
 
   @override
   Widget build(BuildContext context) {
+    if (!initializedPref) {
+      return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
+    }
+
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is FetchOrdersProductsFailedState) {
@@ -87,6 +97,27 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
             ),
           );
           _fetchProducts();
+        } else if (state is CancelOrderFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+          _fetchProducts();
+        } else if (state is CancelOrderSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
+            ),
+          );
+
+          fetchProfile().then((_) {
+            _fetchProducts();
+          });
         }
       },
       builder: (context, state) {
@@ -121,7 +152,7 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
                 final buyerName = groupedProducts.keys.elementAt(index);
                 final productGroup = groupedProducts[buyerName]!;
 
-                return _buildSellerGroup(productGroup);
+                return _buildSellerGroup(productGroup, token!);
               },
             ),
           );
@@ -132,7 +163,7 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
     );
   }
 
-  Widget _buildSellerGroup(SellerGroup productGroup) {
+  Widget _buildSellerGroup(SellerGroup productGroup, String token) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
@@ -152,12 +183,12 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSellerInfo(
-              productGroup,
-              () => _markOrder(
-                productGroup.id,
-                productGroup.sellerId,
-              ),
-            ),
+                productGroup,
+                () => _markOrder(
+                      productGroup.id,
+                      productGroup.sellerId,
+                    ),
+                token),
             const SizedBox(height: 10),
             _buildProductList(productGroup.products),
           ],
@@ -166,7 +197,8 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
     );
   }
 
-  Widget _buildSellerInfo(SellerGroup productGroup, VoidCallback onCheck) {
+  Widget _buildSellerInfo(
+      SellerGroup productGroup, VoidCallback onCheck, String token) {
     final formatCurrency = NumberFormat.currency(
       locale: "en_PH",
       symbol: "₱ ",
@@ -212,9 +244,16 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
                       backgroundColor: Theme.of(context).colorScheme.secondary,
                       textColor: Theme.of(context).colorScheme.onPrimary,
                       widthFactor: 0.25,
-                      height: 40,
-                      verticalPadding: 5,
-                      onPressed: () {},
+                      verticalPadding: 6,
+                      onPressed: () {
+                        context.read<ProfileBloc>().add(
+                              CancelOrderEvent(
+                                orderId: productGroup.id,
+                                status: "to prepare",
+                                token: token,
+                              ),
+                            );
+                      },
                     ),
                   }
                 ],

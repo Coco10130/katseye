@@ -55,6 +55,8 @@ class _UpdateProductBodyState extends State<UpdateProductBody> {
   final TextEditingController _productStockController = TextEditingController();
   final TextEditingController _productDescriptionController =
       TextEditingController();
+  final TextEditingController _productDiscountController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -70,6 +72,7 @@ class _UpdateProductBodyState extends State<UpdateProductBody> {
     _productDescriptionController.dispose();
     _productPriceController.dispose();
     _productStockController.dispose();
+    _productDiscountController.dispose();
     sizeQuantityControllers.forEach((_, controller) => controller.dispose());
     super.dispose();
   }
@@ -86,6 +89,7 @@ class _UpdateProductBodyState extends State<UpdateProductBody> {
     _productNameController.text = product.productName;
     _productPriceController.text = product.price.toString();
     _productDescriptionController.text = product.productDescription;
+    _productDiscountController.text = product.discount.toString();
 
     selectedSizes.clear();
     sizeQuantityControllers.clear();
@@ -105,9 +109,13 @@ class _UpdateProductBodyState extends State<UpdateProductBody> {
   }
 
   bool _isFormValid() {
+    final discount = double.tryParse(_productDiscountController.text);
     return _productNameController.text.isNotEmpty &&
         _productPriceController.text.isNotEmpty &&
-        selectedSizes.isNotEmpty;
+        selectedSizes.isNotEmpty &&
+        discount != null &&
+        discount >= 0 &&
+        discount < 100;
   }
 
   @override
@@ -125,6 +133,8 @@ class _UpdateProductBodyState extends State<UpdateProductBody> {
               textColor: Theme.of(context).colorScheme.error,
             ),
           );
+
+          fetchProduct();
         } else if (state is UpdateProductSuccessState) {
           _resetForm();
           ScaffoldMessenger.of(context).showSnackBar(
@@ -138,6 +148,24 @@ class _UpdateProductBodyState extends State<UpdateProductBody> {
         } else if (state is FetchUpdateProductState) {
           final product = state.product;
           initializeProductDetails(product);
+        } else if (state is DeleteProductSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
+            ),
+          );
+          Navigator.pop(context, true);
+        } else if (state is DeleteProductFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+          fetchProduct();
         }
       },
       builder: (context, state) {
@@ -176,6 +204,12 @@ class _UpdateProductBodyState extends State<UpdateProductBody> {
                   // Spacing
                   const SizedBox(height: 20),
 
+                  // Discount input
+                  _buildDiscountInput(context),
+
+                  // Spacing
+                  const SizedBox(height: 20),
+
                   // Sizes input
                   _buildSizes(),
 
@@ -189,31 +223,56 @@ class _UpdateProductBodyState extends State<UpdateProductBody> {
                   const SizedBox(height: 50),
 
                   // Submit button
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: MyButton(
-                      title: "Update",
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                      textColor: Theme.of(context).colorScheme.onPrimary,
-                      onPressed: _isFormValid()
-                          ? () {
-                              context.read<ShopBloc>().add(
-                                    UpdateProductEvent(
-                                      productId: widget.productId,
-                                      token: pref.getString("token")!,
-                                      sizes: selectedSizes,
-                                      price: _productPriceController.text,
-                                      sizeQuantities: _getTotalQuantity(),
-                                      productName:
-                                          _productNameController.text.trim(),
-                                      description: _productDescriptionController
-                                          .text
-                                          .trim(),
-                                    ),
-                                  );
-                            }
-                          : () {}, // Disable button if the form is invalid
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // delete Button
+                      MyButton(
+                        title: "Delete",
+                        backgroundColor:
+                            Theme.of(context).colorScheme.onSecondary,
+                        textColor: Theme.of(context).colorScheme.onPrimary,
+                        widthFactor: 0.42,
+                        onPressed: () {
+                          context.read<ShopBloc>().add(
+                                DeleteProductEvent(
+                                  token: token!,
+                                  productId: product.id,
+                                  sellerId: product.sellerId,
+                                ),
+                              );
+                        },
+                      ),
+                      // update button
+                      MyButton(
+                        title: "Update",
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary,
+                        textColor: Theme.of(context).colorScheme.onPrimary,
+                        widthFactor: 0.42,
+                        onPressed: _isFormValid()
+                            ? () {
+                                context.read<ShopBloc>().add(
+                                      UpdateProductEvent(
+                                        productId: widget.productId,
+                                        token: pref.getString("token")!,
+                                        sizes: selectedSizes,
+                                        price: _productPriceController.text,
+                                        sizeQuantities: _getTotalQuantity(),
+                                        productName:
+                                            _productNameController.text.trim(),
+                                        description:
+                                            _productDescriptionController.text
+                                                .trim(),
+                                        discount: double.parse(
+                                            _productDiscountController.text),
+                                      ),
+                                    );
+                              }
+                            : () {}, // Disable button if the form is invalid
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -242,6 +301,14 @@ class _UpdateProductBodyState extends State<UpdateProductBody> {
       "Price",
       "Enter the product price",
       _productPriceController,
+    );
+  }
+
+  Widget _buildDiscountInput(BuildContext context) {
+    return _buildTextField(
+      "Discount (%)",
+      "Enter the discount (less than 100%)",
+      _productDiscountController,
     );
   }
 
@@ -285,14 +352,12 @@ class _UpdateProductBodyState extends State<UpdateProductBody> {
   }
 
   Widget _buildSizeQuantityInputs() {
-    // Check if selectedSizes is not empty to render quantity inputs
     if (selectedSizes.isEmpty) {
-      return Container(); // Return an empty container if no sizes are selected
+      return Container();
     }
 
     return Column(
       children: selectedSizes.map((size) {
-        // Ensure each controller is initialized properly
         sizeQuantityControllers.putIfAbsent(
             size, () => TextEditingController());
         final controller = sizeQuantityControllers[size]!;

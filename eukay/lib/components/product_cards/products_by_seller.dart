@@ -7,8 +7,11 @@ import 'package:flutter/material.dart';
 class ProductsBySeller extends StatelessWidget {
   final List<ProductModel> products;
   final VoidCallback onFetch;
-  const ProductsBySeller(
-      {super.key, required this.products, required this.onFetch});
+  const ProductsBySeller({
+    super.key,
+    required this.products,
+    required this.onFetch,
+  });
 
   @override
   Widget build(BuildContext context) {

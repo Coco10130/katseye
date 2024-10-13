@@ -101,12 +101,13 @@ class _BodyPageState extends State<BodyPage> {
                 crossAxisCount: crossAxisCount,
                 crossAxisSpacing: productSpacing,
                 mainAxisSpacing: productSpacing,
-                childAspectRatio: screenWidth > 1200 ? 0.81 : 0.74,
+                childAspectRatio: screenWidth > 1200 ? 0.81 : 0.77,
               ),
               itemCount: products.length,
               itemBuilder: (context, index) {
                 final product = products[index];
                 return ProductCard(
+                  discount: product.discount,
                   name: product.productName,
                   image: product.productImage[0],
                   price: product.price,
