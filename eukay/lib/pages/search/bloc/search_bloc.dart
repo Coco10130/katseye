@@ -14,6 +14,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     on<FetchViewProductEvent>(fetchViewProductEvent);
     on<AddToCartEvent>(addToCartEvent);
     on<AddWishlistEvent>(addWishlistEvent);
+    on<ReportProductEvent>(reportProductEvent);
     on<RemoveWishlistEvent>(removeWishlistEvent);
   }
 
@@ -101,6 +102,31 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       }
     } catch (e) {
       emit(WishlistFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> reportProductEvent(
+      ReportProductEvent event, Emitter<SearchState> emit) async {
+    emit(SearchLoadingState());
+
+    try {
+      final response = await _searchRepository.reportProduct(
+        productId: event.productId,
+        reason: event.reason,
+        token: event.token,
+        type: event.type,
+      );
+
+      print(response);
+
+      if (response) {
+        emit(ReportProductSuccessState(
+            successMessage: "Product reported successfully"));
+      } else {
+        emit(ReportProductFailedState(errorMessage: "Something went wrong"));
+      }
+    } catch (e) {
+      emit(ReportProductFailedState(errorMessage: e.toString()));
     }
   }
 }

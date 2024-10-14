@@ -114,6 +114,119 @@ class _ViewProductState extends State<ViewProduct> {
         ),
         backgroundColor: Theme.of(context).colorScheme.secondary,
         actions: [
+          // report icon
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: IconButton(
+              icon: const Icon(Iconsax.warning_2, size: 25, color: Colors.red),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    String reportReason = ""; // To store the user's reason
+
+                    return AlertDialog(
+                      backgroundColor: Theme.of(context).colorScheme.onPrimary,
+                      title: Text(
+                        'Report Product',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSecondary,
+                          fontFamily: "Poppins",
+                        ), // Set title text to black
+                      ),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Please provide a reason for reporting this product:',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSecondary,
+                              fontFamily: "Poppins",
+                            ), // Set content text to black
+                          ),
+                          const SizedBox(height: 10),
+                          TextField(
+                            onChanged: (value) {
+                              reportReason = value; // Update the report reason
+                            },
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSecondary,
+                              fontFamily: "Poppins",
+                            ),
+                            decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              labelText: 'Reason',
+                              labelStyle: TextStyle(
+                                color:
+                                    Theme.of(context).colorScheme.onSecondary,
+                                fontFamily: "Poppins",
+                              ),
+                              hintText: 'Enter reason here...',
+                              hintStyle: TextStyle(
+                                color:
+                                    Theme.of(context).colorScheme.onSecondary,
+                                fontFamily: "Poppins",
+                              ),
+                            ),
+                            maxLines: 3,
+                          ),
+                        ],
+                      ),
+                      actions: <Widget>[
+                        TextButton(
+                          child: Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSecondary,
+                              fontFamily: "Poppins",
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.onSecondary,
+                            foregroundColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          child: const Text('Submit'),
+                          onPressed: () {
+                            if (reportReason.isNotEmpty) {
+                              context.read<SearchBloc>().add(
+                                    ReportProductEvent(
+                                      productId: widget.productId,
+                                      reason: reportReason,
+                                      token: token!,
+                                      type: "product",
+                                    ),
+                                  );
+
+                              Navigator.of(context).pop();
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                mySnackBar(
+                                  message:
+                                      "Please enter a reason why reporting the product",
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  textColor:
+                                      Theme.of(context).colorScheme.error,
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+
           // cart action button
           Padding(
             padding: const EdgeInsets.only(right: 10),
@@ -267,18 +380,14 @@ class _BodyPageState extends State<BodyPage> {
             ),
           );
           fetchProduct();
-        }
-
-        if (state is AddToCartFailedState) {
+        } else if (state is AddToCartFailedState) {
           // if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
             message: state.errorMessage,
             backgroundColor: Theme.of(context).colorScheme.primary,
             textColor: Theme.of(context).colorScheme.error,
           ));
-        }
-
-        if (state is AddToCartSuccessState) {
+        } else if (state is AddToCartSuccessState) {
           ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
             message: state.successMessage,
             backgroundColor: Theme.of(context).colorScheme.primary,
@@ -287,6 +396,20 @@ class _BodyPageState extends State<BodyPage> {
           updateToken(state.token).then((_) {
             widget.onSignIn();
           });
+          fetchProduct();
+        } else if (state is ReportProductSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
+            message: state.successMessage,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            textColor: Theme.of(context).colorScheme.onSecondary,
+          ));
+          fetchProduct();
+        } else if (state is ReportProductFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
+            message: state.errorMessage,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            textColor: Theme.of(context).colorScheme.error,
+          ));
           fetchProduct();
         }
       },

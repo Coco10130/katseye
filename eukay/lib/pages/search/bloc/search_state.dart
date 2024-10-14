@@ -59,4 +59,16 @@ final class WishlistFailedState extends SearchState {
   WishlistFailedState({required this.errorMessage});
 }
 
+final class ReportProductSuccessState extends SearchState {
+  final String successMessage;
+
+  ReportProductSuccessState({required this.successMessage});
+}
+
+final class ReportProductFailedState extends SearchState {
+  final String errorMessage;
+
+  ReportProductFailedState({required this.errorMessage});
+}
+
 final class SearchLoadingState extends SearchState {}

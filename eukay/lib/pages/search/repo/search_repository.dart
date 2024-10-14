@@ -12,4 +12,9 @@ abstract class SearchRepository {
   Future<String> addToCart(String token, String productId, String size);
   Future<bool> addWishlist(String token, String productId);
   Future<bool> removeWishlist(String token, String productId);
+  Future<bool> reportProduct(
+      {required String token,
+      required String productId,
+      required String type,
+      required String reason});
 }

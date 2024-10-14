@@ -10,7 +10,6 @@ const secretKey = process.env.JWT_SECRET;
 
 const addProduct = async (req, res) => {
   try {
-    // Check for authorization header
     const authorizationHeader = req.headers.authorization;
     if (!authorizationHeader) {
       return res
@@ -21,7 +20,6 @@ const addProduct = async (req, res) => {
     const token = authorizationHeader.split(" ")[1];
     const decode = jwt.verify(token, secretKey);
 
-    // Find seller based on userId
     const seller = await Seller.findOne({ userId: decode.id });
     if (!seller) {
       return res.status(404).json({ errorMessage: "Seller not found" });
@@ -36,7 +34,6 @@ const addProduct = async (req, res) => {
       quantities,
     } = req.body;
 
-    // Validate required fields
     if (!productName || !price || !categories || !sizes || !quantities) {
       return res.status(400).json({ errorMessage: "All fields are required" });
     }
@@ -46,10 +43,18 @@ const addProduct = async (req, res) => {
         ? req.files.map((file) => file.filename)
         : [];
 
-    // Assign quantity to each size
-    const sizeQuantities = sizes.map((size, index) => ({
+    const sizeArray = Array.isArray(sizes) ? sizes : [sizes];
+    const quantityArray = Array.isArray(quantities) ? quantities : [quantities];
+
+    if (sizeArray.length !== quantityArray.length) {
+      return res.status(400).json({
+        errorMessage: "Sizes and quantities must match in length",
+      });
+    }
+
+    const sizeQuantities = sizeArray.map((size, index) => ({
       size,
-      quantity: quantities[index],
+      quantity: quantityArray[index],
     }));
 
     const data = {
@@ -63,7 +68,6 @@ const addProduct = async (req, res) => {
       sellerId: seller.id,
     };
 
-    // Create new product
     const newProduct = await Product.create(data);
     seller.products += 1;
     seller.live += 1;
@@ -72,10 +76,9 @@ const addProduct = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "Product added successfully",
-      productId: newProduct._id, // Optionally return the created product ID
+      productId: newProduct._id,
     });
   } catch (error) {
-    console.error(error); // Log the error for debugging
     res.status(500).json({ errorMessage: error.message });
   }
 };

@@ -17,16 +17,15 @@ const addressRouters = require("./routes/address.route.js");
 const wishlistRouters = require("./routes/wishlist.route.js");
 const ordersRouters = require("./routes/order.route.js");
 const reviewRouters = require("./routes/review.route.js");
-const notificationRoute = require("./routes/notification.route.js")
-
-
-
+const adminRoute = require("./routes/admin.route.js");
+const reportRoute = require("./routes/report.route.js");
 
 // middlewares
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(
   cors({
+    origin: "http://localhost:3000",
     credentials: true,
     allowedHeaders: "Authorization, Content-Type",
   })
@@ -49,10 +48,8 @@ app.use("/api/address", addressRouters);
 app.use("/api/wishlist", wishlistRouters);
 app.use("/api/orders", ordersRouters);
 app.use("/api/reviews", reviewRouters);
-app.use("/api/notification", notificationRoute);
-
-
-
+app.use("/api/admin", adminRoute);
+app.use("/api/report", reportRoute);
 
 mongoose
   .connect(process.env.MONGODB)

@@ -39,3 +39,13 @@ final class RemoveWishlistEvent extends SearchEvent {
 
   RemoveWishlistEvent({required this.productId, required this.token});
 }
+
+final class ReportProductEvent extends SearchEvent {
+  final String token, productId, type, reason;
+
+  ReportProductEvent(
+      {required this.token,
+      required this.productId,
+      required this.type,
+      required this.reason});
+}

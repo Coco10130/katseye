@@ -153,4 +153,38 @@ class SearchRepo extends SearchRepository {
       }
     }
   }
+
+  @override
+  Future<bool> reportProduct(
+      {required String token,
+      required String productId,
+      required String type,
+      required String reason}) async {
+    try {
+      final payload = {"productId": productId, "type": type, "reason": reason};
+
+      final response = await _dio.post(
+        "${Server.serverUrl}/api/report/create",
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+        data: jsonEncode(payload),
+      );
+
+      if (response.statusCode == 201 && response.data["success"]) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
 }
