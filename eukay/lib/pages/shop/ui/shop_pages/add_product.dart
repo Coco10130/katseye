@@ -48,7 +48,6 @@ class _AddProductBodyState extends State<AddProductBody> {
   List<String> categoryItems = [
     "Men",
     "Women",
-    "Shoes",
     "Pants",
     "Shirts",
     "Long Sleeves",

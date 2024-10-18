@@ -7,6 +7,7 @@ AppBar MyAppBar({
   bool centerTile = true,
   Color backgroundColor = Colors.black,
   Color textColor = Colors.white,
+  List<Widget>? actions,
 }) {
   return AppBar(
     title: Text(
@@ -26,6 +27,7 @@ AppBar MyAppBar({
             icon: const Icon(Icons.arrow_back),
             onPressed: onPressed,
           )
-        : null, // Remove the leading icon if onPressed is null
+        : null,
+    actions: actions,
   );
 }

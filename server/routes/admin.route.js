@@ -5,6 +5,7 @@ const {
   getSellers,
   getReports,
   deleteProduct,
+  getAllProducts,
 } = require("../controllers/admin.controller.js");
 
 router.use(authMiddleware);
@@ -12,6 +13,8 @@ router.use(authMiddleware);
 router.get("/get/sellers", getSellers);
 
 router.get("/get/reports", getReports);
+
+router.get("/get/products", getAllProducts);
 
 router.delete("/delete/product/:reportId", deleteProduct);
 

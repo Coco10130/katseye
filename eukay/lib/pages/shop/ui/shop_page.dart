@@ -2,10 +2,12 @@ import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/navigate_to_auth.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/cart/ui/cart_page.dart';
+import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
 import 'package:eukay/pages/shop/ui/shop_pages/add_product.dart';
 import 'package:eukay/pages/shop/ui/shop_pages/non_seller_page.dart';
 import 'package:eukay/pages/shop/ui/shop_pages/seller_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -42,6 +44,10 @@ class _ShopPageState extends State<ShopPage> {
   void initState() {
     super.initState();
     initPref();
+  }
+
+  Future<void> fetchSellerProfile() async {
+    context.read<ShopBloc>().add(FetchSellerProfileEvent(token: token));
   }
 
   @override
@@ -98,6 +104,7 @@ class _ShopPageState extends State<ShopPage> {
                         page: CartPage(
                           token: token,
                         ),
+                        onFetch: () => fetchSellerProfile(),
                       );
                     },
                   ),

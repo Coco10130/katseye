@@ -50,8 +50,10 @@ class _DashboardPageState extends State<DashboardPage> {
   void initCartCount() {
     if (token!.isNotEmpty) {
       final Map<String, dynamic> jwtDecocded = JwtDecoder.decode(token!);
-      cartCount = jwtDecocded["cartItems"].toString();
-      userId = jwtDecocded["id"].toString();
+      setState(() {
+        cartCount = jwtDecocded["cartItems"].toString();
+        userId = jwtDecocded["id"].toString();
+      });
     }
   }
 
@@ -154,7 +156,7 @@ class _DashboardPageState extends State<DashboardPage> {
       body: DashboardBody(
         fetchProfile: () => onResetToken(),
         userId: userId,
-        onFetchProduct: fetchProducts,
+        onFetchProduct: () => fetchProducts(),
       ),
     );
   }

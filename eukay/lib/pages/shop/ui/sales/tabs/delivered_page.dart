@@ -33,7 +33,6 @@ class _DeliveredPageState extends State<DeliveredPage> {
   }
 
   Future<void> _fetchProducts() async {
-    print("REFRESH");
     context.read<ShopBloc>().add(FetchSalesProductEvent(
         token: token!, sellerId: widget.sellerId, status: "delivered"));
   }

@@ -28,3 +28,9 @@ final class CartItemCheckOutItemEvent extends CartEvent {
 
   CartItemCheckOutItemEvent({required this.cartItemId, required this.token});
 }
+
+final class DeleteCartItemEvent extends CartEvent {
+  final String token;
+
+  DeleteCartItemEvent({required this.token});
+}

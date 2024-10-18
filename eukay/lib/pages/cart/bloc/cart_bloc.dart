@@ -15,6 +15,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     on<CartItemAddQuantityEvent>(cartItemAddQuantityEvent);
     on<CartItemMinusQuantityEvent>(cartItemMinusQuantityEvent);
     on<CartItemCheckOutItemEvent>(cartItemCheckOutItemEvent);
+    on<DeleteCartItemEvent>(deleteCartItemEvent);
   }
 
   FutureOr<void> initialCartFetchEvent(
@@ -76,6 +77,23 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       }
     } catch (e) {
       emit(CartEventFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> deleteCartItemEvent(
+      DeleteCartItemEvent event, Emitter<CartState> emit) async {
+    emit(CartLoadingState());
+    try {
+      final response = await _cartRepository.deleteCartItem(event.token);
+
+      if (response.isNotEmpty) {
+        emit(DeleteCartItemSuccessState(
+            successMessage: "Item deleted successfully", newToken: response));
+      } else {
+        emit(DeleteCartItemFailedState(errorMessage: "Something went wrong"));
+      }
+    } catch (e) {
+      emit(DeleteCartItemFailedState(errorMessage: e.toString()));
     }
   }
 }

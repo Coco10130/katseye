@@ -23,4 +23,17 @@ final class CartEventFailedState extends CartState {
   CartEventFailedState({required this.errorMessage});
 }
 
+final class DeleteCartItemSuccessState extends CartState {
+  final String successMessage, newToken;
+
+  DeleteCartItemSuccessState(
+      {required this.successMessage, required this.newToken});
+}
+
+final class DeleteCartItemFailedState extends CartState {
+  final String errorMessage;
+
+  DeleteCartItemFailedState({required this.errorMessage});
+}
+
 final class CartLoadingState extends CartState {}

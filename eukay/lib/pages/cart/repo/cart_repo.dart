@@ -125,4 +125,31 @@ class CartRepo extends CartRepository {
       }
     }
   }
+
+  @override
+  Future<String> deleteCartItem(String token) async {
+    try {
+      final response = await _dio.delete(
+        "${Server.serverUrl}/api/cart/delete-items",
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        return response.data["newToken"];
+      } else {
+        throw response.data["message"];
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
+        throw errorMessage;
+      } else {
+        throw Exception("Error: ${e.toString()}");
+      }
+    }
+  }
 }

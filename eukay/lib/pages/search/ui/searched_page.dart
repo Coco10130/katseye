@@ -74,7 +74,6 @@ class _SearchedBodyState extends State<SearchedBody> {
   final List<String> itemCategory = [
     "Item Category",
     "Pants",
-    "Shoes",
     "Shirts",
     "Shorts",
     "Long Sleeves",

@@ -9,7 +9,9 @@ import 'package:eukay/pages/cart/mappers/cart_model.dart';
 import 'package:eukay/pages/check_out/ui/check_out_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CartPage extends StatefulWidget {
   final String token;
@@ -30,6 +32,20 @@ class _CartPageState extends State<CartPage> {
         onPressed: () {
           Navigator.pop(context, true);
         },
+        actions: [
+          IconButton(
+            onPressed: () {
+              context
+                  .read<CartBloc>()
+                  .add(DeleteCartItemEvent(token: widget.token));
+            },
+            icon: Icon(
+              Iconsax.trash,
+              size: 20,
+              color: Theme.of(context).colorScheme.error,
+            ),
+          ),
+        ],
         backgroundColor: Theme.of(context).colorScheme.secondary,
         textColor: Theme.of(context).colorScheme.onPrimary,
       ),
@@ -49,14 +65,26 @@ class CartBody extends StatefulWidget {
 
 class _CartBodyState extends State<CartBody> {
   int toCheckOutLength = 0;
+  late SharedPreferences pref;
   @override
   void initState() {
     super.initState();
+    initPref();
     fetchCart();
   }
 
   Future<void> fetchCart() async {
     context.read<CartBloc>().add(InitialCartFetchEvent(token: widget.token));
+  }
+
+  Future<void> initPref() async {
+    pref = await SharedPreferences.getInstance();
+  }
+
+  Future<void> changeToken(String newToken) async {
+    pref.clear();
+
+    pref.setString("token", newToken);
   }
 
   Future<void> addQuantity(String cartId) async {
@@ -107,19 +135,38 @@ class _CartBodyState extends State<CartBody> {
             mySnackBar(
               message: state.errorMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
-              textColor: Theme.of(context).colorScheme.onPrimary,
+              textColor: Theme.of(context).colorScheme.error,
             ),
           );
-        }
-
-        if (state is FetchCartFailedState) {
+        } else if (state is FetchCartFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
               message: state.errorMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
-              textColor: Theme.of(context).colorScheme.onPrimary,
+              textColor: Theme.of(context).colorScheme.error,
             ),
           );
+        } else if (state is DeleteCartItemFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+          fetchCart();
+        } else if (state is DeleteCartItemSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
+            ),
+          );
+
+          changeToken(state.newToken).then((_) {
+            fetchCart();
+          });
         }
       },
       builder: (context, state) {

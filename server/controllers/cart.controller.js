@@ -266,6 +266,48 @@ const getCheckOutItems = async (req, res) => {
   }
 };
 
+const deleteCartItem = async (req, res) => {
+  try {
+    const authorizationHeader = req.headers.authorization;
+    const token = authorizationHeader.split(" ")[1];
+    const decode = jwt.verify(token, secretKey);
+
+    const userId = decode.id;
+
+    const items = await Cart.find({ toCheckOut: true, userId: userId });
+    const user = await User.findById(userId);
+    const itemLength = items.length;
+
+    if (!items || items.length === 0) {
+      return res.status(404).json({ message: "No items selected" });
+    }
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found access" });
+    }
+
+    await Cart.deleteMany({ toCheckOut: true, userId: userId });
+
+    await User.findByIdAndUpdate(userId, {
+      $inc: {
+        cartItems: -itemLength,
+      },
+    });
+
+    const updatedUser = await User.findById(userId);
+
+    const newToken = signToken(updatedUser);
+
+    res.status(200).json({
+      success: true,
+      message: "All items marked for checkout have been deleted.",
+      newToken,
+    });
+  } catch (error) {
+    res.status(500).json({ errorMessage: error.message });
+  }
+};
+
 module.exports = {
   addToCart,
   showCart,
@@ -273,4 +315,5 @@ module.exports = {
   minusQuantity,
   checkItem,
   getCheckOutItems,
+  deleteCartItem,
 };

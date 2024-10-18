@@ -49,5 +49,9 @@
 		<false/>
 		<key>com.apple.developer.siri</key>
 		<true/>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Image galery selection</string>
+		<key>NSCameraUsageDescription</key>
+		<string>Camera selection</string>
 	</dict>
 </plist>
