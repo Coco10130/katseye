@@ -5,6 +5,7 @@ class SellerGroup {
   final double totalPrice;
   final String? orderId;
   final bool markedAsPrepared;
+  final String? status;
   final List<SalesProductModel> products;
 
   SellerGroup({
@@ -15,5 +16,6 @@ class SellerGroup {
     required this.products,
     required this.totalPrice,
     this.orderId,
+    this.status,
   });
 }

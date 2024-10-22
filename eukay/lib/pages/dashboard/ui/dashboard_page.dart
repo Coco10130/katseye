@@ -57,7 +57,7 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
-  void fetchProducts() {
+  Future<void> fetchProducts() async {
     context.read<DashboardBloc>().add(FetchProductsInitialEvent());
   }
 
@@ -166,11 +166,12 @@ class DashboardBody extends StatefulWidget {
   final String? userId;
   final VoidCallback fetchProfile;
   final VoidCallback onFetchProduct;
-  const DashboardBody(
-      {super.key,
-      this.userId,
-      required this.fetchProfile,
-      required this.onFetchProduct});
+  const DashboardBody({
+    super.key,
+    this.userId,
+    required this.fetchProfile,
+    required this.onFetchProduct,
+  });
 
   @override
   State<DashboardBody> createState() => _DashboardBodyState();
@@ -183,13 +184,13 @@ class _DashboardBodyState extends State<DashboardBody> {
     widget.onFetchProduct();
   }
 
-  Future<void> refresh() async {
+  Future<void> _refresh() async {
     widget.onFetchProduct();
   }
 
   @override
   Widget build(BuildContext context) {
-    const double spacing = 20;
+    const double spacing = 10;
     final double screenWidth = MediaQuery.of(context).size.width;
     final double gridItemWidth = screenWidth > 1200 ? 300 : screenWidth * 0.4;
 
@@ -212,9 +213,10 @@ class _DashboardBodyState extends State<DashboardBody> {
           );
         } else if (state is DashboardInitialFetchState) {
           final products = state.products;
-          return SingleChildScrollView(
-            child: RefreshIndicator(
-              onRefresh: refresh,
+
+          return RefreshIndicator(
+            onRefresh: _refresh,
+            child: SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: screenWidth > 1200 ? 100 : 20,
@@ -399,11 +401,12 @@ class _DashboardBodyState extends State<DashboardBody> {
                           textColor: Theme.of(context).colorScheme.onSecondary,
                           onPressed: () {
                             navigateWithSlideTransition(
-                                context: context,
-                                page: ViewProduct(
-                                  productId: product.id,
-                                ),
-                                onFetch: () => widget.fetchProfile());
+                              context: context,
+                              page: ViewProduct(
+                                productId: product.id,
+                              ),
+                              onFetch: () => _refresh(),
+                            );
                           },
                         );
                       },

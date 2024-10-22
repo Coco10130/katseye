@@ -277,7 +277,7 @@ class ProfileRepo extends ProfileRepository {
       String token, String status) async {
     try {
       final response = await _dio.get(
-        "${Server.serverUrl}/api/product/get/orders/$status",
+        "${Server.serverUrl}/api/orders/get?status=$status",
         options: Options(
           headers: {
             "Authorization": "Bearer $token",
@@ -352,7 +352,7 @@ class ProfileRepo extends ProfileRepository {
       required String status}) async {
     try {
       final response = await _dio.put(
-        "${Server.serverUrl}/api/orders/cancel-order/$orderId/$status",
+        "${Server.serverUrl}/api/orders/cancel-order/user/$orderId/$status",
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',

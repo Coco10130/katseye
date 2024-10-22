@@ -205,7 +205,7 @@ class ShopRepo extends ShopRepository {
       String token, String sellerId, String status) async {
     try {
       final response = await _dio.get(
-        "${Server.serverUrl}/api/product/get/sales/$status/$sellerId",
+        "${Server.serverUrl}/api/product/get/sales/$sellerId?status=${Uri.encodeComponent(status)}",
         options: Options(
           headers: {
             "Authorization": "Bearer $token",
@@ -381,6 +381,34 @@ class ShopRepo extends ShopRepository {
         options: Options(
           headers: {
             "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data["success"]) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      if (e is DioException && e.response != null) {
+        final errorMessage =
+            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        throw errorMessage;
+      } else {
+        throw Exception(e.toString());
+      }
+    }
+  }
+
+  @override
+  Future<bool> cancelOrder(String token, String sellerId) async {
+    try {
+      final response = await _dio.put(
+        "${Server.serverUrl}/api/orders/cancel-order/seller/$sellerId",
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
           },
         ),
       );

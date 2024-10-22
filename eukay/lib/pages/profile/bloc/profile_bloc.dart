@@ -273,11 +273,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       final response = await _profileRepository.fetchReviewsOfUser(event.token);
 
-      if (response.isNotEmpty) {
-        emit(FetchReviewSuccessState(review: response));
-      } else {
-        emit(FetchReviewsFailedState(errorMessage: "Failed to fetch reviews"));
-      }
+      emit(FetchReviewSuccessState(review: response));
     } catch (e) {
       emit(FetchReviewsFailedState(errorMessage: e.toString()));
     }

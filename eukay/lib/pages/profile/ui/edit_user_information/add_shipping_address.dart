@@ -284,7 +284,7 @@ class _AddAddressBodyState extends State<AddAddressBody> {
 
                 // street name
                 MyTextField(
-                  label: "Street name, House No.",
+                  label: ", House No, Street name.",
                   hint: "",
                   textColor: Theme.of(context).colorScheme.onSecondary,
                   backgroundColor: Theme.of(context).colorScheme.onPrimary,

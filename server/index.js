@@ -19,6 +19,7 @@ const ordersRouters = require("./routes/order.route.js");
 const reviewRouters = require("./routes/review.route.js");
 const adminRoute = require("./routes/admin.route.js");
 const reportRoute = require("./routes/report.route.js");
+const notificationRoute = require("./routes/notification.route.js");
 
 // middlewares
 app.use(express.json());
@@ -50,6 +51,7 @@ app.use("/api/orders", ordersRouters);
 app.use("/api/reviews", reviewRouters);
 app.use("/api/admin", adminRoute);
 app.use("/api/report", reportRoute);
+app.use("/api/notification", notificationRoute);
 
 mongoose
   .connect(process.env.MONGODB)

@@ -1,6 +1,6 @@
 import 'package:eukay/components/appbar/my_tab_bar.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
-import 'package:eukay/pages/profile/ui/orders/tabs/completed_page.dart';
+import 'package:eukay/pages/profile/ui/orders/tabs/delivered_page.dart';
 import 'package:eukay/pages/profile/ui/orders/tabs/pending_page.dart';
 import 'package:eukay/pages/profile/ui/orders/tabs/reviews_page.dart';
 import 'package:eukay/pages/profile/ui/orders/tabs/to_prepage_page.dart';
@@ -97,11 +97,12 @@ class _OrdersPageState extends State<OrdersPage> {
               ),
             ),
             body: const TabBarView(
+              physics: NeverScrollableScrollPhysics(),
               children: [
                 PendingPage(),
                 ToPrepareUser(),
                 ToRecieve(),
-                CompletedPage(),
+                Delivered(),
                 OrderHistory(),
                 UserReviewPage(),
               ],

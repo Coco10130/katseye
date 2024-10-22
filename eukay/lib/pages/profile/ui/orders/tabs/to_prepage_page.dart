@@ -18,9 +18,21 @@ class ToPrepareUser extends StatefulWidget {
 }
 
 class _ToPrepareUserState extends State<ToPrepareUser> {
-  String? token;
-  late SharedPreferences pref;
   bool initializedPref = false;
+  late SharedPreferences pref;
+  String? token;
+
+  @override
+  void initState() {
+    super.initState();
+    _initPreferences().then((_) {
+      _fetchProducts();
+    });
+  }
+
+  Future<void> _fetchProfile() async {
+    context.read<ProfileBloc>().add(ProfileInitialFetchEvent(token: token!));
+  }
 
   Future<void> _initPreferences() async {
     try {
@@ -38,18 +50,6 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
     context
         .read<ProfileBloc>()
         .add(FetchOrdersEvent(status: "to prepare", token: token!));
-  }
-
-  Future<void> fetchProfile() async {
-    context.read<ProfileBloc>().add(ProfileInitialFetchEvent(token: token!));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _initPreferences().then((_) {
-      _fetchProducts();
-    });
   }
 
   Map<String, SellerGroup> _groupProductsBySeller(
@@ -78,91 +78,6 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
     return groupedProducts;
   }
 
-  Future<void> _markOrder(String orderId, String sellerId) async {}
-
-  @override
-  Widget build(BuildContext context) {
-    if (!initializedPref) {
-      return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
-    }
-
-    return BlocConsumer<ProfileBloc, ProfileState>(
-      listener: (context, state) {
-        if (state is FetchOrdersProductsFailedState) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            mySnackBar(
-              message: state.errorMessage,
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              textColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-          _fetchProducts();
-        } else if (state is CancelOrderFailedState) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            mySnackBar(
-              message: state.errorMessage,
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              textColor: Theme.of(context).colorScheme.error,
-            ),
-          );
-          _fetchProducts();
-        } else if (state is CancelOrderSuccessState) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            mySnackBar(
-              message: state.successMessage,
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              textColor: Theme.of(context).colorScheme.onSecondary,
-            ),
-          );
-
-          fetchProfile().then((_) {
-            _fetchProducts();
-          });
-        }
-      },
-      builder: (context, state) {
-        if (state is FetchOrdersProductsSuccessState) {
-          final orderProducts = state.products;
-          final groupedProducts = _groupProductsBySeller(orderProducts);
-
-          if (orderProducts.isEmpty) {
-            return Center(
-              child: Text(
-                "No products to prepare",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSecondary,
-                  fontFamily: "Poppins",
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            );
-          }
-
-          return Padding(
-            padding: const EdgeInsets.only(
-              left: 10,
-              right: 10,
-              top: 20,
-              bottom: 50,
-            ),
-            child: ListView.builder(
-              itemCount: groupedProducts.length,
-              itemBuilder: (context, index) {
-                final buyerName = groupedProducts.keys.elementAt(index);
-                final productGroup = groupedProducts[buyerName]!;
-
-                return _buildSellerGroup(productGroup, token!);
-              },
-            ),
-          );
-        }
-
-        return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
-      },
-    );
-  }
-
   Widget _buildSellerGroup(SellerGroup productGroup, String token) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -182,13 +97,7 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSellerInfo(
-                productGroup,
-                () => _markOrder(
-                      productGroup.id,
-                      productGroup.sellerId,
-                    ),
-                token),
+            _buildSellerInfo(productGroup, token),
             const SizedBox(height: 10),
             _buildProductList(productGroup.products),
           ],
@@ -197,8 +106,7 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
     );
   }
 
-  Widget _buildSellerInfo(
-      SellerGroup productGroup, VoidCallback onCheck, String token) {
+  Widget _buildSellerInfo(SellerGroup productGroup, String token) {
     final formatCurrency = NumberFormat.currency(
       locale: "en_PH",
       symbol: "₱ ",
@@ -287,6 +195,109 @@ class _ToPrepareUserState extends State<ToPrepareUser> {
           }).toList(),
         );
       }).toList(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!initializedPref) {
+      return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
+    }
+
+    return BlocConsumer<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        if (state is FetchOrdersProductsFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+          _fetchProducts();
+        } else if (state is CancelOrderFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+          _fetchProducts();
+        } else if (state is CancelOrderSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
+            ),
+          );
+
+          _fetchProfile().then((_) {
+            _fetchProducts();
+          });
+        }
+      },
+      builder: (context, state) {
+        if (state is FetchOrdersProductsSuccessState) {
+          final orderProducts = state.products;
+          orderProducts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+          final groupedProducts = _groupProductsBySeller(orderProducts);
+
+          if (orderProducts.isEmpty) {
+            return RefreshIndicator(
+              onRefresh: () => _fetchProfile().then((_) {
+                _fetchProducts();
+              }),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  height:
+                      MediaQuery.of(context).size.height - kToolbarHeight - 100,
+                  alignment: Alignment.center,
+                  child: Center(
+                    child: Text(
+                      "No products to prepare",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                        fontFamily: "Poppins",
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: () => _fetchProfile().then((_) {
+              _fetchProducts();
+            }),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+                top: 20,
+                bottom: 50,
+              ),
+              child: ListView.builder(
+                itemCount: groupedProducts.length,
+                itemBuilder: (context, index) {
+                  final buyerName = groupedProducts.keys.elementAt(index);
+                  final productGroup = groupedProducts[buyerName]!;
+
+                  return _buildSellerGroup(productGroup, token!);
+                },
+              ),
+            ),
+          );
+        }
+
+        return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
+      },
     );
   }
 }

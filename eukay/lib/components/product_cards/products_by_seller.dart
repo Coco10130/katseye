@@ -21,6 +21,9 @@ class ProductsBySeller extends StatelessWidget {
     final int crossAxisCount = (screenWidth / gridItemWidth).floor();
     final double productSpacing = screenWidth > 1200 ? 50 : 10;
 
+    final sortedProducts = List<ProductModel>.from(products)
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
     if (products.isEmpty) {
       return Center(
         child: Text(
@@ -44,16 +47,17 @@ class ProductsBySeller extends StatelessWidget {
           crossAxisCount: crossAxisCount,
           crossAxisSpacing: productSpacing,
           mainAxisSpacing: productSpacing,
-          childAspectRatio: screenWidth > 1200 ? 0.81 : 0.74,
+          childAspectRatio: screenWidth > 1200 ? 0.81 : 0.77,
         ),
-        itemCount: products.length,
+        itemCount: sortedProducts.length,
         itemBuilder: (context, index) {
-          final product = products[index];
+          final product = sortedProducts[index];
           final totalQuantity = product.sizeQuantities.fold<int>(
             0,
             (sum, size) => sum + size.quantity,
           );
           return LiveProductCard(
+            discount: product.discount,
             name: product.productName,
             image: product.productImage[0],
             price: product.price,

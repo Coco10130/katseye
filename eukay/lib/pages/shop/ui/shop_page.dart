@@ -129,7 +129,9 @@ class _ShopPageState extends State<ShopPage> {
               onPressed: () {
                 navigateWithSlideTransition(
                   context: context,
-                  page: const AddProduct(),
+                  page: AddProduct(
+                    token: pref.getString("token")!,
+                  ),
                 );
               },
               tooltip: "Add New Product",

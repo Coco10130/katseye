@@ -36,7 +36,11 @@ class _OrderHistoryState extends State<OrderHistory> {
   Future<void> _fetchProducts() async {
     context
         .read<ProfileBloc>()
-        .add(FetchOrdersEvent(status: "completed", token: token!));
+        .add(FetchOrdersEvent(status: "canceled,completed", token: token!));
+  }
+
+  Future<void> _fetchProfile() async {
+    context.read<ProfileBloc>().add(ProfileInitialFetchEvent(token: token!));
   }
 
   @override
@@ -62,6 +66,7 @@ class _OrderHistoryState extends State<OrderHistory> {
             totalPrice: item.totalPrice,
             markedAsPrepared: item.markAsNextStep,
             sellerName: item.shopName,
+            status: item.status,
             products: [item],
           );
         }
@@ -72,8 +77,6 @@ class _OrderHistoryState extends State<OrderHistory> {
 
     return groupedProducts;
   }
-
-  Future<void> _markOrder(String orderId, String sellerId) async {}
 
   @override
   Widget build(BuildContext context) {
@@ -99,37 +102,57 @@ class _OrderHistoryState extends State<OrderHistory> {
       builder: (context, state) {
         if (state is FetchOrdersProductsSuccessState) {
           final orderProducts = state.products;
+          orderProducts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
           final groupedProducts = _groupProductsBySeller(orderProducts);
 
           if (orderProducts.isEmpty) {
-            return Center(
-              child: Text(
-                "No products to prepare",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSecondary,
-                  fontFamily: "Poppins",
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+            return RefreshIndicator(
+              onRefresh: () => _fetchProfile().then((_) {
+                _fetchProducts();
+              }),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  height:
+                      MediaQuery.of(context).size.height - kToolbarHeight - 100,
+                  alignment: Alignment.center,
+                  child: Center(
+                    child: Text(
+                      "No ordered products yet",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                        fontFamily: "Poppins",
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             );
           }
 
-          return Padding(
-            padding: const EdgeInsets.only(
-              left: 10,
-              right: 10,
-              top: 20,
-              bottom: 50,
-            ),
-            child: ListView.builder(
-              itemCount: groupedProducts.length,
-              itemBuilder: (context, index) {
-                final buyerName = groupedProducts.keys.elementAt(index);
-                final productGroup = groupedProducts[buyerName]!;
+          return RefreshIndicator(
+            onRefresh: () => _fetchProfile().then((_) {
+              _fetchProducts();
+            }),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+                top: 20,
+                bottom: 50,
+              ),
+              child: ListView.builder(
+                itemCount: groupedProducts.length,
+                itemBuilder: (context, index) {
+                  final buyerName = groupedProducts.keys.elementAt(index);
+                  final productGroup = groupedProducts[buyerName]!;
 
-                return _buildSellerGroup(productGroup);
-              },
+                  return _buildSellerGroup(productGroup);
+                },
+              ),
             ),
           );
         }
@@ -160,10 +183,6 @@ class _OrderHistoryState extends State<OrderHistory> {
           children: [
             _buildSellerInfo(
               productGroup,
-              () => _markOrder(
-                productGroup.id,
-                productGroup.sellerId,
-              ),
             ),
             const SizedBox(height: 10),
             _buildProductList(productGroup.products),
@@ -173,7 +192,7 @@ class _OrderHistoryState extends State<OrderHistory> {
     );
   }
 
-  Widget _buildSellerInfo(SellerGroup productGroup, VoidCallback onCheck) {
+  Widget _buildSellerInfo(SellerGroup productGroup) {
     final formatCurrency = NumberFormat.currency(
       locale: "en_PH",
       symbol: "₱ ",
@@ -216,6 +235,17 @@ class _OrderHistoryState extends State<OrderHistory> {
 
               // spacing
               const SizedBox(height: 5),
+
+              // display the ordered status
+              Text(
+                productGroup.status!,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: "Poppins",
+                ),
+              ),
             ],
           ),
         ),

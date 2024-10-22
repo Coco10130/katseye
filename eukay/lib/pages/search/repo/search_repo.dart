@@ -58,6 +58,8 @@ class SearchRepo extends SearchRepository {
 
       if (response.data["success"]) {
         final product = response.data["data"];
+        
+
         return ProductModel.fromJson(product);
       } else {
         throw response.data["message"];

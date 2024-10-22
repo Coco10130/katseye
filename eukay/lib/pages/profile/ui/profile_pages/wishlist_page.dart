@@ -92,6 +92,21 @@ class _BodyPageState extends State<BodyPage> {
       builder: (context, state) {
         if (state is WishListSuccessState) {
           final products = state.products;
+
+          if (products.isEmpty) {
+            return Center(
+              child: Text(
+                "No wishlist yet",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSecondary,
+                  fontFamily: "Poppins",
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          }
+          
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
             child: GridView.builder(

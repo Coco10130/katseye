@@ -21,11 +21,15 @@ class ToPreparePage extends StatefulWidget {
 
 class _ToPreparePageState extends State<ToPreparePage> {
   String? token;
+  bool initializedPref = false;
 
-  Future<String?> _initPreferences() async {
+  Future<void> _initPreferences() async {
     try {
       SharedPreferences pref = await SharedPreferences.getInstance();
-      return pref.getString('token');
+      setState(() {
+        token = pref.getString('token');
+        initializedPref = true;
+      });
     } catch (e) {
       throw Exception("Failed to load preferences: $e");
     }
@@ -43,11 +47,8 @@ class _ToPreparePageState extends State<ToPreparePage> {
   @override
   void initState() {
     super.initState();
-    _initPreferences().then((fetchedToken) {
-      if (fetchedToken != null) {
-        token = fetchedToken;
-        _fetchProducts();
-      }
+    _initPreferences().then((_) {
+      _fetchProducts();
     });
   }
 
@@ -92,6 +93,12 @@ class _ToPreparePageState extends State<ToPreparePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!initializedPref) {
+      return LoadingScreen(
+        color: Theme.of(context).colorScheme.onSecondary,
+      );
+    }
+
     return BlocConsumer<ShopBloc, ShopState>(
       listener: (context, state) {
         if (state is MarkSalesProductSuccessState) {
@@ -114,9 +121,7 @@ class _ToPreparePageState extends State<ToPreparePage> {
             ),
           );
 
-          fetchSellerProfile().then((_) {
-            _fetchProducts();
-          });
+          fetchSellerProfile();
         } else if (state is ChangeStatusFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
@@ -125,6 +130,8 @@ class _ToPreparePageState extends State<ToPreparePage> {
               textColor: Theme.of(context).colorScheme.error,
             ),
           );
+          _fetchProducts();
+        } else if (state is FetchSellerSuccessState) {
           _fetchProducts();
         }
       },
@@ -144,9 +151,7 @@ class _ToPreparePageState extends State<ToPreparePage> {
 
           if (orderProducts.isEmpty) {
             return RefreshIndicator(
-              onRefresh: () => fetchSellerProfile().then((_) {
-                _fetchProducts();
-              }),
+              onRefresh: () => fetchSellerProfile(),
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Container(
@@ -159,7 +164,7 @@ class _ToPreparePageState extends State<ToPreparePage> {
                       style: TextStyle(
                         fontFamily: "Poppins",
                         fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                        fontSize: 14,
                         color: Theme.of(context).colorScheme.onSecondary,
                       ),
                     ),
@@ -170,7 +175,7 @@ class _ToPreparePageState extends State<ToPreparePage> {
           }
 
           return RefreshIndicator(
-            onRefresh: () => _fetchProducts(),
+            onRefresh: () => fetchSellerProfile(),
             child: Stack(
               children: [
                 Padding(

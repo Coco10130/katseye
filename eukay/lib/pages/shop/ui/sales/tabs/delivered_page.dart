@@ -101,9 +101,7 @@ class _DeliveredPageState extends State<DeliveredPage> {
             ),
           );
 
-          fetchSellerProfile().then((_) {
-            _fetchProducts();
-          });
+          fetchSellerProfile();
         } else if (state is ChangeStatusFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
@@ -112,6 +110,8 @@ class _DeliveredPageState extends State<DeliveredPage> {
               textColor: Theme.of(context).colorScheme.error,
             ),
           );
+          _fetchProducts();
+        } else if (state is FetchSellerSuccessState) {
           _fetchProducts();
         }
       },
@@ -136,9 +136,7 @@ class _DeliveredPageState extends State<DeliveredPage> {
 
           if (orderProducts.isEmpty) {
             return RefreshIndicator(
-              onRefresh: () => fetchSellerProfile().then((_) {
-                _fetchProducts();
-              }),
+              onRefresh: () => fetchSellerProfile(),
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Container(
@@ -151,7 +149,7 @@ class _DeliveredPageState extends State<DeliveredPage> {
                       style: TextStyle(
                         fontFamily: "Poppins",
                         fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                        fontSize: 14,
                         color: Theme.of(context).colorScheme.onSecondary,
                       ),
                     ),
@@ -162,7 +160,7 @@ class _DeliveredPageState extends State<DeliveredPage> {
           }
 
           return RefreshIndicator(
-            onRefresh: () => _fetchProducts(),
+            onRefresh: () => fetchSellerProfile(),
             child: Padding(
               padding: const EdgeInsets.only(
                 left: 10,

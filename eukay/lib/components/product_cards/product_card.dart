@@ -41,19 +41,17 @@ class ProductCard extends StatelessWidget {
           maxWidth: parentWidth * 0.4,
         ),
         decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onPrimary,
-            border: Border.all(
-              width: 1.5,
-              color: Theme.of(context).colorScheme.onSecondary,
-            ),
-            borderRadius: BorderRadius.circular(borderRadius),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                spreadRadius: 3,
-                blurRadius: 5,
-              )
-            ]),
+          color: Theme.of(context).colorScheme.onPrimary,
+          borderRadius: BorderRadius.circular(borderRadius),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5),
+              spreadRadius: 3,
+              blurRadius: 6,
+              offset: const Offset(2, 4),
+            )
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -79,8 +77,12 @@ class ProductCard extends StatelessWidget {
                 // discount
                 if (discount >= 1) ...{
                   Container(
+                    decoration: const BoxDecoration(
+                      borderRadius:
+                          BorderRadius.only(topLeft: Radius.circular(10)),
+                      color: Colors.red,
+                    ),
                     padding: const EdgeInsets.all(5),
-                    color: Colors.red,
                     child: Text(
                       "$discount %",
                       style: TextStyle(

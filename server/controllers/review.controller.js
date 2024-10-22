@@ -2,6 +2,7 @@ const Product = require("../models/product.model.js");
 const Order = require("../models/order.model.js");
 const User = require("../models/user.model.js");
 const Seller = require("../models/seller.model.js");
+const Notification = require("../models/notification.model.js");
 const Review = require("../models/review.model.js");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
@@ -16,8 +17,6 @@ const addReview = async (req, res) => {
     const decode = jwt.verify(token, secretKey);
     const userId = decode.id;
 
-    const user = await User.findById(userId);
-
     const product = await Product.findById(productId);
 
     if (!product) {
@@ -26,33 +25,14 @@ const addReview = async (req, res) => {
 
     const order = await Order.findById(orderId);
 
+    const user = await User.findById(order.userId);
+
     if (!order) {
       return res.status(404).json({ errorMessage: "Order not found" });
     }
 
     const sellerId = product.sellerId;
     const productImage = product.productImage[0];
-
-    if (productImage) {
-      const sourcePath = path.join(
-        __dirname,
-        "../images/products",
-        productImage
-      );
-      const destinationPath = path.join(
-        __dirname,
-        "../images/reviews",
-        productImage
-      );
-
-      fs.copyFile(sourcePath, destinationPath, (copyError) => {
-        if (copyError) {
-          return res.status(500).json({ message: "Failed to copy image" });
-        }
-
-        console.log(productImage);
-      });
-    }
 
     const newReview = new Review({
       starRating,
@@ -87,6 +67,11 @@ const addReview = async (req, res) => {
       await Seller.findByIdAndUpdate(sellerId, {
         $inc: { deliveredOrders: -1, completeOrders: 1 },
       });
+
+      await User.findByIdAndUpdate(user._id, {
+        $inc: { deliveredOrders: -1, completeOrders: 1, reviews: 1 },
+      });
+
       await order.save();
     }
 
@@ -96,6 +81,14 @@ const addReview = async (req, res) => {
       order.status = "completed";
       await order.save();
     }
+
+    const seller = await Seller.findById(sellerId);
+
+    await Notification.create({
+      icon: "shop.png",
+      userId: seller.userId,
+      message: `${user.userName} posted a review to your product ${product.productName}`,
+    });
 
     res.status(201).json({
       message: "Review added successfully, product marked as rated",
@@ -134,8 +127,6 @@ const getReviewOfProduct = async (req, res) => {
             "host"
           )}/images/profiles/default-image.jpg`;
 
-      console.log(review.productImage);
-
       const productImage = `${req.protocol}://${req.get(
         "host"
       )}/images/reviews/${review.productImage}`;
@@ -173,7 +164,7 @@ const getReviewOfUser = async (req, res) => {
     const response = reviews.map((review) => {
       const productImage = `${req.protocol}://${req.get(
         "host"
-      )}/images/reviews/${review.productImage}`;
+      )}/images/orders/${review.productImage}`;
 
       const imageUrl = review.userId.image
         ? `${req.protocol}://${req.get("host")}/images/profiles/${

@@ -1,7 +1,8 @@
 import 'package:eukay/components/appbar/my_tab_bar.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
-import 'package:eukay/pages/shop/ui/sales/tabs/pending_page.dart';
 import 'package:eukay/pages/shop/ui/sales/tabs/delivered_page.dart';
+import 'package:eukay/pages/shop/ui/sales/tabs/order-history.dart';
+import 'package:eukay/pages/shop/ui/sales/tabs/pending_page.dart';
 import 'package:eukay/pages/shop/ui/sales/tabs/to_deliver_page.dart';
 import 'package:eukay/pages/shop/ui/sales/tabs/to_prepare_page.dart';
 import 'package:flutter/material.dart';
@@ -25,10 +26,17 @@ class _SalesPageState extends State<SalesPage> {
   int toDeliver = 0;
   int toPrepare = 0;
   int delivered = 0;
+  int orders = 0;
 
   @override
   void initState() {
     super.initState();
+    fetchSellerProfile();
+  }
+
+  @override
+  void deactivate() {
+    super.deactivate();
     fetchSellerProfile();
   }
 
@@ -49,12 +57,13 @@ class _SalesPageState extends State<SalesPage> {
             toDeliver = seller.deliverOrders;
             toPrepare = seller.prepareOrders;
             delivered = seller.deliveredOrders;
+            orders = seller.canceledOrders + seller.completeOrders;
           });
         }
       },
       builder: (context, state) {
         return DefaultTabController(
-          length: 4,
+          length: 5,
           child: Scaffold(
             backgroundColor: Theme.of(context).colorScheme.onSurface,
             appBar: AppBar(
@@ -75,6 +84,7 @@ class _SalesPageState extends State<SalesPage> {
                   _tab("To Prepare", toPrepare),
                   _tab("To Deliver", toDeliver),
                   _tab("Delivered", delivered),
+                  _tab("Orders", orders),
                 ],
                 height: 70,
                 isScrollable: true,
@@ -87,6 +97,7 @@ class _SalesPageState extends State<SalesPage> {
               ),
             ),
             body: TabBarView(
+              physics: const NeverScrollableScrollPhysics(),
               children: [
                 PendingPage(
                   sellerId: widget.sellerId,
@@ -98,6 +109,9 @@ class _SalesPageState extends State<SalesPage> {
                   sellerId: widget.sellerId,
                 ),
                 DeliveredPage(
+                  sellerId: widget.sellerId,
+                ),
+                Orders(
                   sellerId: widget.sellerId,
                 ),
               ],

@@ -134,4 +134,18 @@ final class DeleteProductFailedState extends ShopState {
   DeleteProductFailedState({required this.errorMessage});
 }
 
+final class CancelOrderSuccessState extends ShopState {
+  final String successMessage;
+
+  CancelOrderSuccessState({required this.successMessage});
+}
+
+final class CancelOrderFailedState extends ShopState {
+  final String errorMessage;
+
+  CancelOrderFailedState({required this.errorMessage});
+}
+
 final class ShopLoadingState extends ShopState {}
+
+final class SalesRefreshedState extends ShopState {}

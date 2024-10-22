@@ -15,6 +15,7 @@ class ProductModel {
   final String sellerId;
   final List<String> wishedByUser;
   final List<ReviewModel> reviews;
+  final DateTime createdAt;
 
   const ProductModel({
     required this.id,
@@ -31,19 +32,20 @@ class ProductModel {
     required this.reviews,
     required this.sellerName,
     required this.wishedByUser,
+    required this.createdAt,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
       id: json["_id"],
       sellerId: json["sellerId"],
-      productImage: List<String>.from(json["productImage"] ?? []),
+      productImage: List<String>.from(json["productImage"]),
       productName: json["productName"],
       price: (json["price"] is int)
           ? (json["price"] as int).toDouble()
           : (json["price"] as double? ?? 0.0),
       productDescription: json["productDescription"],
-      categories: List<String>.from(json["categories"] ?? []),
+      categories: List<String>.from(json["categories"]),
       sizeQuantities: (json["sizeQuantities"] is List)
           ? List<SizeQuantity>.from(json["sizeQuantities"]
               .map((sizeJson) => SizeQuantity.fromJson(sizeJson)))
@@ -51,16 +53,17 @@ class ProductModel {
       status: json["status"],
       discount: (json["discount"] is int)
           ? (json["discount"] as int).toDouble()
-          : (json["discount"] as double? ?? 0.0),
+          : (json["discount"] as double),
       rating: (json["rating"] is int)
           ? (json["rating"] as int).toDouble()
-          : (json["rating"] as double? ?? 0.0),
+          : (json["rating"] as double),
       reviews: (json["reviews"] is List)
           ? List<ReviewModel>.from(json["reviews"]
-              .map((reviewJson) => ReviewModel.fromJson(reviewJson)))
-          : [], // Handle non-list cases
+              .map((reviewJson) => ReviewModel.fromJson(reviewJson))).toList()
+          : [],
       sellerName: json["sellerName"],
-      wishedByUser: List<String>.from(json["wishedByUser"] ?? []),
+      wishedByUser: List<String>.from(json["wishedByUser"]),
+      createdAt: DateTime.parse(json["createdAt"]),
     );
   }
 }
@@ -68,19 +71,16 @@ class ProductModel {
 class SizeQuantity {
   final String size;
   final int quantity;
-  final String id;
 
   const SizeQuantity({
     required this.size,
     required this.quantity,
-    required this.id,
   });
 
   factory SizeQuantity.fromJson(Map<String, dynamic> json) {
     return SizeQuantity(
       size: json["size"],
       quantity: json["quantity"],
-      id: json["_id"],
     );
   }
 }

@@ -8,18 +8,19 @@ class SalesProductCard extends StatelessWidget {
   final double price;
   final bool rate;
   final VoidCallback? onPressedRate;
-  const SalesProductCard(
-      {super.key,
-      required this.image,
-      required this.productName,
-      required this.size,
-      required this.quantity,
-      required this.price,
-      this.backgroundColor = Colors.black,
-      this.buttonBackgroundColor = Colors.white,
-      this.buttonTextColor = Colors.black,
-      this.rate = false,
-      this.onPressedRate});
+  const SalesProductCard({
+    super.key,
+    required this.image,
+    required this.productName,
+    required this.size,
+    required this.quantity,
+    required this.price,
+    this.backgroundColor = Colors.black,
+    this.buttonBackgroundColor = Colors.white,
+    this.buttonTextColor = Colors.black,
+    this.rate = false,
+    this.onPressedRate,
+  });
 
   @override
   Widget build(BuildContext context) {

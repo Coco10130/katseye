@@ -14,16 +14,38 @@ const addToCart = async (req, res) => {
     const token = authorizationHeader.split(" ")[1];
     const { productId } = req.params;
     const { size } = req.body;
-    const decode = jwt.verify(token, process.env.JWT_SECRET);
+    const decode = jwt.verify(token, secretKey);
 
     const product = await Product.findById(productId);
     const seller = await Seller.findById(product.sellerId);
-    const user = await User.findOne({ _id: decode.id });
+    const user = await User.findById(decode.id);
     const cart = await Cart.findOne({
       productId: productId,
       size: size,
       userId: user._id,
     });
+
+    if (
+      product.sellerId.toString() === seller._id.toString() &&
+      seller.userId.toString() === user._id.toString()
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Sellers cannot add their own product to the cart" });
+    }
+
+    // Check the size quantity
+    const sizeQuantity = product.sizeQuantities.find((sq) => sq.size === size);
+
+    if (!sizeQuantity) {
+      return res
+        .status(400)
+        .json({ message: "Selected size is not available" });
+    }
+
+    if (sizeQuantity.quantity <= 0) {
+      return res.status(400).json({ message: "Selected size is out of stock" });
+    }
 
     const existingCart = await Cart.findOne({ userId: user._id });
 

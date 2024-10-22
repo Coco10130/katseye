@@ -7,8 +7,10 @@ class SalesProductModel {
       deliveryAddress,
       sellerId,
       shopName,
-      id;
+      id,
+      status;
   final bool markAsNextStep;
+  final DateTime createdAt;
 
   SalesProductModel({
     required this.id,
@@ -21,6 +23,8 @@ class SalesProductModel {
     required this.sellerId,
     required this.shopName,
     required this.markAsNextStep,
+    required this.createdAt,
+    required this.status,
   });
 
   factory SalesProductModel.fromJson(Map<String, dynamic> json) {
@@ -38,6 +42,8 @@ class SalesProductModel {
       orderedBy: json["orderedBy"],
       markAsNextStep: json["markAsNextStep"],
       sellerId: json["sellerId"],
+      status: json["status"],
+      createdAt: DateTime.parse(json["createdAt"]),
     );
   }
 }

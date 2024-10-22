@@ -6,6 +6,7 @@ class LiveProductCard extends StatelessWidget {
   final String name, image;
   final double price, rating;
   final int stocks;
+  final double discount;
   final VoidCallback onPressed;
   const LiveProductCard({
     super.key,
@@ -14,6 +15,7 @@ class LiveProductCard extends StatelessWidget {
     required this.rating,
     required this.stocks,
     required this.image,
+    required this.discount,
     required this.onPressed,
     this.backgroundColor = Colors.black,
     this.textColor = Colors.black,
@@ -37,38 +39,61 @@ class LiveProductCard extends StatelessWidget {
           maxWidth: parentWidth * 0.4,
         ),
         decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onPrimary,
-            border: Border.all(
-              width: 1.5,
-              color: Theme.of(context).colorScheme.onSecondary,
-            ),
-            borderRadius: BorderRadius.circular(borderRadius),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                spreadRadius: 3,
-                blurRadius: 5,
-              )
-            ]),
+          color: Theme.of(context).colorScheme.onPrimary,
+          borderRadius: BorderRadius.circular(borderRadius),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5),
+              spreadRadius: 3,
+              blurRadius: 6,
+              offset: const Offset(2, 4),
+            )
+          ],
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             /// image
-            Container(
-              width: parentWidth,
-              height: parentWidth > 1200 ? 200 : parentWidth * 0.35,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(borderRadius),
-                  topRight: Radius.circular(borderRadius),
+            Stack(
+              children: [
+                Container(
+                  width: parentWidth,
+                  height: parentWidth > 1200 ? 200 : parentWidth * 0.35,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(borderRadius - 2),
+                      topRight: Radius.circular(borderRadius - 2),
+                    ),
+                    image: DecorationImage(
+                      image: NetworkImage(image),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
                 ),
-                image: DecorationImage(
-                  image: NetworkImage(image),
-                  fit: BoxFit.fill,
-                ),
-              ),
+
+                // discount
+                if (discount >= 1) ...{
+                  Container(
+                    decoration: const BoxDecoration(
+                      borderRadius:
+                          BorderRadius.only(topLeft: Radius.circular(10)),
+                      color: Colors.red,
+                    ),
+                    padding: const EdgeInsets.all(5),
+                    child: Text(
+                      "$discount %",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimary,
+                        fontFamily: "Poppins",
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                },
+              ],
             ),
 
             // spacing

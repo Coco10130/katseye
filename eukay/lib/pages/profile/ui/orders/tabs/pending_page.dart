@@ -40,7 +40,7 @@ class _PendingPageState extends State<PendingPage> {
         .add(FetchOrdersEvent(status: "pending", token: token!));
   }
 
-  Future<void> fetchProfile() async {
+  Future<void> _fetchProfile() async {
     context.read<ProfileBloc>().add(ProfileInitialFetchEvent(token: token!));
   }
 
@@ -78,7 +78,6 @@ class _PendingPageState extends State<PendingPage> {
     return groupedProducts;
   }
 
-  Future<void> _markOrder(String orderId, String sellerId) async {}
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +115,7 @@ class _PendingPageState extends State<PendingPage> {
               textColor: Theme.of(context).colorScheme.onSecondary,
             ),
           );
-          fetchProfile().then((_) {
+          _fetchProfile().then((_) {
             _fetchProducts();
           });
         }
@@ -124,37 +123,57 @@ class _PendingPageState extends State<PendingPage> {
       builder: (context, state) {
         if (state is FetchOrdersProductsSuccessState) {
           final orderProducts = state.products;
+          orderProducts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
           final groupedProducts = _groupProductsBySeller(orderProducts);
 
           if (orderProducts.isEmpty) {
-            return Center(
-              child: Text(
-                "No products to prepare",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSecondary,
-                  fontFamily: "Poppins",
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+            return RefreshIndicator(
+              onRefresh: () => _fetchProfile().then((_) {
+                _fetchProducts();
+              }),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  height:
+                      MediaQuery.of(context).size.height - kToolbarHeight - 100,
+                  alignment: Alignment.center,
+                  child: Center(
+                    child: Text(
+                      "No pending products yet",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                        fontFamily: "Poppins",
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             );
           }
 
-          return Padding(
-            padding: const EdgeInsets.only(
-              left: 10,
-              right: 10,
-              top: 20,
-              bottom: 50,
-            ),
-            child: ListView.builder(
-              itemCount: groupedProducts.length,
-              itemBuilder: (context, index) {
-                final buyerName = groupedProducts.keys.elementAt(index);
-                final productGroup = groupedProducts[buyerName]!;
+          return RefreshIndicator(
+            onRefresh: () => _fetchProfile().then((_) {
+              _fetchProducts();
+            }),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+                top: 20,
+                bottom: 50,
+              ),
+              child: ListView.builder(
+                itemCount: groupedProducts.length,
+                itemBuilder: (context, index) {
+                  final buyerName = groupedProducts.keys.elementAt(index);
+                  final productGroup = groupedProducts[buyerName]!;
 
-                return _buildSellerGroup(productGroup, token!);
-              },
+                  return _buildSellerGroup(productGroup, token!);
+                },
+              ),
             ),
           );
         }
@@ -185,10 +204,6 @@ class _PendingPageState extends State<PendingPage> {
           children: [
             _buildSellerInfo(
                 productGroup,
-                () => _markOrder(
-                      productGroup.id,
-                      productGroup.sellerId,
-                    ),
                 token),
             const SizedBox(height: 10),
             _buildProductList(productGroup.products),
@@ -199,7 +214,7 @@ class _PendingPageState extends State<PendingPage> {
   }
 
   Widget _buildSellerInfo(
-      SellerGroup productGroup, VoidCallback onCheck, String token) {
+      SellerGroup productGroup, String token) {
     final formatCurrency = NumberFormat.currency(
       locale: "en_PH",
       symbol: "₱ ",
@@ -239,19 +254,25 @@ class _PendingPageState extends State<PendingPage> {
                   ),
 
                   // button
-                  MyButton(
-                    title: "Cancel",
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    textColor: Theme.of(context).colorScheme.onPrimary,
-                    widthFactor: 0.25,
-                    verticalPadding: 6,
-                    onPressed: () {
-                      context.read<ProfileBloc>().add(CancelOrderEvent(
-                          orderId: productGroup.id,
-                          status: "pending",
-                          token: token));
-                    },
-                  ),
+                  if (!productGroup.markedAsPrepared) ...{
+                    // button
+                    MyButton(
+                      title: "Cancel",
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      textColor: Theme.of(context).colorScheme.onPrimary,
+                      widthFactor: 0.25,
+                      verticalPadding: 6,
+                      onPressed: () {
+                        context.read<ProfileBloc>().add(
+                              CancelOrderEvent(
+                                orderId: productGroup.id,
+                                status: "pending",
+                                token: token,
+                              ),
+                            );
+                      },
+                    ),
+                  }
                 ],
               ),
 

@@ -10,7 +10,6 @@ const {
   getProductsByStatus,
   updateProduct,
   getSalesProductByStatus,
-  getOrdersProductByStatus,
   deleteProduct,
 } = require("../controllers/product.controller.js");
 
@@ -33,13 +32,7 @@ router.get(
   getProductsByStatus
 );
 
-router.get(
-  "/get/sales/:status/:sellerId",
-  authMiddleware,
-  getSalesProductByStatus
-);
-
-router.get("/get/orders/:status", authMiddleware, getOrdersProductByStatus);
+router.get("/get/sales/:sellerId", authMiddleware, getSalesProductByStatus);
 
 router.put("/update/:productId", authMiddleware, updateProduct);
 

@@ -25,6 +25,8 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
     on<FetchUpdateProductEvent>(fetchUpdateProductEvent);
     on<DeleteProductEvent>(deleteProductEvent);
     on<UpdateProductEvent>(updateProductEvent);
+    on<CancelOrderEvent>(cancelOrderEvent);
+    on<RefreshSalesEvent>(refreshSalesEvent);
   }
 
   FutureOr<void> registerShopEvent(
@@ -71,9 +73,9 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
 
   FutureOr<void> fetchSellerProfileEvent(
       FetchSellerProfileEvent event, Emitter<ShopState> emit) async {
+    emit(ShopLoadingState());
     try {
       final response = await _shopRepository.fetchSellerProfile(event.token);
-
       emit(FetchSellerSuccessState(seller: response));
     } catch (e) {
       emit(FetchSellerFailedState(errorMessage: e.toString()));
@@ -135,7 +137,6 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
     try {
       final response = await _shopRepository.fetchProductByStatus(
           event.sellerId, event.token, event.status);
-
       emit(FetchLiveProductsSuccessState(products: response));
     } catch (e) {
       emit(FetchLiveProductsFailedState(errorMessage: e.toString()));
@@ -149,6 +150,7 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
     try {
       final response = await _shopRepository.fetchSalesProduct(
           event.token, event.sellerId, event.status);
+
       emit(FetchSalesProductsState(products: response));
     } catch (e) {
       emit(FetchProductFailedState(errorMessage: e.toString()));
@@ -277,5 +279,28 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
     } catch (e) {
       emit(DeleteProductFailedState(errorMessage: e.toString()));
     }
+  }
+
+  FutureOr<void> cancelOrderEvent(
+      CancelOrderEvent event, Emitter<ShopState> emit) async {
+    emit(ShopLoadingState());
+    try {
+      final response =
+          await _shopRepository.cancelOrder(event.token, event.sellerId);
+
+      if (response) {
+        emit(CancelOrderSuccessState(
+            successMessage: "Order cancelled successfully"));
+      } else {
+        emit(CancelOrderFailedState(errorMessage: "Something went wrong"));
+      }
+    } catch (e) {
+      emit(CancelOrderFailedState(errorMessage: e.toString()));
+    }
+  }
+
+  FutureOr<void> refreshSalesEvent(
+      RefreshSalesEvent event, Emitter<ShopState> emit) {
+    emit(SalesRefreshedState());
   }
 }

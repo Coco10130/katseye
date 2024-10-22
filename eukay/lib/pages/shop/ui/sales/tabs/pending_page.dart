@@ -22,12 +22,14 @@ class PendingPage extends StatefulWidget {
 class _PendingPageState extends State<PendingPage> {
   late SharedPreferences pref;
   String? token;
+  bool initializedPref = false;
 
   Future<void> _initPreferences() async {
     try {
       pref = await SharedPreferences.getInstance();
       setState(() {
         token = pref.getString('token');
+        initializedPref = true;
       });
     } catch (e) {
       throw Exception("Failed to load preferences: $e");
@@ -35,7 +37,6 @@ class _PendingPageState extends State<PendingPage> {
   }
 
   Future<void> _fetchProducts() async {
-    print("REFRESH");
     context.read<ShopBloc>().add(FetchSalesProductEvent(
         token: token!, sellerId: widget.sellerId, status: "pending"));
   }
@@ -92,7 +93,24 @@ class _PendingPageState extends State<PendingPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  // @override
+  // void deactivate() {
+  //   super.deactivate();
+  //   fetchSellerProfile();
+  // }
+
+  @override
   Widget build(BuildContext context) {
+    if (!initializedPref) {
+      return LoadingScreen(
+        color: Theme.of(context).colorScheme.onSecondary,
+      );
+    }
+
     return BlocConsumer<ShopBloc, ShopState>(
       listener: (context, state) {
         if (state is MarkSalesProductSuccessState) {
@@ -127,27 +145,45 @@ class _PendingPageState extends State<PendingPage> {
             ),
           );
           _fetchProducts();
+        } else if (state is FetchProductFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+        } else if (state is CancelOrderSuccessState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
+            ),
+          );
+
+          fetchSellerProfile();
+        } else if (state is CancelOrderFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+          _fetchProducts();
+        } else if (state is FetchSellerSuccessState) {
+          _fetchProducts();
         }
       },
       builder: (context, state) {
-        if (state is FetchProductFailedState) {
-          return Center(
-            child: Text(
-              state.errorMessage,
-              style: const TextStyle(color: Colors.black),
-            ),
-          );
-        }
-
         if (state is FetchSalesProductsState) {
           final orderProducts = state.products;
           final groupedProducts = _groupProductsByBuyer(orderProducts);
 
           if (orderProducts.isEmpty) {
             return RefreshIndicator(
-              onRefresh: () => fetchSellerProfile().then((_) {
-                _fetchProducts();
-              }),
+              onRefresh: () => fetchSellerProfile(),
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Container(
@@ -160,7 +196,7 @@ class _PendingPageState extends State<PendingPage> {
                       style: TextStyle(
                         fontFamily: "Poppins",
                         fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                        fontSize: 14,
                         color: Theme.of(context).colorScheme.onSecondary,
                       ),
                     ),
@@ -171,7 +207,7 @@ class _PendingPageState extends State<PendingPage> {
           }
 
           return RefreshIndicator(
-            onRefresh: () => _fetchProducts(),
+            onRefresh: () => fetchSellerProfile(),
             child: Stack(
               children: [
                 Padding(
@@ -195,23 +231,46 @@ class _PendingPageState extends State<PendingPage> {
                   alignment: AlignmentDirectional.bottomCenter,
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 10),
-                    child: MyButton(
-                      title: "Accept order",
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                      textColor: Theme.of(context).colorScheme.onPrimary,
-                      verticalPadding: 10,
-                      height: 60,
-                      widthFactor: 0.9,
-                      onPressed: () {
-                        context.read<ShopBloc>().add(
-                              ChangeOrderStatusEvent(
-                                nextStatus: "to prepare",
-                                status: "pending",
-                                sellerId: widget.sellerId,
-                                token: token!,
-                              ),
-                            );
-                      },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        MyButton(
+                          title: "Cancel order",
+                          backgroundColor:
+                              Theme.of(context).colorScheme.onSecondary,
+                          textColor: Theme.of(context).colorScheme.onPrimary,
+                          verticalPadding: 10,
+                          height: 60,
+                          widthFactor: 0.43,
+                          onPressed: () {
+                            context.read<ShopBloc>().add(
+                                  CancelOrderEvent(
+                                    token: token!,
+                                    sellerId: widget.sellerId,
+                                  ),
+                                );
+                          },
+                        ),
+                        MyButton(
+                          title: "Accept order",
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondary,
+                          textColor: Theme.of(context).colorScheme.onPrimary,
+                          verticalPadding: 10,
+                          height: 60,
+                          widthFactor: 0.43,
+                          onPressed: () {
+                            context.read<ShopBloc>().add(
+                                  ChangeOrderStatusEvent(
+                                    nextStatus: "to prepare",
+                                    status: "pending",
+                                    sellerId: widget.sellerId,
+                                    token: token!,
+                                  ),
+                                );
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 )
@@ -221,7 +280,6 @@ class _PendingPageState extends State<PendingPage> {
         }
 
         return LoadingScreen(color: Theme.of(context).colorScheme.onSecondary);
-        // return showLoadingDialog(context, Colors.blue);
       },
     );
   }

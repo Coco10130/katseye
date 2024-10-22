@@ -1,6 +1,7 @@
 class ReviewModel {
   final int starRating;
   final String review, productName, userName, userImage, productImage, id;
+  final DateTime createdAt;
 
   const ReviewModel({
     required this.id,
@@ -10,6 +11,7 @@ class ReviewModel {
     required this.userImage,
     required this.productName,
     required this.productImage,
+    required this.createdAt,
   });
 
   factory ReviewModel.fromJson(Map<String, dynamic> json) {
@@ -21,6 +23,7 @@ class ReviewModel {
       userImage: json["userImage"],
       productName: json["productName"],
       productImage: json["productImage"],
+      createdAt: DateTime.parse(json["createdAt"]),
     );
   }
 }

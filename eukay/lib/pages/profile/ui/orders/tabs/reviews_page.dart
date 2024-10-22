@@ -18,6 +18,10 @@ class _UserReviewPageState extends State<UserReviewPage> {
   late SharedPreferences pref;
   bool initializedPref = false;
 
+  Future<void> _fetchProfile() async {
+    context.read<ProfileBloc>().add(ProfileInitialFetchEvent(token: token!));
+  }
+
   Future<void> _initPreferences() async {
     try {
       pref = await SharedPreferences.getInstance();
@@ -63,21 +67,54 @@ class _UserReviewPageState extends State<UserReviewPage> {
       builder: (context, state) {
         if (state is FetchReviewSuccessState) {
           final reviews = state.review;
+          reviews.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
-          return ListView.builder(
-            itemCount: reviews.length,
-            itemBuilder: (context, index) {
-              final review = reviews[index];
+          if (reviews.isEmpty) {
+            return RefreshIndicator(
+              onRefresh: () => _fetchProfile().then((_) {
+                _fetchReviews();
+              }),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  height:
+                      MediaQuery.of(context).size.height - kToolbarHeight - 100,
+                  alignment: Alignment.center,
+                  child: Center(
+                    child: Text(
+                      "No reviews yet",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                        fontFamily: "Poppins",
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
 
-              return ReviewContainer(
-                productImage: review.productImage,
-                productName: review.productName,
-                review: review.review,
-                starRating: review.starRating,
-                userImage: review.userImage,
-                userName: review.userName,
-              );
-            },
+          return RefreshIndicator(
+            onRefresh: () => _fetchProfile().then((_) {
+              _fetchReviews();
+            }),
+            child: ListView.builder(
+              itemCount: reviews.length,
+              itemBuilder: (context, index) {
+                final review = reviews[index];
+
+                return ReviewContainer(
+                  productImage: review.productImage,
+                  productName: review.productName,
+                  review: review.review,
+                  starRating: review.starRating,
+                  userImage: review.userImage,
+                  userName: review.userName,
+                );
+              },
+            ),
           );
         }
 

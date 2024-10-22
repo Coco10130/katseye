@@ -3,6 +3,7 @@ import 'package:eukay/pages/shop/mappers/sales_product_model.dart';
 class BuyerGroup {
   final String contact, address, buyerName, id, sellerId;
   final bool marked;
+  final String? status;
   final double totalPrice;
   final List<SalesProductModel> products;
 
@@ -15,5 +16,6 @@ class BuyerGroup {
     required this.address,
     required this.products,
     required this.totalPrice,
+    this.status,
   });
 }

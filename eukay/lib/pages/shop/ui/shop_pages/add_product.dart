@@ -11,8 +11,18 @@ import 'package:image_picker/image_picker.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AddProduct extends StatelessWidget {
-  const AddProduct({super.key});
+class AddProduct extends StatefulWidget {
+  final String token;
+  const AddProduct({super.key, required this.token});
+
+  @override
+  State<AddProduct> createState() => _AddProductState();
+}
+
+class _AddProductState extends State<AddProduct> {
+  Future<void> fetchSellerProfile() async {
+    context.read<ShopBloc>().add(FetchSellerProfileEvent(token: widget.token));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +32,7 @@ class AddProduct extends StatelessWidget {
         label: "Add Product",
         backgroundColor: Theme.of(context).colorScheme.secondary,
         onPressed: () {
+          fetchSellerProfile();
           Navigator.pop(context, true);
         },
       ),
@@ -121,7 +132,7 @@ class _AddProductBodyState extends State<AddProductBody> {
             mySnackBar(
               message: state.successMessage,
               backgroundColor: Theme.of(context).colorScheme.primary,
-              textColor: Theme.of(context).colorScheme.onPrimary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
             ),
           );
         }

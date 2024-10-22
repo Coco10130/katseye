@@ -4,6 +4,7 @@ const Report = require("../models/report.model.js");
 const Order = require("../models/order.model.js");
 const Cart = require("../models/cart.model.js");
 const Product = require("../models/product.model.js");
+const Notification = require("../models/notification.model.js");
 
 const secretKey = process.env.JWT_SECRET;
 
@@ -126,27 +127,28 @@ const deleteProduct = async (req, res) => {
     for (const order of orders) {
       const sellerId = order.sellerId;
       const status = order.status;
+      const orderLength = order.orderLength;
 
       const seller = await Seller.findById(sellerId);
 
       switch (status) {
         case "pending":
-          seller.pendingOrders -= 1;
+          seller.pendingOrders -= orderLength;
           break;
         case "to prepare":
-          seller.prepareOrders -= 1;
+          seller.prepareOrders -= orderLength;
           break;
         case "to deliver":
-          seller.deliverOrders -= 1;
+          seller.deliverOrders -= orderLength;
           break;
         case "delivered":
-          seller.deliveredOrders -= 1;
+          seller.deliveredOrders -= orderLength;
           break;
         case "completed":
-          seller.completeOrders -= 1;
+          seller.completeOrders -= orderLength;
           break;
         case "canceled":
-          seller.canceledOrders -= 1;
+          seller.canceledOrders -= orderLength;
           break;
       }
 

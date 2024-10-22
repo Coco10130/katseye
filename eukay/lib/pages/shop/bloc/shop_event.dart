@@ -121,3 +121,11 @@ final class DeleteProductEvent extends ShopEvent {
     required this.sellerId,
   });
 }
+
+final class CancelOrderEvent extends ShopEvent {
+  final String token, sellerId;
+
+  CancelOrderEvent({required this.token, required this.sellerId});
+}
+
+final class RefreshSalesEvent extends ShopEvent {}

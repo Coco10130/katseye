@@ -36,17 +36,17 @@ class _ViewProductState extends State<ViewProduct> {
   void initState() {
     super.initState();
     initPref().then((_) {
-      initToken();
+      initRole();
     });
   }
 
-  void onSignIn() {
-    initPref().then((_) {
-      initToken();
-    });
+  Future<void> fetchProduct() async {
+    context
+        .read<SearchBloc>()
+        .add(FetchViewProductEvent(productId: widget.productId));
   }
 
-  void initToken() {
+  Future<void> initRole() async {
     if (token!.isNotEmpty) {
       final Map<String, dynamic> jwtDecocded = JwtDecoder.decode(token!);
       userId = jwtDecocded["id"].toString();
@@ -246,7 +246,7 @@ class _ViewProductState extends State<ViewProduct> {
                       navigateWithSlideTransition(
                         context: context,
                         page: const AuthPage(),
-                        onFetch: () => onSignIn(),
+                        onFetch: () => initPref(),
                       );
                     },
             ),
@@ -276,13 +276,14 @@ class _ViewProductState extends State<ViewProduct> {
                     ),
                     onPressed: () {
                       navigateWithSlideTransition(
-                          context: context,
-                          page: CartPage(
-                            token: pref.getString("token")!,
-                          ),
-                          onFetch: () {
-                            () => onSignIn();
-                          });
+                        context: context,
+                        page: CartPage(
+                          token: pref.getString("token")!,
+                        ),
+                        onFetch: () => initPref().then((_) {
+                          fetchProduct();
+                        }),
+                      );
                     },
                   ),
                 ),
@@ -292,7 +293,8 @@ class _ViewProductState extends State<ViewProduct> {
         ],
       ),
       body: BodyPage(
-        onSignIn: () => onSignIn(),
+        fetchProduct: () => fetchProduct(),
+        onSignIn: () => initPref(),
         productId: widget.productId,
         userId: userId ?? "",
         onProductFetched: checkIfLiked,
@@ -306,12 +308,15 @@ class BodyPage extends StatefulWidget {
   final String? userId;
   final Function(List<String>) onProductFetched;
   final VoidCallback onSignIn;
-  const BodyPage(
-      {super.key,
-      required this.productId,
-      required this.onProductFetched,
-      required this.onSignIn,
-      this.userId});
+  final VoidCallback fetchProduct;
+  const BodyPage({
+    super.key,
+    required this.productId,
+    required this.onProductFetched,
+    required this.onSignIn,
+    required this.fetchProduct,
+    this.userId,
+  });
 
   @override
   State<BodyPage> createState() => _BodyPageState();
@@ -326,7 +331,7 @@ class _BodyPageState extends State<BodyPage> {
   void initState() {
     super.initState();
     initPreference();
-    fetchProduct();
+    widget.fetchProduct();
   }
 
   Future<void> initPreference() async {
@@ -336,12 +341,6 @@ class _BodyPageState extends State<BodyPage> {
   Future<void> updateToken(String newToken) async {
     await pref.clear();
     await pref.setString("token", newToken);
-  }
-
-  void fetchProduct() {
-    context
-        .read<SearchBloc>()
-        .add(FetchViewProductEvent(productId: widget.productId));
   }
 
   @override
@@ -369,9 +368,8 @@ class _BodyPageState extends State<BodyPage> {
               textColor: Theme.of(context).colorScheme.onSecondary,
             ),
           );
-          fetchProduct();
+          widget.fetchProduct();
         } else if (state is WishlistFailedState) {
-          // if (!mounted) return;
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
               message: state.errorMessage,
@@ -379,38 +377,51 @@ class _BodyPageState extends State<BodyPage> {
               textColor: Theme.of(context).colorScheme.error,
             ),
           );
-          fetchProduct();
+
+          widget.fetchProduct();
         } else if (state is AddToCartFailedState) {
-          // if (!mounted) return;
-          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
-            message: state.errorMessage,
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.error,
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+
+          widget.fetchProduct();
         } else if (state is AddToCartSuccessState) {
-          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
-            message: state.successMessage,
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.onSecondary,
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
+            ),
+          );
+
           updateToken(state.token).then((_) {
             widget.onSignIn();
           });
-          fetchProduct();
+          widget.fetchProduct();
         } else if (state is ReportProductSuccessState) {
-          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
-            message: state.successMessage,
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.onSecondary,
-          ));
-          fetchProduct();
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.successMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
+            ),
+          );
+
+          widget.fetchProduct();
         } else if (state is ReportProductFailedState) {
-          ScaffoldMessenger.of(context).showSnackBar(mySnackBar(
-            message: state.errorMessage,
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            textColor: Theme.of(context).colorScheme.error,
-          ));
-          fetchProduct();
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+
+          widget.fetchProduct();
         }
       },
       builder: (context, state) {
@@ -419,6 +430,8 @@ class _BodyPageState extends State<BodyPage> {
           final List<ReviewModel> reviews = product.reviews;
           final List<SizeQuantity> sizeQuantities = product.sizeQuantities;
 
+          reviews.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
           final List<Map<String, dynamic>> extractedReviews =
               reviews.map((review) {
             return {
@@ -426,6 +439,7 @@ class _BodyPageState extends State<BodyPage> {
               'starRating': review.starRating,
               'userImage': review.userImage,
               'review': review.review,
+              'productImage': review.productImage,
             };
           }).toList();
           final List<String> sizes =
@@ -495,37 +509,68 @@ class _BodyPageState extends State<BodyPage> {
                 ),
 
                 // ratings
-                Padding(
-                  padding: edgePadding,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // star icon
-                      const Icon(
-                        Iconsax.star1,
-                        color: Colors.amber,
-                        size: 20,
-                      ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: edgePadding,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // star icon
+                            const Icon(
+                              Iconsax.star1,
+                              color: Colors.amber,
+                              size: 20,
+                            ),
 
-                      // spacing
-                      const SizedBox(
-                        width: 8,
-                      ),
+                            // spacing
+                            const SizedBox(
+                              width: 8,
+                            ),
 
-                      // rating score
-                      Text(
-                        "${product.rating} ( ${product.reviews.length} REVIEWS )",
-                        style: TextStyle(
-                          fontFamily: "Poppins",
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSecondary,
+                            // rating score
+                            Text(
+                              "${product.rating} ( ${product.reviews.length} REVIEWS )",
+                              style: TextStyle(
+                                fontFamily: "Poppins",
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color:
+                                    Theme.of(context).colorScheme.onSecondary,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+
+                    // discount
+                    if (product.discount >= 1) ...{
+                      Padding(
+                        padding: edgePadding,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            "${product.discount}% OFF",
+                            style: const TextStyle(
+                              fontFamily: "Poppins",
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    }
+                  ],
                 ),
 
                 // spacing
@@ -651,7 +696,7 @@ class _BodyPageState extends State<BodyPage> {
                                 return navigateWithSlideTransition(
                                   context: context,
                                   page: const AuthPage(),
-                                  onFetch: fetchProduct,
+                                  onFetch: () => widget.fetchProduct(),
                                 );
                               }
 

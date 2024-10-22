@@ -7,6 +7,8 @@ import 'package:eukay/pages/check_out/bloc/check_out_bloc.dart';
 import 'package:eukay/pages/check_out/repo/check_out_repo.dart';
 import 'package:eukay/pages/dashboard/bloc/dashboard_bloc.dart';
 import 'package:eukay/pages/dashboard/repo/dashboard_repo.dart';
+import 'package:eukay/pages/notification/bloc/notification_bloc.dart';
+import 'package:eukay/pages/notification/repo/notification.repo.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
 import 'package:eukay/pages/profile/repo/profile_repo.dart';
 import 'package:eukay/pages/search/bloc/search_bloc.dart';
@@ -48,6 +50,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => CheckOutBloc(CheckOutRepo()),
+        ),
+        BlocProvider(
+          create: (context) => NotificationBloc(NotificationRepo()),
         ),
       ],
       child: GetMaterialApp(

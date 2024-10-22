@@ -19,15 +19,15 @@ class _SoldOutProductsState extends State<SoldOutProducts> {
   @override
   void initState() {
     super.initState();
-    fetchLiveProduct();
+    _fetchSellerProfile();
   }
 
-  Future<void> fetchLiveProduct() async {
+  Future<void> _fetchLiveProduct() async {
     context.read<ShopBloc>().add(FetchLiveProductEvent(
         token: widget.token, sellerId: widget.sellerId, status: "sold out"));
   }
 
-  Future<void> fetchSellerProfile() async {
+  Future<void> _fetchSellerProfile() async {
     context.read<ShopBloc>().add(FetchSellerProfileEvent(token: widget.token));
   }
 
@@ -49,9 +49,9 @@ class _SoldOutProductsState extends State<SoldOutProducts> {
             ),
           );
 
-          fetchSellerProfile().then((_) {
-            fetchLiveProduct();
-          });
+          _fetchSellerProfile();
+        } else if (state is FetchSellerSuccessState) {
+          _fetchLiveProduct();
         }
       },
       builder: (context, state) {
@@ -65,57 +65,73 @@ class _SoldOutProductsState extends State<SoldOutProducts> {
         if (state is FetchLiveProductsSuccessState) {
           final products = state.products;
           if (products.isEmpty) {
-            return Center(
-              child: Text(
-                'No sold out products were found',
-                style: TextStyle(
-                  fontFamily: "Poppins",
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: Theme.of(context).colorScheme.onSecondary,
+            return RefreshIndicator(
+              onRefresh: () => _fetchSellerProfile(),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  height:
+                      MediaQuery.of(context).size.height - kToolbarHeight - 100,
+                  alignment: Alignment.center,
+                  child: Center(
+                    child: Text(
+                      'No sold out products',
+                      style: TextStyle(
+                        fontFamily: "Poppins",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: Theme.of(context).colorScheme.onSecondary,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             );
           }
 
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  crossAxisSpacing: productSpacing,
-                  mainAxisSpacing: productSpacing,
-                  childAspectRatio: screenWidth > 1200 ? 0.81 : 0.74,
+          return RefreshIndicator(
+            onRefresh: () => _fetchSellerProfile(),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: crossAxisCount,
+                    crossAxisSpacing: productSpacing,
+                    mainAxisSpacing: productSpacing,
+                    childAspectRatio: screenWidth > 1200 ? 0.81 : 0.74,
+                  ),
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    final totalQuantity = product.sizeQuantities.fold<int>(
+                      0,
+                      (sum, size) => sum + size.quantity,
+                    );
+                    return LiveProductCard(
+                      discount: product.discount,
+                      onPressed: () {
+                        navigateWithSlideTransition(
+                          context: context,
+                          page: UpdateProductPage(
+                            productId: product.id,
+                          ),
+                          onFetch: () => _fetchSellerProfile(),
+                        );
+                      },
+                      name: product.productName,
+                      image: product.productImage[0],
+                      price: product.price,
+                      rating: product.rating,
+                      stocks: totalQuantity,
+                      backgroundColor: Theme.of(context).colorScheme.onSurface,
+                      textColor: Theme.of(context).colorScheme.onSecondary,
+                    );
+                  },
                 ),
-                itemCount: products.length,
-                itemBuilder: (context, index) {
-                  final product = products[index];
-                  final totalQuantity = product.sizeQuantities.fold<int>(
-                    0,
-                    (sum, size) => sum + size.quantity,
-                  );
-                  return LiveProductCard(
-                    onPressed: () {
-                      navigateWithSlideTransition(
-                        context: context,
-                        page: UpdateProductPage(
-                          productId: product.id,
-                        ),
-                        onFetch: () => fetchLiveProduct(),
-                      );
-                    },
-                    name: product.productName,
-                    image: product.productImage[0],
-                    price: product.price,
-                    rating: product.rating,
-                    stocks: totalQuantity,
-                    backgroundColor: Theme.of(context).colorScheme.onSurface,
-                    textColor: Theme.of(context).colorScheme.onSecondary,
-                  );
-                },
               ),
             ),
           );

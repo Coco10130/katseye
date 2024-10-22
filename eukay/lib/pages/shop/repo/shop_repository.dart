@@ -49,4 +49,5 @@ abstract class ShopRepository {
       {required String productId,
       required String sellerId,
       required String token});
+  Future<bool> cancelOrder(String token, String sellerId);
 }

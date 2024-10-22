@@ -172,7 +172,7 @@ class _UpdateProductBodyState extends State<UpdateProductBody> {
         if (state is FetchUpdateProductState) {
           final product = state.product;
           _productNameController.text = product.productName;
-          _productPriceController.text = product.price.toString();
+          _productPriceController.text = product.price.toStringAsFixed(2);
           _productDescriptionController.text = product.productDescription;
 
           return SingleChildScrollView(

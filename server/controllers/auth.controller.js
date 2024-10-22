@@ -13,17 +13,17 @@ const login = async (req, res) => {
 
     // check if user entered email
     if (!email) {
-      return res.status(400).json({ errorMessage: "Email is required" });
+      return res.status(400).json({ message: "Email is required" });
     }
 
     // check if user entered password
     if (!password) {
-      return res.status(400).json({ errorMessage: "Password is required" });
+      return res.status(400).json({ message: "Password is required" });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ errorMessage: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     // check if password match
@@ -33,7 +33,7 @@ const login = async (req, res) => {
       const token = signToken(user);
       return res.status(200).json({ token: token });
     } else {
-      return res.status(401).json({ errorMessage: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
   } catch (error) {
     res.status(500).json({ errorMessage: error.message });
@@ -51,32 +51,32 @@ const register = async (req, res) => {
     if (!userName || userName.length < 4) {
       return res
         .status(403)
-        .json({ errorMessage: "Enter User name atleast 4 characters" });
+        .json({ message: "Enter User name atleast 4 characters" });
     }
 
     // check email
     if (!email) {
-      return res.status(403).json({ errorMessage: "Please enter Email" });
+      return res.status(403).json({ message: "Please enter Email" });
     } else if (!emailRegex.test(email)) {
-      return res.status(403).json({ errorMessage: "Invalid Email format" });
+      return res.status(403).json({ message: "Invalid Email format" });
     }
 
     // check password
     if (!password || password.length < 8) {
       return res.status(403).json({
-        errorMessage: "Password should be at least 8 characters long",
+        message: "Password should be at least 8 characters long",
       });
     }
 
     // check if password not match
     if (password !== confirmPassword) {
-      return res.status(403).json({ errorMessage: "Passwords do not match" });
+      return res.status(403).json({ message: "Passwords do not match" });
     }
 
     // check if email is already exist
     const user = await User.findOne({ email });
     if (user) {
-      return res.status(409).json({ errorMessage: "Email already exists" });
+      return res.status(409).json({ message: "Email already exists" });
     }
 
     // hash passwrod

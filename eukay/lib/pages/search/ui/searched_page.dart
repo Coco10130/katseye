@@ -75,7 +75,6 @@ class _SearchedBodyState extends State<SearchedBody> {
     "Item Category",
     "Pants",
     "Shirts",
-    "Shorts",
     "Long Sleeves",
     "Cap",
     "Hoodie",
@@ -299,7 +298,7 @@ class _SearchedBodyState extends State<SearchedBody> {
                             crossAxisCount: crossAxisCount,
                             crossAxisSpacing: productSpacing,
                             mainAxisSpacing: productSpacing,
-                            childAspectRatio: screenWidth > 1200 ? 0.81 : 0.77,
+                            childAspectRatio: screenWidth > 1200 ? 0.81 : 0.7,
                           ),
                           itemCount: products.length,
                           itemBuilder: (context, index) {

@@ -3,8 +3,10 @@ const router = express.Router();
 const {
   processOrder,
   markAsNextStep,
-  cancelOrder,
+  cancelOrderByUser,
   changeProductSalesStatus,
+  cancelOrderBySeller,
+  getOrdersProductByStatus,
 } = require("../controllers/order.controller.js");
 const authMiddleware = require("../middlewares/auth.middleware.js");
 
@@ -19,6 +21,10 @@ router.put(
   changeProductSalesStatus
 );
 
-router.put("/cancel-order/:orderId/:status", cancelOrder);
+router.get("/get", getOrdersProductByStatus);
+
+router.put("/cancel-order/user/:orderId/:status", cancelOrderByUser);
+
+router.put("/cancel-order/seller/:sellerId", cancelOrderBySeller);
 
 module.exports = router;

@@ -154,7 +154,10 @@ const searchProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find({ status: "live" });
+    const products = await Product.find({
+      status: "live",
+      rating: { $gt: 3.5 },
+    });
 
     const productsWithImageUrl = products.map((product) => {
       const imageUrls = product.productImage.map(
@@ -199,6 +202,7 @@ const getViewProduct = async (req, res) => {
       .populate({
         path: "productId",
         select: "productName",
+        select: "productImage",
       });
 
     const responseReviews = reviews.map((review) => {
@@ -210,6 +214,10 @@ const getViewProduct = async (req, res) => {
             "host"
           )}/images/profiles/default-image.jpg`;
 
+      const productReviewImage = `${req.protocol}://${req.get(
+        "host"
+      )}/images/orders/${review.productImage}`;
+
       return {
         _id: review._id,
         starRating: review.starRating,
@@ -217,7 +225,9 @@ const getViewProduct = async (req, res) => {
         userName: review.userId.userName,
         userImage: imageUrl,
         productName: review.productId.productName,
+        productName: review.productName,
         createdAt: review.createdAt,
+        productImage: productReviewImage,
       };
     });
 
@@ -262,37 +272,15 @@ const getProductsByStatus = async (req, res) => {
 
 const getSalesProductByStatus = async (req, res) => {
   try {
-    const { sellerId, status } = req.params;
+    const { sellerId } = req.params;
+    const { status } = req.query;
 
-    const orders = await Order.find({ sellerId: sellerId, status: status });
+    const statuses = status.split(",");
 
-    const updatedOrders = orders.map((order) => {
-      const updatedProducts = order.products.map((product) => {
-        const imageUrls = product.productImage.map(
-          (image) =>
-            `${req.protocol}://${req.get("host")}/images/products/${image}`
-        );
-        return { ...product.toObject(), productImage: imageUrls };
-      });
-
-      return { ...order.toObject(), products: updatedProducts };
+    const orders = await Order.find({
+      sellerId: sellerId,
+      status: { $in: statuses },
     });
-
-    return res.status(200).json({ success: true, data: updatedOrders });
-  } catch (error) {
-    res.status(500).json({ errorMessage: error.message });
-  }
-};
-
-const getOrdersProductByStatus = async (req, res) => {
-  try {
-    const authorizationHeader = req.headers.authorization;
-    const token = authorizationHeader.split(" ")[1];
-    const decode = jwt.verify(token, secretKey);
-    const userId = decode.id;
-    const { status } = req.params;
-
-    const orders = await Order.find({ userId: userId, status: status });
 
     const updatedOrders = orders.map((order) => {
       const updatedProducts = order.products.map((product) => {
@@ -483,6 +471,5 @@ module.exports = {
   deleteProduct,
   getProductsByStatus,
   getSalesProductByStatus,
-  getOrdersProductByStatus,
   updateProduct,
 };

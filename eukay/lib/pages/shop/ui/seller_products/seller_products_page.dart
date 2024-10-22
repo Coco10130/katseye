@@ -1,6 +1,5 @@
 import 'package:eukay/components/appbar/my_tab_bar.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
-import 'package:eukay/pages/shop/ui/seller_products/tabs/delisted_page.dart';
 import 'package:eukay/pages/shop/ui/seller_products/tabs/live_products.dart';
 import 'package:eukay/pages/shop/ui/seller_products/tabs/sold_out_products.dart';
 import 'package:flutter/material.dart';
@@ -21,15 +20,14 @@ class MyProducts extends StatefulWidget {
 class _MyProductsState extends State<MyProducts> {
   int live = 0;
   int soldOut = 0;
-  int delisted = 0;
 
   Future<void> fetchSellerProfile() async {
     context.read<ShopBloc>().add(FetchSellerProfileEvent(token: widget.token));
   }
 
   @override
-  void initState() {
-    super.initState();
+  void deactivate() {
+    super.deactivate();
     fetchSellerProfile();
   }
 
@@ -42,13 +40,12 @@ class _MyProductsState extends State<MyProducts> {
           setState(() {
             live = seller.live;
             soldOut = seller.soldOut;
-            delisted = seller.delisted;
           });
         }
       },
       builder: (context, state) {
         return DefaultTabController(
-          length: 3,
+          length: 2,
           child: Scaffold(
             backgroundColor: Theme.of(context).colorScheme.onSurface,
             appBar: AppBar(
@@ -67,7 +64,6 @@ class _MyProductsState extends State<MyProducts> {
                 tabs: [
                   _tab("Live", live),
                   _tab("Sold Out", soldOut),
-                  _tab("Delisted", delisted),
                 ],
                 height: 70,
               ),
@@ -79,16 +75,13 @@ class _MyProductsState extends State<MyProducts> {
               ),
             ),
             body: TabBarView(
+              physics: const NeverScrollableScrollPhysics(),
               children: [
                 LivePage(
                   sellerId: widget.sellerId,
                   token: widget.token,
                 ),
                 SoldOutProducts(
-                  sellerId: widget.sellerId,
-                  token: widget.token,
-                ),
-                DelistedPage(
                   sellerId: widget.sellerId,
                   token: widget.token,
                 ),

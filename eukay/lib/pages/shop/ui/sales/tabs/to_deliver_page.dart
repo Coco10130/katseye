@@ -22,12 +22,14 @@ class ToDeliverPage extends StatefulWidget {
 class _ToDeliverPageState extends State<ToDeliverPage> {
   late SharedPreferences pref;
   String? token;
+  bool initializedPref = false;
 
   Future<void> _initPreferences() async {
     try {
       pref = await SharedPreferences.getInstance();
       setState(() {
         token = pref.getString('token');
+        initializedPref = true;
       });
     } catch (e) {
       throw Exception("Failed to load preferences: $e");
@@ -92,6 +94,12 @@ class _ToDeliverPageState extends State<ToDeliverPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!initializedPref) {
+      return LoadingScreen(
+        color: Theme.of(context).colorScheme.onSecondary,
+      );
+    }
+
     return BlocConsumer<ShopBloc, ShopState>(
       listener: (context, state) {
         if (state is MarkSalesProductSuccessState) {
@@ -114,9 +122,7 @@ class _ToDeliverPageState extends State<ToDeliverPage> {
             ),
           );
 
-          fetchSellerProfile().then((_) {
-            _fetchProducts();
-          });
+          fetchSellerProfile();
         } else if (state is ChangeStatusFailedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             mySnackBar(
@@ -125,6 +131,8 @@ class _ToDeliverPageState extends State<ToDeliverPage> {
               textColor: Theme.of(context).colorScheme.error,
             ),
           );
+          _fetchProducts();
+        } else if (state is FetchSellerSuccessState) {
           _fetchProducts();
         }
       },
@@ -144,9 +152,7 @@ class _ToDeliverPageState extends State<ToDeliverPage> {
 
           if (orderProducts.isEmpty) {
             return RefreshIndicator(
-              onRefresh: () => fetchSellerProfile().then((_) {
-                _fetchProducts();
-              }),
+              onRefresh: () => fetchSellerProfile(),
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Container(
@@ -159,7 +165,7 @@ class _ToDeliverPageState extends State<ToDeliverPage> {
                       style: TextStyle(
                         fontFamily: "Poppins",
                         fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                        fontSize: 14,
                         color: Theme.of(context).colorScheme.onSecondary,
                       ),
                     ),
@@ -170,7 +176,7 @@ class _ToDeliverPageState extends State<ToDeliverPage> {
           }
 
           return RefreshIndicator(
-            onRefresh: () => _fetchProducts(),
+            onRefresh: () => fetchSellerProfile(),
             child: Stack(
               children: [
                 Padding(
