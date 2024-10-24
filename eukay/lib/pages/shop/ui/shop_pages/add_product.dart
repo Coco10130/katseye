@@ -61,6 +61,7 @@ class _AddProductBodyState extends State<AddProductBody> {
     "Women",
     "Pants",
     "Shirts",
+    "Shorts",
     "Long Sleeves",
     "Jacket",
     "Cap",

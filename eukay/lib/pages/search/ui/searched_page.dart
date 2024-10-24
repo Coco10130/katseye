@@ -75,6 +75,7 @@ class _SearchedBodyState extends State<SearchedBody> {
     "Item Category",
     "Pants",
     "Shirts",
+    "Shorts",
     "Long Sleeves",
     "Cap",
     "Hoodie",

@@ -163,7 +163,6 @@ const processOrder = async (req, res) => {
       user.cartItems -= products.length;
       await user.save();
 
-      // Increment seller's pending orders
       await Seller.findByIdAndUpdate(sellerId, {
         $inc: { pendingOrders: products.length },
       });

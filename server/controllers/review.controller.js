@@ -20,7 +20,11 @@ const addReview = async (req, res) => {
     const product = await Product.findById(productId);
 
     if (!product) {
-      return res.status(404).json({ errorMessage: "Product not found" });
+      return res
+        .status(404)
+        .json({
+          errorMessage: "Can't add review because the product was deleted",
+        });
     }
 
     const order = await Order.findById(orderId);

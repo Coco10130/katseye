@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const Seller = require("../models/seller.model.js");
 const Report = require("../models/report.model.js");
 const Order = require("../models/order.model.js");
+const User = require("../models/user.model.js");
 const Cart = require("../models/cart.model.js");
 const Product = require("../models/product.model.js");
 const Notification = require("../models/notification.model.js");
@@ -111,6 +112,7 @@ const deleteProduct = async (req, res) => {
     const { reportId } = req.params;
 
     const report = await Report.findById(reportId);
+
     if (!report) {
       return res.status(404).json({ message: "Report not found" });
     }
@@ -118,54 +120,14 @@ const deleteProduct = async (req, res) => {
     const productId = report.productId;
 
     const deletedProduct = await Product.findByIdAndDelete(productId);
+
     if (!deletedProduct) {
       return res.status(404).json({ message: "Product not found" });
     }
 
-    const orders = await Order.find({ "products.productId": productId });
-
-    for (const order of orders) {
-      const sellerId = order.sellerId;
-      const status = order.status;
-      const orderLength = order.orderLength;
-
-      const seller = await Seller.findById(sellerId);
-
-      switch (status) {
-        case "pending":
-          seller.pendingOrders -= orderLength;
-          break;
-        case "to prepare":
-          seller.prepareOrders -= orderLength;
-          break;
-        case "to deliver":
-          seller.deliverOrders -= orderLength;
-          break;
-        case "delivered":
-          seller.deliveredOrders -= orderLength;
-          break;
-        case "completed":
-          seller.completeOrders -= orderLength;
-          break;
-        case "canceled":
-          seller.canceledOrders -= orderLength;
-          break;
-      }
-
-      order.products = order.products.filter(
-        (p) => p.productId.toString() !== productId.toString()
-      );
-
-      if (order.products.length > 0) {
-        await order.save();
-      } else {
-        await Order.findByIdAndDelete(order._id);
-      }
-
-      await seller.save();
-    }
-
     await Cart.deleteMany({ productId });
+
+    console.log(deletedProduct);
 
     const sellerOfProduct = await Seller.findById(deletedProduct.sellerId);
 
@@ -176,14 +138,21 @@ const deleteProduct = async (req, res) => {
     }
 
     sellerOfProduct.products -= 1;
+
     await sellerOfProduct.save();
+
+    await Notification.create({
+      icon: "shop.png",
+      userId: sellerOfProduct.userId,
+      message: `Your product ${deletedProduct.productName} has been deleted.`,
+    });
 
     await Report.deleteMany({ productId }).exec();
 
     res.status(200).json({
       success: true,
       message:
-        "Product, all related reports, cart items, and related orders deleted successfully. Seller data updated.",
+        "Product, all related reports, and cart items deleted successfully. Seller data updated.",
     });
   } catch (error) {
     res.status(500).json({
