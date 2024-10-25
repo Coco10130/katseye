@@ -106,7 +106,7 @@ class _BodyPageState extends State<BodyPage> {
               ),
             );
           }
-          
+
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
             child: GridView.builder(
@@ -116,7 +116,7 @@ class _BodyPageState extends State<BodyPage> {
                 crossAxisCount: crossAxisCount,
                 crossAxisSpacing: productSpacing,
                 mainAxisSpacing: productSpacing,
-                childAspectRatio: screenWidth > 1200 ? 0.81 : 0.7,
+                childAspectRatio: screenWidth > 1200 ? 0.81 : 0.73,
               ),
               itemCount: products.length,
               itemBuilder: (context, index) {
