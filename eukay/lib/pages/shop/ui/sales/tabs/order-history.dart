@@ -149,7 +149,7 @@ class _OrdersState extends State<Orders> {
                   alignment: Alignment.center,
                   child: Center(
                     child: Text(
-                      'No delivered products were found',
+                      'No ordered products yet',
                       style: TextStyle(
                         fontFamily: "Poppins",
                         fontWeight: FontWeight.bold,

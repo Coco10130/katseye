@@ -49,6 +49,10 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
         emit(RegisterShopFailedState(errorMessage: "Failed to register shop."));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ShopServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(RegisterShopFailedState(errorMessage: e.toString()));
     }
   }
@@ -67,6 +71,10 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
         emit(OtpSentFailedState(errorMessage: "Failed to send OTP"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ShopServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(OtpSentFailedState(errorMessage: e.toString()));
     }
   }
@@ -78,6 +86,10 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
       final response = await _shopRepository.fetchSellerProfile(event.token);
       emit(FetchSellerSuccessState(seller: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ShopServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(FetchSellerFailedState(errorMessage: e.toString()));
     }
   }
@@ -127,6 +139,10 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
         emit(AddProductFailedState(errorMessage: "Failed to add product"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ShopServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(AddProductFailedState(errorMessage: e.toString()));
     }
   }
@@ -139,6 +155,10 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
           event.sellerId, event.token, event.status);
       emit(FetchLiveProductsSuccessState(products: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ShopServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(FetchLiveProductsFailedState(errorMessage: e.toString()));
     }
   }
@@ -153,6 +173,10 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
 
       emit(FetchSalesProductsState(products: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ShopServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(FetchProductFailedState(errorMessage: e.toString()));
     }
   }
@@ -174,6 +198,10 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
         emit(MarkSalesProductFailedState(errorMessage: "Something went wrong"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ShopServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(MarkSalesProductFailedState(errorMessage: e.toString()));
     }
   }
@@ -196,6 +224,10 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
         emit(ChangeStatusFailedState(errorMessage: "Something went wrong"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ShopServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(ChangeStatusFailedState(errorMessage: e.toString()));
     }
   }
@@ -209,6 +241,10 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
 
       emit(FetchUpdateProductState(product: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ShopServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(UpdateProductFailedState(errorMessage: e.toString()));
     }
   }
@@ -255,6 +291,10 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
             successMessage: "Product updated Successfully"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ShopServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(UpdateProductFailedState(errorMessage: e.toString()));
     }
   }
@@ -277,6 +317,10 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
             DeleteProductFailedState(errorMessage: "Failed to delete product"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ShopServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(DeleteProductFailedState(errorMessage: e.toString()));
     }
   }
@@ -295,6 +339,10 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
         emit(CancelOrderFailedState(errorMessage: "Something went wrong"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ShopServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(CancelOrderFailedState(errorMessage: e.toString()));
     }
   }

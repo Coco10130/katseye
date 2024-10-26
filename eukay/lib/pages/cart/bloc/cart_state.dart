@@ -36,4 +36,10 @@ final class DeleteCartItemFailedState extends CartState {
   DeleteCartItemFailedState({required this.errorMessage});
 }
 
+final class CartServerErrorState extends CartState {
+  final String errorMessage;
+
+  CartServerErrorState({required this.errorMessage});
+}
+
 final class CartLoadingState extends CartState {}

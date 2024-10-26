@@ -45,11 +45,10 @@ class ShopRepo extends ShopRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -72,11 +71,10 @@ class ShopRepo extends ShopRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -100,11 +98,10 @@ class ShopRepo extends ShopRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -130,7 +127,6 @@ class ShopRepo extends ShopRepository {
         "sizes": sizes,
       });
 
-      // Add images to formData
       for (var image in images) {
         formData.files.add(
           MapEntry(
@@ -140,7 +136,6 @@ class ShopRepo extends ShopRepository {
         );
       }
 
-      // Make the POST request
       final response = await _dio.post(
         "${Server.serverUrl}/api/product/add",
         options: Options(
@@ -151,7 +146,6 @@ class ShopRepo extends ShopRepository {
         data: formData,
       );
 
-      // Check response status
       if (response.statusCode == 201 && response.data["success"] == true) {
         return true;
       } else {
@@ -159,11 +153,10 @@ class ShopRepo extends ShopRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -191,11 +184,10 @@ class ShopRepo extends ShopRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -223,11 +215,10 @@ class ShopRepo extends ShopRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -256,11 +247,10 @@ class ShopRepo extends ShopRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -289,11 +279,10 @@ class ShopRepo extends ShopRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -314,11 +303,10 @@ class ShopRepo extends ShopRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -361,11 +349,10 @@ class ShopRepo extends ShopRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -392,11 +379,10 @@ class ShopRepo extends ShopRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -420,11 +406,10 @@ class ShopRepo extends ShopRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }

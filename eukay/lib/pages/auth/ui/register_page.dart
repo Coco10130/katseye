@@ -1,4 +1,6 @@
 import 'package:eukay/components/loading_screen.dart';
+import 'package:eukay/components/server_error_message.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
 import 'package:eukay/components/buttons/my_text_button.dart';
 import 'package:eukay/components/my_snackbar.dart';
@@ -96,6 +98,13 @@ class _RegisterPageState extends State<RegisterPage>
           );
           _isVisible = false;
           _loginTransition();
+        }
+
+        if (state is AuthServerErrorState) {
+          navigateWithSlideTransition(
+            context: context,
+            page: ServerErrorMessage(message: state.errorMessage),
+          );
         }
       },
       builder: (context, state) {

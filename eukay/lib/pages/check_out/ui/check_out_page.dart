@@ -4,6 +4,7 @@ import 'package:eukay/components/containers/order_shipping_address_container.dar
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/product_cards/order_summary_cards.dart';
+import 'package:eukay/components/server_error_message.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/check_out/bloc/check_out_bloc.dart';
 import 'package:eukay/pages/check_out/mappers/order_model.dart';
@@ -156,6 +157,12 @@ class _BodyPageState extends State<BodyPage> {
 
           changeToken(state.newToken);
           Navigator.pop(context, true);
+        } else if (state is CheckOutServerErrorState) {
+          navigateWithSlideTransition(
+            context: context,
+            page: ServerErrorMessage(message: state.errorMessage),
+            onFetch: () => fetchOrders(),
+          );
         }
       },
       builder: (context, state) {

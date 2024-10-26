@@ -2,6 +2,8 @@ import 'package:eukay/components/appbar/my_app_bar.dart';
 import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/inputs/my_input.dart';
 import 'package:eukay/components/my_snackbar.dart';
+import 'package:eukay/components/server_error_message.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -135,6 +137,11 @@ class _AddProductBodyState extends State<AddProductBody> {
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.onSecondary,
             ),
+          );
+        } else if (state is ShopServerErrorState) {
+          navigateWithSlideTransition(
+            context: context,
+            page: ServerErrorMessage(message: state.errorMessage),
           );
         }
       },

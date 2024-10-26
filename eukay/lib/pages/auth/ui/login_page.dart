@@ -1,4 +1,5 @@
 import 'package:eukay/components/loading_screen.dart';
+import 'package:eukay/components/server_error_message.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/auth/bloc/auth_bloc.dart';
 import 'package:eukay/components/buttons/my_button.dart';
@@ -96,11 +97,19 @@ class _LoginPageState extends State<LoginPage>
           prefs.setString("token", myToken);
           Navigator.pop(context, true);
         }
+
+        if (state is AuthServerErrorState) {
+          navigateWithSlideTransition(
+            context: context,
+            page: ServerErrorMessage(message: state.errorMessage),
+          );
+        }
       },
       builder: (context, state) {
         if (state is AuthLoading) {
           return LoadingScreen(
-              color: Theme.of(context).colorScheme.onSecondary);
+            color: Theme.of(context).colorScheme.onSecondary,
+          );
         }
 
         return Center(

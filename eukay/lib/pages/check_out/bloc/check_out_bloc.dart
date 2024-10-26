@@ -23,6 +23,9 @@ class CheckOutBloc extends Bloc<CheckOutEvent, CheckOutState> {
 
       emit(FetchCheckOutSuccessState(products: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(CheckOutServerErrorState(errorMessage: e.toString()));
+      }
       emit(FetchCheckOutFailedState(errorMessage: e.toString()));
     }
   }
@@ -37,10 +40,11 @@ class CheckOutBloc extends Bloc<CheckOutEvent, CheckOutState> {
         emit(CheckOutSuccessState(
             newToken: response,
             successMessage: "Order Checked out successfully"));
-      } else {
-        print(response);
-      }
+      } else {}
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(CheckOutServerErrorState(errorMessage: e.toString()));
+      }
       emit(CheckOutFailedState(errorMessage: e.toString()));
     }
   }

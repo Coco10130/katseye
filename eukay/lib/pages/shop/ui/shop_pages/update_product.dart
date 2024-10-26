@@ -3,6 +3,8 @@ import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/inputs/my_input.dart';
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
+import 'package:eukay/components/server_error_message.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/dashboard/mappers/product_model.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
 import 'package:flutter/material.dart';
@@ -166,6 +168,11 @@ class _UpdateProductBodyState extends State<UpdateProductBody> {
             ),
           );
           fetchProduct();
+        } else if (state is ShopServerErrorState) {
+          navigateWithSlideTransition(
+            context: context,
+            page: ServerErrorMessage(message: state.errorMessage),
+          );
         }
       },
       builder: (context, state) {

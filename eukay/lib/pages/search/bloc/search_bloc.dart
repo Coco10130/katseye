@@ -37,6 +37,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
       emit(SearchProductSuccessState(products: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(SearchServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(SearchProductFailedState(errorMessage: e.toString()));
     }
   }
@@ -50,6 +54,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
       emit(ViewProductSuccessState(product: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(SearchServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(ViewProductFailedState(errorMessage: e.toString()));
     }
   }
@@ -68,6 +76,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         emit(AddToCartFailedState(errorMessage: "Something went wrong"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(SearchServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(AddToCartFailedState(errorMessage: e.toString()));
     }
   }
@@ -84,6 +96,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
             WishlistSuccessState(successMessage: "Product added to wishlists"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(SearchServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(WishlistFailedState(errorMessage: e.toString()));
     }
   }
@@ -101,6 +117,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
             successMessage: "Product removed from wishlists"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(SearchServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(WishlistFailedState(errorMessage: e.toString()));
     }
   }
@@ -117,8 +137,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         type: event.type,
       );
 
-      print(response);
-
       if (response) {
         emit(ReportProductSuccessState(
             successMessage: "Product reported successfully"));
@@ -126,6 +144,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         emit(ReportProductFailedState(errorMessage: "Something went wrong"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(SearchServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(ReportProductFailedState(errorMessage: e.toString()));
     }
   }

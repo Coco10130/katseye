@@ -78,7 +78,6 @@ class _PendingPageState extends State<PendingPage> {
     return groupedProducts;
   }
 
-
   @override
   Widget build(BuildContext context) {
     if (!initializedPref) {
@@ -202,9 +201,7 @@ class _PendingPageState extends State<PendingPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSellerInfo(
-                productGroup,
-                token),
+            _buildSellerInfo(productGroup, token),
             const SizedBox(height: 10),
             _buildProductList(productGroup.products),
           ],
@@ -213,8 +210,7 @@ class _PendingPageState extends State<PendingPage> {
     );
   }
 
-  Widget _buildSellerInfo(
-      SellerGroup productGroup, String token) {
+  Widget _buildSellerInfo(SellerGroup productGroup, String token) {
     final formatCurrency = NumberFormat.currency(
       locale: "en_PH",
       symbol: "₱ ",

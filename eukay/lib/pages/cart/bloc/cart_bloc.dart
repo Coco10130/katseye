@@ -26,6 +26,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
 
       emit(FetchCartSuccessState(cartItems: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(CartServerErrorState(errorMessage: e.toString()));
+      }
       emit(FetchCartFailedState(errorMessage: e.toString()));
     }
   }
@@ -43,6 +46,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         emit(CartEventFailedState(errorMessage: "Something went wrong"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(CartServerErrorState(errorMessage: e.toString()));
+      }
       emit(CartEventFailedState(errorMessage: e.toString()));
     }
   }
@@ -60,6 +66,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         emit(CartEventFailedState(errorMessage: "Something went wrong"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(CartServerErrorState(errorMessage: e.toString()));
+      }
       emit(CartEventFailedState(errorMessage: e.toString()));
     }
   }
@@ -76,6 +85,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         emit(CartEventFailedState(errorMessage: "Something went wrong"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(CartServerErrorState(errorMessage: e.toString()));
+      }
       emit(CartEventFailedState(errorMessage: e.toString()));
     }
   }
@@ -93,6 +105,9 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         emit(DeleteCartItemFailedState(errorMessage: "Something went wrong"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(CartServerErrorState(errorMessage: e.toString()));
+      }
       emit(DeleteCartItemFailedState(errorMessage: e.toString()));
     }
   }

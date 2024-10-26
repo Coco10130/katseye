@@ -19,7 +19,7 @@ const sendOtp = (req, res, next) => {
 
     sendOTP(req.body, (error, results) => {
       if (error) {
-        return res.status(500).json({ errorMessage: error.message });
+        return res.status(500).json({ message: error.message });
       }
       return res.status(200).json({ message: "OTP emailed", data: results });
     });
@@ -36,7 +36,7 @@ const registerSeller = (req, res) => {
 
     verifyOTP(req.body, async (error, results) => {
       if (error) {
-        return res.status(400).json({ errorMessage: error });
+        return res.status(400).json({ message: error });
       }
 
       const token = authorizationHeader.split(" ")[1];

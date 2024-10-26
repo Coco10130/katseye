@@ -29,4 +29,10 @@ final class CheckOutSuccessState extends CheckOutState {
   CheckOutSuccessState({required this.successMessage, required this.newToken});
 }
 
+final class CheckOutServerErrorState extends CheckOutState {
+  final String errorMessage;
+
+  CheckOutServerErrorState({required this.errorMessage});
+}
+
 final class CheckOutLoadingState extends CheckOutState {}

@@ -71,4 +71,10 @@ final class ReportProductFailedState extends SearchState {
   ReportProductFailedState({required this.errorMessage});
 }
 
+final class SearchServerErrorState extends SearchState {
+  final String errorMessage;
+
+  SearchServerErrorState({required this.errorMessage});
+}
+
 final class SearchLoadingState extends SearchState {}

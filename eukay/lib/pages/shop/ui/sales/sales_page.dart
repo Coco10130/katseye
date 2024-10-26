@@ -84,7 +84,7 @@ class _SalesPageState extends State<SalesPage> {
                   _tab("To Prepare", toPrepare),
                   _tab("To Deliver", toDeliver),
                   _tab("Delivered", delivered),
-                  _tab("Orders", orders),
+                  _tab("Total Orders", orders),
                 ],
                 height: 70,
                 isScrollable: true,

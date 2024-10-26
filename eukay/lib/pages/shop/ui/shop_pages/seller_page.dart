@@ -1,5 +1,6 @@
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
+import 'package:eukay/components/server_error_message.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
 import 'package:eukay/pages/shop/ui/sales/sales_page.dart';
@@ -60,6 +61,11 @@ class _SellerPageState extends State<SellerPage> {
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.error,
             ),
+          );
+        } else if (state is ShopServerErrorState) {
+          navigateWithSlideTransition(
+            context: context,
+            page: ServerErrorMessage(message: state.errorMessage),
           );
         }
       },

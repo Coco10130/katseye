@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 
 class NavigateAuthButtons extends StatelessWidget {
   final Color textColor, backgroundColor, buttonTextColor;
-
+  final VoidCallback onReset;
   const NavigateAuthButtons(
       {super.key,
+      required this.onReset,
       this.textColor = Colors.black,
       this.buttonTextColor = Colors.black,
       this.backgroundColor = Colors.white});
@@ -46,6 +47,7 @@ class NavigateAuthButtons extends StatelessWidget {
                 navigateWithSlideTransition(
                   context: context,
                   page: const AuthPage(),
+                  onFetch: () => onReset(),
                 );
               },
             )

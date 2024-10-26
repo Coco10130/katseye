@@ -146,6 +146,12 @@ final class CancelOrderFailedState extends ShopState {
   CancelOrderFailedState({required this.errorMessage});
 }
 
+final class ShopServerErrorState extends ShopState {
+  final String errorMessage;
+
+  ShopServerErrorState({required this.errorMessage});
+}
+
 final class ShopLoadingState extends ShopState {}
 
 final class SalesRefreshedState extends ShopState {}

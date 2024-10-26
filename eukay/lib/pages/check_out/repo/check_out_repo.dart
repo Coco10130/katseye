@@ -55,8 +55,7 @@ class CheckOutRepo extends CheckOutRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["message"] ?? e.response?.data["errorMessage"];
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
         throw Exception("Error: ${e.toString()}");

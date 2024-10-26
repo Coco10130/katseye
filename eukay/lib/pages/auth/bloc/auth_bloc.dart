@@ -30,6 +30,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthLoginFailure(errorMessage: "Login failed. Please try again."));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(AuthServerErrorState(errorMessage: e.toString()));
+      }
       emit(AuthLoginFailure(errorMessage: e.toString()));
     }
   }
@@ -60,6 +63,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             errorMessage: "Login failed. Please try again"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(AuthServerErrorState(errorMessage: e.toString()));
+      }
       emit(AuthRegisterFailure(errorMessage: e.toString()));
     }
   }
@@ -80,6 +86,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(ForgotPasswordFailedState(errorMessage: "Failed to send OTP"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(AuthServerErrorState(errorMessage: e.toString()));
+      }
       emit(ForgotPasswordFailedState(errorMessage: e.toString()));
     }
   }
@@ -100,6 +109,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         throw Exception(response);
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(AuthServerErrorState(errorMessage: e.toString()));
+      }
       emit(ForgotPasswordFailedState(errorMessage: e.toString()));
     }
   }
@@ -128,6 +140,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         throw Exception(response);
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(AuthServerErrorState(errorMessage: e.toString()));
+      }
       emit(ForgotPasswordFailedState(errorMessage: e.toString()));
     }
   }

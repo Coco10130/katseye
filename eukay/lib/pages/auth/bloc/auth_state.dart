@@ -60,4 +60,10 @@ final class ResetPasswordSuccessState extends AuthState {
   ResetPasswordSuccessState({required this.successMessage});
 }
 
+final class AuthServerErrorState extends AuthState {
+  final String errorMessage;
+
+  AuthServerErrorState({required this.errorMessage});
+}
+
 final class AuthLoading extends AuthState {}

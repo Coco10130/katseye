@@ -21,6 +21,9 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       final response = await _dashboardRepo.fetchProducts();
       emit(DashboardInitialFetchState(products: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(DashboardServerErrorState(errorMessage: e.toString()));
+      }
       emit(DashboardFetchFailedState(errorMessage: e.toString()));
     }
   }

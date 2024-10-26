@@ -1,6 +1,7 @@
 import 'package:eukay/components/appbar/my_app_bar.dart';
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
+import 'package:eukay/components/server_error_message.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/cart/bloc/cart_bloc.dart';
 import 'package:eukay/components/buttons/my_button.dart';
@@ -167,6 +168,12 @@ class _CartBodyState extends State<CartBody> {
           changeToken(state.newToken).then((_) {
             fetchCart();
           });
+        } else if (state is CartServerErrorState) {
+          navigateWithSlideTransition(
+            context: context,
+            page: ServerErrorMessage(message: state.errorMessage),
+            onFetch: () => fetchCart(),
+          );
         }
       },
       builder: (context, state) {

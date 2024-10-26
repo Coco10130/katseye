@@ -2,6 +2,8 @@ import 'package:eukay/components/appbar/my_app_bar.dart';
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/product_cards/rate_product_card.dart';
+import 'package:eukay/components/server_error_message.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -109,6 +111,11 @@ class _BodyPageState extends State<BodyPage> {
             ),
           );
           Navigator.pop(context, true);
+        } else if (state is ProfileServerErrorState) {
+          navigateWithSlideTransition(
+            context: context,
+            page: ServerErrorMessage(message: state.errorMessage),
+          );
         }
       },
       builder: (context, state) {
@@ -116,6 +123,7 @@ class _BodyPageState extends State<BodyPage> {
           return LoadingScreen(
               color: Theme.of(context).colorScheme.onSecondary);
         }
+
         return SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),

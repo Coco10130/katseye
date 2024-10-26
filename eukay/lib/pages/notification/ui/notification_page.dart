@@ -2,6 +2,8 @@ import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/containers/notification_container.dart';
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
+import 'package:eukay/components/navigate_to_auth.dart';
+import 'package:eukay/components/server_error_message.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/auth/ui/auth_page.dart';
 import 'package:eukay/pages/cart/ui/cart_page.dart';
@@ -21,7 +23,7 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   late SharedPreferences pref;
   late String cartCount;
-  String? token;
+  late String token = "";
   String? userId;
   bool initializedToken = false;
 
@@ -44,8 +46,8 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   void initCartCount() {
-    if (token!.isNotEmpty) {
-      final Map<String, dynamic> jwtDecocded = JwtDecoder.decode(token!);
+    if (token.isNotEmpty) {
+      final Map<String, dynamic> jwtDecocded = JwtDecoder.decode(token);
       setState(() {
         cartCount = jwtDecocded["cartItems"].toString();
         userId = jwtDecocded["id"].toString();
@@ -53,8 +55,10 @@ class _NotificationPageState extends State<NotificationPage> {
     }
   }
 
-  Future<void> fetchProducts() async {
-    // context.read<DashboardBloc>().add(FetchProductsInitialEvent());
+  Future<void> _fetchNotifications() async {
+    context
+        .read<NotificationBloc>()
+        .add(FetchNotificationsEvent(token: token, userId: userId!));
   }
 
   @override
@@ -91,7 +95,7 @@ class _NotificationPageState extends State<NotificationPage> {
         ),
         actions: [
           // cart action button
-          token! != ""
+          token != ""
               ? Stack(
                   children: [
                     Positioned(
@@ -122,7 +126,7 @@ class _NotificationPageState extends State<NotificationPage> {
                               ),
                               onFetch: () {
                                 onResetToken();
-                                fetchProducts();
+                                _fetchNotifications();
                               });
                         },
                       ),
@@ -150,35 +154,44 @@ class _NotificationPageState extends State<NotificationPage> {
                 ),
         ],
       ),
-      body: NotificationBody(
-        userId: userId!,
-        token: token!,
-      ),
+      body: token.isEmpty
+          ? NavigateAuthButtons(
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              textColor: Theme.of(context).colorScheme.onSecondary,
+              buttonTextColor: Theme.of(context).colorScheme.onPrimary,
+              onReset: () => onResetToken(),
+            )
+          : NotificationBody(
+              onFetch: () => _fetchNotifications(),
+              userId: userId!,
+              token: token,
+            ),
     );
   }
 }
 
 class NotificationBody extends StatefulWidget {
   final String userId, token;
+  final VoidCallback onFetch;
   const NotificationBody(
-      {super.key, required this.userId, required this.token});
+      {super.key,
+      required this.userId,
+      required this.token,
+      required this.onFetch});
 
   @override
   State<NotificationBody> createState() => _NotificationBodyState();
 }
 
 class _NotificationBodyState extends State<NotificationBody> {
-  Future<void> _refresh() async {}
-
   @override
   void initState() {
     super.initState();
-    _fetchNotifications();
+    widget.onFetch();
   }
 
-  Future<void> _fetchNotifications() async {
-    context.read<NotificationBloc>().add(
-        FetchNotificationsEvent(token: widget.token, userId: widget.userId));
+  Future<void> _refresh() async {
+    widget.onFetch();
   }
 
   @override
@@ -193,6 +206,12 @@ class _NotificationBodyState extends State<NotificationBody> {
               textColor: Theme.of(context).colorScheme.error,
             ),
           );
+        } else if (state is NotificationServerErrorState) {
+          navigateWithSlideTransition(
+            context: context,
+            page: ServerErrorMessage(message: state.errorMessage),
+            onFetch: () => widget.onFetch(),
+          );
         }
       },
       builder: (context, state) {
@@ -201,7 +220,7 @@ class _NotificationBodyState extends State<NotificationBody> {
           notifications.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
           return RefreshIndicator(
-            onRefresh: () => _fetchNotifications(),
+            onRefresh: () => _refresh(),
             child: SingleChildScrollView(
               child: Padding(
                   padding:

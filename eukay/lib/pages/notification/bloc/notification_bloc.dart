@@ -24,6 +24,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
       emit(FetchNotificationSuccessState(notifications: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(NotificationServerErrorState(errorMessage: e.toString()));
+      }
       emit(FetchNotificationFailedState(errorMessage: e.toString()));
     }
   }

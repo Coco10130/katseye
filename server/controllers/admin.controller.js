@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const Seller = require("../models/seller.model.js");
 const Report = require("../models/report.model.js");
 const Order = require("../models/order.model.js");
-const User = require("../models/user.model.js");
 const Cart = require("../models/cart.model.js");
 const Product = require("../models/product.model.js");
 const Notification = require("../models/notification.model.js");
@@ -62,10 +61,9 @@ const getSellers = async (req, res) => {
       sellers: sellerData,
     });
   } catch (error) {
-    console.error("Error fetching sellers:", error);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      errorMessage: "Internal server error",
     });
   }
 };
@@ -89,10 +87,9 @@ const getReports = async (req, res) => {
       reports,
     });
   } catch (error) {
-    console.error("Error fetching reports:", error);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      errorMessage: "Internal server error",
     });
   }
 };

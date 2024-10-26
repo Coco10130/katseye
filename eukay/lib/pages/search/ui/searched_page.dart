@@ -2,6 +2,8 @@ import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_searchbox.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/product_cards/product_card.dart';
+import 'package:eukay/components/server_error_message.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/search/bloc/search_bloc.dart';
 import 'package:eukay/pages/search/ui/view_product.dart';
 import 'package:flutter/material.dart';
@@ -259,6 +261,11 @@ class _SearchedBodyState extends State<SearchedBody> {
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     textColor: Theme.of(context).colorScheme.error,
                   ),
+                );
+              } else if (state is SearchServerErrorState) {
+                navigateWithSlideTransition(
+                  context: context,
+                  page: ServerErrorMessage(message: state.errorMessage),
                 );
               }
             },

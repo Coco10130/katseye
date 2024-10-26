@@ -163,4 +163,10 @@ final class FetchReviewSuccessState extends ProfileState {
   FetchReviewSuccessState({required this.review});
 }
 
+final class ProfileServerErrorState extends ProfileState {
+  final String errorMessage;
+
+  ProfileServerErrorState({required this.errorMessage});
+}
+
 final class ProfileLoadingState extends ProfileState {}

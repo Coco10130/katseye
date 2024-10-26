@@ -3,6 +3,7 @@ import 'package:eukay/components/buttons/category_text_button.dart';
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_searchbox.dart';
 import 'package:eukay/components/product_cards/product_card.dart';
+import 'package:eukay/components/server_error_message.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/auth/ui/auth_page.dart';
 import 'package:eukay/pages/cart/ui/cart_page.dart';
@@ -199,7 +200,9 @@ class _DashboardBodyState extends State<DashboardBody> {
 
     return BlocBuilder<DashboardBloc, DashboardState>(
       builder: (context, state) {
-        if (state is DashboardLoadingState) {
+        if (state is DashboardServerErrorState) {
+          return ServerErrorMessage(message: state.errorMessage);
+        } else if (state is DashboardLoadingState) {
           return Center(
             child:
                 LoadingScreen(color: Theme.of(context).colorScheme.onSecondary),

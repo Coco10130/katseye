@@ -17,4 +17,10 @@ final class FetchNotificationFailedState extends NotificationState {
   FetchNotificationFailedState({required this.errorMessage});
 }
 
+final class NotificationServerErrorState extends NotificationState {
+  final String errorMessage;
+
+  NotificationServerErrorState({required this.errorMessage});
+}
+
 final class NotificationLoadingState extends NotificationState {}

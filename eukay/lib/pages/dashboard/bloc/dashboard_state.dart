@@ -17,4 +17,10 @@ final class DashboardFetchFailedState extends DashboardState {
   DashboardFetchFailedState({required this.errorMessage});
 }
 
+final class DashboardServerErrorState extends DashboardState {
+  final String errorMessage;
+
+  DashboardServerErrorState({required this.errorMessage});
+}
+
 final class DashboardLoadingState extends DashboardState {}

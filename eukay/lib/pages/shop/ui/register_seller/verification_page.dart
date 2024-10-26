@@ -3,6 +3,8 @@ import 'package:eukay/components/appbar/my_app_bar.dart';
 import 'package:eukay/components/inputs/otp_input.dart';
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
+import 'package:eukay/components/server_error_message.dart';
+import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/navigation_menu.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
 import 'package:flutter/material.dart';
@@ -92,9 +94,7 @@ class _BodyPageState extends State<BodyPage> {
           await updateToken(state.token);
 
           Get.offAll(const NavigationMenu());
-        }
-
-        if (state is RegisterShopFailedState) {
+        } else if (state is RegisterShopFailedState) {
           if (!context.mounted) return;
 
           ScaffoldMessenger.of(context).showSnackBar(
@@ -103,6 +103,11 @@ class _BodyPageState extends State<BodyPage> {
               backgroundColor: Theme.of(context).colorScheme.primary,
               textColor: Theme.of(context).colorScheme.error,
             ),
+          );
+        } else if (state is ShopServerErrorState) {
+          navigateWithSlideTransition(
+            context: context,
+            page: ServerErrorMessage(message: state.errorMessage),
           );
         }
       },

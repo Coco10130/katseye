@@ -3,6 +3,7 @@ import 'package:eukay/components/buttons/my_button.dart';
 import 'package:eukay/components/containers/product_review_container.dart';
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
+import 'package:eukay/components/server_error_message.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/auth/ui/auth_page.dart';
 import 'package:eukay/pages/cart/ui/cart_page.dart';
@@ -422,6 +423,11 @@ class _BodyPageState extends State<BodyPage> {
           );
 
           widget.fetchProduct();
+        } else if (state is SearchServerErrorState) {
+          navigateWithSlideTransition(
+            context: context,
+            page: ServerErrorMessage(message: state.errorMessage),
+          );
         }
       },
       builder: (context, state) {

@@ -1,6 +1,7 @@
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
 import 'package:eukay/components/navigate_to_auth.dart';
+import 'package:eukay/components/server_error_message.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/navigation_menu.dart';
 import 'package:eukay/pages/profile/bloc/profile_bloc.dart';
@@ -35,6 +36,12 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  void onResetToken() {
+    initPref().then((_) {
+      fetchProfile(token);
+    });
+  }
+
   Future<void> fetchProfile(String token) async {
     if (token.isNotEmpty) {
       context.read<ProfileBloc>().add(ProfileInitialFetchEvent(token: token));
@@ -62,6 +69,7 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: Theme.of(context).colorScheme.secondary,
       body: token.isEmpty
           ? NavigateAuthButtons(
+              onReset: () => onResetToken(),
               backgroundColor: Theme.of(context).colorScheme.onPrimary,
               textColor: Theme.of(context).colorScheme.onPrimary,
               buttonTextColor: Theme.of(context).colorScheme.onSecondary,
@@ -118,6 +126,12 @@ class ProfilePageBody extends StatelessWidget {
           );
 
           fetchProfile();
+        } else if (state is ProfileServerErrorState) {
+          navigateWithSlideTransition(
+            context: context,
+            page: ServerErrorMessage(message: state.errorMessage),
+            onFetch: () => fetchProfile(),
+          );
         }
       },
       builder: (context, state) {

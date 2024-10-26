@@ -3,6 +3,7 @@ import 'package:eukay/components/appbar/my_app_bar.dart';
 import 'package:eukay/components/inputs/my_input.dart';
 import 'package:eukay/components/loading_screen.dart';
 import 'package:eukay/components/my_snackbar.dart';
+import 'package:eukay/components/server_error_message.dart';
 import 'package:eukay/components/transitions/navigation_transition.dart';
 import 'package:eukay/pages/shop/bloc/shop_bloc.dart';
 import 'package:eukay/pages/shop/ui/register_seller/verification_page.dart';
@@ -80,6 +81,11 @@ class _BodyPageState extends State<BodyPage> {
                 token: pref.getString("token")!,
                 otpHash: state.otpHash,
               ));
+        } else if (state is ShopServerErrorState) {
+          navigateWithSlideTransition(
+            context: context,
+            page: ServerErrorMessage(message: state.errorMessage),
+          );
         }
       },
       builder: (context, state) {

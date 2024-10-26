@@ -41,11 +41,10 @@ class SearchRepo extends SearchRepository {
       }
     } catch (e) {
       if (e is DioException && e.response != null) {
-        final errorMessage =
-            e.response?.data["errorMessage"] ?? e.response?.data["message"];
+        final errorMessage = e.response?.data["message"] ?? "Unknown error";
         throw errorMessage;
       } else {
-        throw Exception(e.toString());
+        throw Exception("Error: ${e.toString()}");
       }
     }
   }
@@ -58,7 +57,6 @@ class SearchRepo extends SearchRepository {
 
       if (response.data["success"]) {
         final product = response.data["data"];
-        
 
         return ProductModel.fromJson(product);
       } else {

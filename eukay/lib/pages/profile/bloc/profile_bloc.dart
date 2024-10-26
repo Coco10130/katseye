@@ -78,6 +78,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
       emit(FetchMunicipalitiesSuccessState(municipalities: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ProfileServerErrorState(errorMessage: e.toString()));
+      }
       emit(FetchingFailedState(errorMessage: e.toString()));
     }
   }
@@ -91,6 +94,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
       emit(FetchBarangaysSccessState(barangays: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ProfileServerErrorState(errorMessage: e.toString()));
+      }
       emit(FetchingFailedState(errorMessage: e.toString()));
     }
   }
@@ -113,6 +119,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             successMessage: "Address added successfully"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ProfileServerErrorState(errorMessage: e.toString()));
+      }
       emit(AddUserAddressFailedState(errorMessage: e.toString()));
     }
   }
@@ -129,6 +138,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
       emit(FetchUserAddressSuccessState(addresses: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ProfileServerErrorState(errorMessage: e.toString()));
+      }
       emit(FetchUserAddressFailedState(errorMessage: e.toString()));
     }
   }
@@ -147,6 +159,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         throw Exception("Something went wrong");
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ProfileServerErrorState(errorMessage: e.toString()));
+      }
       emit(DeleteAddressFailedState(errorMessage: e.toString()));
     }
   }
@@ -160,6 +175,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
       emit(WishListSuccessState(products: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ProfileServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(WishListFailedState(errorMessage: e.toString()));
     }
   }
@@ -179,6 +198,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         throw Exception("Something went wrong");
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ProfileServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(UseAddressFailedState(errorMessage: e.toString()));
     }
   }
@@ -207,6 +230,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(FetchDeliveryAddressSuccessState(address: address));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ProfileServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(FetchUserAddressFailedState(errorMessage: e.toString()));
     }
   }
@@ -221,6 +248,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
       emit(FetchOrdersProductsSuccessState(products: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ProfileServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(FetchOrdersProductsFailedState(errorMessage: e.toString()));
     }
   }
@@ -262,6 +293,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(CancelOrderFailedState(errorMessage: "Failed to cancel order"));
       }
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ProfileServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(CancelOrderFailedState(errorMessage: e.toString()));
     }
   }
@@ -275,6 +310,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
       emit(FetchReviewSuccessState(review: response));
     } catch (e) {
+      if (e.toString() == "Unknown error") {
+        return emit(ProfileServerErrorState(errorMessage: e.toString()));
+      }
+
       emit(FetchReviewsFailedState(errorMessage: e.toString()));
     }
   }

@@ -116,6 +116,7 @@ class _ShopPageState extends State<ShopPage> {
       ),
       body: token.isEmpty
           ? NavigateAuthButtons(
+              onReset: () => initPref(),
               textColor: Theme.of(context).colorScheme.onSecondary,
               buttonTextColor: Theme.of(context).colorScheme.onPrimary,
               backgroundColor: Theme.of(context).colorScheme.secondary,

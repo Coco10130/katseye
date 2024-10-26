@@ -14,7 +14,7 @@ const addProduct = async (req, res) => {
     if (!authorizationHeader) {
       return res
         .status(401)
-        .json({ errorMessage: "No authorization token provided" });
+        .json({ message: "No authorization token provided" });
     }
 
     const token = authorizationHeader.split(" ")[1];
@@ -22,7 +22,7 @@ const addProduct = async (req, res) => {
 
     const seller = await Seller.findOne({ userId: decode.id });
     if (!seller) {
-      return res.status(404).json({ errorMessage: "Seller not found" });
+      return res.status(404).json({ message: "Seller not found" });
     }
 
     const {
@@ -35,7 +35,7 @@ const addProduct = async (req, res) => {
     } = req.body;
 
     if (!productName || !price || !categories || !sizes || !quantities) {
-      return res.status(400).json({ errorMessage: "All fields are required" });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     const images =
@@ -48,7 +48,7 @@ const addProduct = async (req, res) => {
 
     if (sizeArray.length !== quantityArray.length) {
       return res.status(400).json({
-        errorMessage: "Sizes and quantities must match in length",
+        message: "Sizes and quantities must match in length",
       });
     }
 
@@ -313,13 +313,13 @@ const updateProduct = async (req, res) => {
     } = req.body;
 
     if (!productName || !price || !sizes || !quantities) {
-      return res.status(400).json({ errorMessage: "All fields are required" });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     if (discount >= 100) {
       return res
         .status(400)
-        .json({ errorMessage: "Discount must be less than 100%" });
+        .json({ message: "Discount must be less than 100%" });
     }
 
     const sizeQuantities = sizes.map((size, index) => ({
@@ -329,7 +329,7 @@ const updateProduct = async (req, res) => {
 
     const product = await Product.findById(productId);
     if (!product) {
-      return res.status(404).json({ errorMessage: "Product not found" });
+      return res.status(404).json({ message: "Product not found" });
     }
 
     const wasSoldOut = product.status === "sold out";
@@ -352,7 +352,7 @@ const updateProduct = async (req, res) => {
 
     const seller = await Seller.findById(product.sellerId);
     if (!seller) {
-      return res.status(404).json({ errorMessage: "Seller not found" });
+      return res.status(404).json({ message: "Seller not found" });
     }
 
     if (wasSoldOut) {
@@ -387,7 +387,7 @@ const deleteProduct = async (req, res) => {
 
     if (existingOrders.length > 0) {
       return res.status(400).json({
-        errorMessage:
+        message:
           "Cannot delete product with existing orders in specific statuses.",
       });
     }
