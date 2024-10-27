@@ -156,7 +156,7 @@ const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find({
       status: "live",
-      rating: { $gt: 3.5 },
+      rating: { $gt: 3.9 },
     });
 
     const productsWithImageUrl = products.map((product) => {

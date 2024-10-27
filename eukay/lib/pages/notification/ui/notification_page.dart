@@ -219,6 +219,31 @@ class _NotificationBodyState extends State<NotificationBody> {
           final notifications = state.notifications;
           notifications.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
+          if (notifications.isEmpty) {
+            return RefreshIndicator(
+              onRefresh: () => _refresh(),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  height:
+                      MediaQuery.of(context).size.height - kToolbarHeight - 100,
+                  alignment: Alignment.center,
+                  child: Center(
+                    child: Text(
+                      "No notifications available yet",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondary,
+                        fontFamily: "Poppins",
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+
           return RefreshIndicator(
             onRefresh: () => _refresh(),
             child: SingleChildScrollView(

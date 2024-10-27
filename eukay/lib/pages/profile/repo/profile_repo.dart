@@ -71,10 +71,10 @@ class ProfileRepo extends ProfileRepository {
         data: formData,
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.data["success"]) {
         return true;
       } else {
-        return false;
+        throw response.data["message"];
       }
     } catch (e) {
       if (e is DioException && e.response != null) {

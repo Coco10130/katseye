@@ -72,6 +72,11 @@ class _EditProfileBodyState extends State<EditProfileBody> {
   @override
   void initState() {
     super.initState();
+
+    _fetchProfile();
+  }
+
+  Future<void> _fetchProfile() async {
     context
         .read<ProfileBloc>()
         .add(ProfileInitialFetchEvent(token: widget.token));
@@ -99,6 +104,19 @@ class _EditProfileBodyState extends State<EditProfileBody> {
               textColor: Theme.of(context).colorScheme.error,
             ),
           );
+          _fetchProfile();
+        } else if (state is ProfileUpdateFailedState) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            mySnackBar(
+              message: state.errorMessage,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              textColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+
+          _fetchProfile();
+        } else if (state is ProfileUpdateSuccessfulState) {
+          Navigator.pop(context, true);
         }
       },
       builder: (context, state) {
@@ -207,7 +225,6 @@ class _EditProfileBodyState extends State<EditProfileBody> {
                                     userName: _nameController.text,
                                   ),
                                 );
-                            Navigator.pop(context, true);
                           })
                     ],
                   ),

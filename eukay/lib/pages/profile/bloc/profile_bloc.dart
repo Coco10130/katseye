@@ -64,6 +64,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (response) {
         emit(ProfileUpdateSuccessfulState(
             successMessage: "Profile updated successfully"));
+      } else {
+        emit(ProfileUpdateFailedState(errorMessage: "Something went wrong"));
       }
     } catch (e) {
       emit(ProfileUpdateFailedState(errorMessage: e.toString()));

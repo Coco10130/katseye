@@ -53,6 +53,7 @@ const updateProfile = async (req, res) => {
         formattedContact.length !== 11 ||
         !formattedContact.startsWith("09")
       ) {
+        console.log(formattedContact);
         return res.status(400).json({ message: "Invalid contact number" });
       }
     }

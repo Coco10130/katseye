@@ -59,6 +59,10 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   Future<void> fetchProducts() async {
+    initPref().then((_) {
+      initCartCount();
+    });
+
     context.read<DashboardBloc>().add(FetchProductsInitialEvent());
   }
 

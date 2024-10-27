@@ -97,12 +97,6 @@ class _PendingPageState extends State<PendingPage> {
     super.didChangeDependencies();
   }
 
-  // @override
-  // void deactivate() {
-  //   super.deactivate();
-  //   fetchSellerProfile();
-  // }
-
   @override
   Widget build(BuildContext context) {
     if (!initializedPref) {

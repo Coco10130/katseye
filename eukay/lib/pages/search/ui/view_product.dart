@@ -41,6 +41,12 @@ class _ViewProductState extends State<ViewProduct> {
     });
   }
 
+  void resetToken() {
+    initPref().then((_) {
+      initRole();
+    });
+  }
+
   Future<void> fetchProduct() async {
     context
         .read<SearchBloc>()
@@ -295,7 +301,7 @@ class _ViewProductState extends State<ViewProduct> {
       ),
       body: BodyPage(
         fetchProduct: () => fetchProduct(),
-        onSignIn: () => initPref(),
+        onSignIn: () => resetToken(),
         productId: widget.productId,
         userId: userId ?? "",
         onProductFetched: checkIfLiked,
@@ -702,7 +708,7 @@ class _BodyPageState extends State<BodyPage> {
                                 return navigateWithSlideTransition(
                                   context: context,
                                   page: const AuthPage(),
-                                  onFetch: () => widget.fetchProduct(),
+                                  onFetch: () => widget.onSignIn(),
                                 );
                               }
 
