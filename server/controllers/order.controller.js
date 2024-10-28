@@ -341,6 +341,24 @@ const cancelOrderByUser = async (req, res) => {
         console.log("Unknown");
     }
 
+    const seller = await Seller.findById(sellerId);
+
+    if (!seller) {
+      return res.status(404).json({ message: "Seller not found." });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    await Notification.create({
+      icon: "shop.png",
+      userId: seller.userId,
+      message: `Order has canceled by ${user.userName}`,
+    });
+
     await Order.findByIdAndUpdate(orderId, { status: "canceled" });
 
     res
