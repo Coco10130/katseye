@@ -21,18 +21,21 @@ const createReport = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const seller = await Seller.findOne({ userId: userId });
-
-    if (seller) {
-      return res
-        .status(400)
-        .json({ message: "Seller can't report their own product" });
-    }
-
     const productExists = await Product.findById(productId);
 
     if (!productExists) {
       return res.status(404).json({ message: "Product not found" });
+    }
+
+    const seller = await Seller.findOne({
+      userId: userId,
+      _id: productExists.sellerId,
+    });
+
+    if (seller) {
+      return res
+        .status(400)
+        .json({ message: "Seller can't report their own product." });
     }
 
     const newReport = new Report({
